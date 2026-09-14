@@ -14,13 +14,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import (average_precision_score, confusion_matrix,
-                             precision_recall_curve, roc_auc_score, roc_curve)
+from sklearn.metrics import (accuracy_score, average_precision_score, confusion_matrix,
+                             f1_score, precision_recall_curve, precision_score,
+                             recall_score, roc_auc_score, roc_curve)
 import yaml
 
-from .benchmark import METRICS, binary_metrics, estimator, preprocessor, save_figure
 from .data import CATEGORICAL, NUMERIC, load_dataset, sha256
-from .integrate_models import EXPECTED_MODELS
+
+METRICS = ['precision', 'recall', 'f1', 'accuracy', 'roc_auc', 'average_precision']
+EXPECTED_MODELS = {
+    'decision_tree', 'random_forest', 'xgboost', 'lightgbm', 'catboost',
+    'tabpfn_v2_5', 'tabpfn_v2_6', 'tabpfn_v3',
+}
+
+
+def binary_metrics(y_true, y_score, threshold):
+    y_pred = (y_score >= threshold).astype(int)
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
+    return {'precision': precision_score(y_true, y_pred, zero_division=0),
+            'recall': recall_score(y_true, y_pred, zero_division=0),
+            'f1': f1_score(y_true, y_pred, zero_division=0),
+            'accuracy': accuracy_score(y_true, y_pred),
+            'roc_auc': roc_auc_score(y_true, y_score),
+            'average_precision': average_precision_score(y_true, y_score),
+            'tn': int(tn), 'fp': int(fp), 'fn': int(fn), 'tp': int(tp)}
+
+
+def save_figure(fig, figures, name):
+    fig.savefig(figures / f'{name}.png', dpi=300, bbox_inches='tight')
+    fig.savefig(figures / f'{name}.svg', bbox_inches='tight')
+    plt.close(fig)
 
 
 def file_sha256(path):
@@ -50,6 +73,8 @@ def numeric_matrix(frame):
 
 
 def tree_evaluate(model_id, tree_config, development, evaluation, regions, seeds, threshold):
+    from .benchmark import estimator, preprocessor
+
     params = yaml.safe_load(Path(tree_config).read_text())['models'][model_id]
     transform = preprocessor()
     x_train = transform.fit_transform(development)
