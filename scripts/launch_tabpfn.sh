@@ -19,8 +19,22 @@ scp -i "$SSH_KEY" -P "$PORT" -o BatchMode=yes -o StrictHostKeyChecking=accept-ne
   "$token_file" "$REMOTE_USER@$HOST:/root/.config/poi/tabpfn_token"
 ssh "${ssh_opts[@]}" "$REMOTE_USER@$HOST" 'chmod 600 /root/.config/poi/tabpfn_token'
 cleanup_token() {
+  if [[ "${preserve_token:-0}" == 1 ]]; then
+    echo "Remote experiment is still active; retaining its mode-600 token until the next launch or instance teardown" >&2
+    return
+  fi
   ssh "${ssh_opts[@]}" "$REMOTE_USER@$HOST" 'rm -f /root/.config/poi/tabpfn_token' || true
 }
 trap cleanup_token EXIT
+launch_status=0
 GPU_CONNECTION_FILE="$connection_file" EXPERIMENT_CONFIG="$experiment_config" \
-  "$orchestrator/scripts/launch_experiment.sh" "$exp_id"
+  "$orchestrator/scripts/launch_experiment.sh" "$exp_id" || launch_status=$?
+if (( launch_status != 0 )); then
+  experiment_status="$($orchestrator/scripts/status_experiment.sh \
+    "$HOST" "$PORT" poi "$exp_id" 2>&1 || true)"
+  if grep -q '^RUN ACTIVE' <<< "$experiment_status"; then
+    preserve_token=1
+  fi
+  printf '%s\n' "$experiment_status" >&2
+  exit "$launch_status"
+fi
