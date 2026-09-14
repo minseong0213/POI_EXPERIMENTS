@@ -44,8 +44,12 @@ def run(config_path):
                     'roc_auc':roc_auc_score(truth,score),'end_to_end_f1':f1_score(truth,forced,zero_division=0),
                     'end_to_end_accuracy':accuracy_score(truth,forced)})
     sensitivity=pd.DataFrame(sensitivity);sensitivity.to_csv(tables/'sensitivity_attack_ratio.csv',index=False)
-    sens_summary=sensitivity.groupby('attack_ratio')[['f1','precision','recall','accuracy','roc_auc','coverage','end_to_end_f1','end_to_end_accuracy']].agg(['mean','std'])
-    sens_summary.to_csv(tables/'sensitivity_summary.csv')
+    sens_summary=(sensitivity.groupby('attack_ratio')
+        [['f1','precision','recall','accuracy','roc_auc','coverage','end_to_end_f1','end_to_end_accuracy']]
+        .agg(['mean','std']).reset_index())
+    sens_summary.columns=['_'.join(filter(None,col if isinstance(col,tuple) else [col]))
+                          for col in sens_summary.columns]
+    sens_summary.to_csv(tables/'sensitivity_summary.csv',index=False)
     fig,axes=plt.subplots(1,2,figsize=(13,5))
     sns.lineplot(data=sensitivity,x='attack_ratio',y='f1',errorbar='sd',marker='o',label='unprotected ensemble F1',ax=axes[0])
     sns.lineplot(data=sensitivity,x='attack_ratio',y='end_to_end_f1',errorbar='sd',marker='o',label='defended end-to-end F1',ax=axes[0])
@@ -145,7 +149,7 @@ def run(config_path):
     fig.suptitle('Ensemble-component and detector-gate ablation')
     fig.tight_layout()
     save(fig,figures,'defense_ablation')
-    sens_json=sens_summary.reset_index();sens_json.columns=['_'.join(filter(None,col if isinstance(col,tuple) else [col])) for col in sens_json.columns]
+    sens_json=sens_summary
     model_count=model_metrics.model.nunique()
     metadata={'status':'complete','scope':'validation synthesis','attack_ratios':cfg['attack_ratios'],
               'seeds':cfg['seeds'],'model_count':model_count,

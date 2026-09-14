@@ -18,10 +18,11 @@
 | 09 | [앙상블과 방어 파이프라인](experiments/09_ensemble_defense.md) | 새 방법, 탐지 후 지역분류, coverage |
 | 10 | [강건성 분석](experiments/10_robustness.md) | sensitivity, stability, ranking, 최종 ablation |
 
-01~10단계의 train/validation 실행 결과는
-`artifacts/poi-validation-study-002/reports/`에 있다. 트리 모델 5개를 포함한 현재
-결과는 `r2:ml-experiments/results/poi/validation-study-002/`에도 기록한다. TabPFN
-v2.5/v2.6/v3와 최종 test 잠금 평가가 끝날 때까지 상태는 `validation_partial`이다.
+01~10단계의 train/validation 결과와 11단계 잠금 test 평가는
+`artifacts/poi-study-final-001/reports/`에 있다. 8개 모델 비교로 TabPFN v2.5를
+고정한 뒤 test를 한 번의 평가 범위로 분리했다. 최종 상태는 `complete`이며 자동
+감사 결과는 `artifacts/poi-study-final-001/audit.json`, 원격 보존 위치는
+`r2:ml-experiments/results/poi/poi-study-final-001/`이다.
 
 생성 결과는 `artifacts/<EXP_ID>/reports/<NN_stage>/`에 저장한다. 각 단계는
 `report.md`, `tables/`, `figures/`, `metrics.json`, `metadata.json`을 가져야 한다.

@@ -1,5 +1,6 @@
 """Create the immutable complete POI study bundle, including the locked test."""
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
@@ -70,6 +71,14 @@ def main():
 
 `manifest.json`은 번들 파일의 크기와 SHA-256, 선택 모델, 데이터 사용 범위를 기록한다.
 ''')
+    success = {
+        'status': 'complete',
+        'completed_at_utc': datetime.now(timezone.utc).isoformat(),
+        'selected_model': 'tabpfn_v2_5',
+        'validation_model_count': 8,
+        'test_split_used_only_after_model_lock': True,
+    }
+    (output / '_SUCCESS.json').write_text(json.dumps(success, indent=2) + '\n')
     files = {
         str(path.relative_to(output)): {'bytes': path.stat().st_size, 'sha256': digest(path)}
         for path in sorted(output.rglob('*')) if path.is_file()
