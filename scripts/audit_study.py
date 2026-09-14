@@ -168,12 +168,29 @@ def audit(bundle):
         failures.append('robustness: sensitivity/stability/ranking does not include all eight models')
 
     test_path = reports / '10_robustness' / 'tables' / 'final_test_metrics.csv'
+    test_prediction_path = reports / '10_robustness' / 'tables' / 'final_test_predictions.parquet'
     final_test_ok = False
+    final_test_rows, final_prediction_rows = 0, 0
     if test_path.is_file():
         test = pd.read_csv(test_path)
-        final_test_ok = (len(test) > 0 and set(test.split.unique()) == {'test'} and
-                         set(test.condition.unique()) == {'clean', 'adversarial'})
-    checks['locked_final_test'] = {'ok': final_test_ok, 'path': str(test_path)}
+        final_test_rows = len(test)
+        test_predictions = pd.DataFrame(columns=['model', 'split', 'condition'])
+        if test_prediction_path.is_file():
+            test_predictions = pd.read_parquet(
+                test_prediction_path, columns=['model', 'split', 'condition'])
+            final_prediction_rows = len(test_predictions)
+        final_test_ok = (
+            final_test_rows == 102 and final_prediction_rows == 693_600 and
+            set(test.model.unique()) == {selected_model} and
+            set(test.split.unique()) == {'test'} and
+            set(test.condition.unique()) == {'clean', 'adversarial'} and
+            set(test_predictions.model.unique()) == {selected_model} and
+            set(test_predictions.split.unique()) == {'test'} and
+            set(test_predictions.condition.unique()) == {'clean', 'adversarial'})
+    checks['locked_final_test'] = {
+        'ok': final_test_ok, 'path': str(test_path), 'metric_rows': final_test_rows,
+        'prediction_rows': final_prediction_rows, 'selected_model': selected_model,
+    }
     if not final_test_ok:
         failures.append('final test: locked clean/adversarial evaluation is missing')
 

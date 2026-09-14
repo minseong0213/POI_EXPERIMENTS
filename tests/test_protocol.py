@@ -63,6 +63,17 @@ def test_final_ensemble_uses_validation_top_three():
     assert config['ensemble_models'] == ranking.model.head(3).tolist()
 
 
+def test_final_bundle_sources_are_all_final_outputs():
+    import runpy
+
+    SOURCES = runpy.run_path('scripts/bundle_final_results.py')['SOURCES']
+    assert 'poi-models-validation-002' in SOURCES['05_region_models']
+    assert 'poi-tabpfn-ablation-001' in SOURCES['06_model_selection_ablation']
+    assert 'poi-tabpfn-explain-001' in SOURCES['07_explainability']
+    assert 'poi-final-validation-001' in SOURCES['09_ensemble_defense']
+    assert 'poi-final-validation-001' in SOURCES['10_robustness']
+
+
 def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
     from poi.final_test import select_model
 
