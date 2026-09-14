@@ -10,8 +10,11 @@
 - clean↔adversarial SHAP 변화량과 ranking 변화
 - 주요 피처 제거 후 성능 및 SHAP/LIME 재계산
 
-트리 계열은 TreeSHAP을 우선 사용하고 TabPFN은 공식 지원 방식 또는 model-agnostic
-방법을 별도 표기한다. 서로 다른 설명 알고리즘의 절댓값을 직접 동등 비교하지 않는다.
+TabPFN v2.5는 train background 32개와 지역별 양성·음성 각 2개 validation POI를 사용한
+model-agnostic permutation SHAP으로 해석한다. 같은 POI의 clean/adversarial 설명을
+비교하며, 대표 지역은 Seoul이다. LIME은 train 분포에서 1,000개 perturbation을 만들고
+범주형 코드는 관측 범주 안에서만 치환한다. 서로 다른 설명 알고리즘의 절댓값은 직접
+동등 비교하지 않는다.
 
 Odds ratio는 해석용 logistic regression을 별도로 적합한다. 연속형은 train 기준 1 SD
 단위, 범주는 기준 범주를 명시한다. 지역분류 17개 각각에 대해 OR, 95% CI, p-value,
