@@ -1,0 +1,3 @@
+[submodule "vendor/tabpfn"]
+	path = vendor/tabpfn
+	url = https://github.com/PriorLabs/TabPFN.git
