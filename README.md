@@ -85,8 +85,8 @@ EXPERIMENT_CONFIG=/home/mlops/orca/projects/poi/experiments/smoke.env \
 
 ## 현재 실제 결과
 
-`artifacts/poi-validation-study-001/reports/`에 train/validation 기반 01~10단계
+`artifacts/poi-validation-study-002/reports/`에 train/validation 기반 01~10단계
 보고서를 분리해 저장한다. 이 묶음은 트리 모델 5개까지 완료된 중간 결과다.
 TabPFN 세 버전과 최종 test 잠금 평가 전에는 최종 결론으로 사용하지 않는다.
-동일 묶음은 `r2:ml-experiments/results/poi/validation-study-001/`에 파일별 SHA-256
+동일 묶음은 `r2:ml-experiments/results/poi/validation-study-002/`에 파일별 SHA-256
 메타데이터와 완료 마커를 포함해 기록했다.

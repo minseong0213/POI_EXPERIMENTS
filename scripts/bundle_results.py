@@ -16,7 +16,7 @@ SOURCES = {
     '07_explainability': 'artifacts/poi-advanced-validation-002/reports/07_explainability',
     '08_attack_detection': 'artifacts/poi-advanced-validation-001/reports/08_attack_detection',
     '09_ensemble_defense': 'artifacts/poi-advanced-validation-001/reports/09_ensemble_defense',
-    '10_robustness': 'artifacts/poi-advanced-validation-001/reports/10_robustness',
+    '10_robustness': 'artifacts/poi-advanced-validation-005/reports/10_robustness',
 }
 
 
@@ -28,7 +28,7 @@ def digest(path):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--output',default='artifacts/poi-validation-study-001');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--output',default='artifacts/poi-validation-study-002');args=p.parse_args()
     output=Path(args.output)
     if output.exists():raise FileExistsError(f'Refusing to overwrite {output}')
     reports=output/'reports';reports.mkdir(parents=True)
@@ -43,11 +43,14 @@ def main():
               'missing_required_model_families':['tabpfn_v2_5','tabpfn_v2_6','tabpfn_v3'],
               'test_split_used':False,'files':files}
     (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    (output/'README.md').write_text('''# POI validation study 001
+    (output/'README.md').write_text('''# POI validation study 002
 
 실제 train/validation 기반 01~10단계 결과 묶음이다. 각 단계의 `report.md`에서 표와
 그림을 확인한다. 트리 모델 5개 결과만 완료됐고 TabPFN v2.5/v2.6/v3와 최종 test
 잠금 평가는 아직 포함하지 않았으므로 최종 연구 결과가 아니다.
+
+10단계에는 공격 비율, 지역·탐지 threshold, 앙상블 구성요소와 탐지 게이트 제거
+민감도 및 ablation을 포함한다.
 
 `manifest.json`은 모든 파일의 크기와 SHA-256을 기록한다.
 ''')

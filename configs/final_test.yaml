@@ -1,0 +1,9 @@
+data_dir: data/poi_34k_seed42
+tree_config: configs/tree_benchmark.yaml
+selection_ranking: artifacts/poi-models-validation-002/reports/05_region_models/tables/model_ranking_validation.csv
+output: artifacts/poi-final-test-001
+seeds: [42, 202, 340]
+threshold: 0.5
+tabpfn_n_estimators: 8
+tabpfn_region_batch_size: 2
+device: cuda

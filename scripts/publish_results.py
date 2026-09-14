@@ -8,8 +8,8 @@ from bundle_results import digest
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--directory',default='artifacts/poi-validation-study-001');
-    p.add_argument('--prefix',default='results/poi/validation-study-001/');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--directory',default='artifacts/poi-validation-study-002');
+    p.add_argument('--prefix',default='results/poi/validation-study-002/');args=p.parse_args()
     directory=Path(args.directory);prefix=args.prefix.rstrip('/')+'/'
     if not prefix.startswith('results/poi/'):raise ValueError('Prefix must be under results/poi/')
     s3=client();bucket='ml-experiments'

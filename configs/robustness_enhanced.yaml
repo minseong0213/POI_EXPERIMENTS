@@ -2,7 +2,7 @@ model_metrics: artifacts/poi-models-validation-001/reports/05_region_models/tabl
 region_predictions: artifacts/poi-models-validation-001/reports/05_region_models/tables/all_predictions.parquet
 defense_predictions: artifacts/poi-advanced-validation-001/reports/09_ensemble_defense/tables/defense_predictions.parquet
 ablation_summary: artifacts/poi-advanced-validation-001/reports/06_model_selection_ablation/tables/ablation_summary.csv
-output: artifacts/poi-advanced-validation-001/reports/10_robustness
+output: artifacts/poi-advanced-validation-005/reports/10_robustness
 seeds: [42, 202, 340]
 attack_ratios: [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]
 region_threshold: 0.5

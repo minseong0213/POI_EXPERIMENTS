@@ -24,6 +24,7 @@ def run(config_path):
     if out.exists():raise FileExistsError(f'Refusing to overwrite {out}')
     tables=out/'tables';figures=out/'figures';tables.mkdir(parents=True);figures.mkdir()
     model_metrics=pd.read_csv(cfg['model_metrics']);defense=pd.read_parquet(cfg['defense_predictions'])
+    region_predictions=pd.read_parquet(cfg['region_predictions'])
     ablation=pd.read_csv(cfg['ablation_summary'])
     sensitivity=[]
     for seed in cfg['seeds']:
@@ -51,6 +52,31 @@ def run(config_path):
     sns.lineplot(data=sensitivity,x='attack_ratio',y='coverage',errorbar='sd',marker='o',color='#7A5195',ax=axes[1])
     axes[0].set_ylim(0,1);axes[1].set_ylim(0,1);axes[0].set_title('Attack-ratio sensitivity');axes[1].set_title('Defense coverage sensitivity')
     save(fig,figures,'sensitivity_attack_ratio')
+
+    threshold_rows=[]
+    for region_threshold in cfg['region_thresholds']:
+        for detector_threshold in cfg['detector_thresholds']:
+            for keys,group in defense.groupby(['seed','region','condition']):
+                seed,region,condition=keys;truth=group.y_true.to_numpy()
+                predicted=(group.y_score.to_numpy()>=region_threshold).astype(int)
+                accepted=group.attack_score.to_numpy()<detector_threshold
+                forced=predicted.copy();forced[~accepted]=1-truth[~accepted]
+                threshold_rows.append({'seed':seed,'region':region,'condition':condition,
+                    'region_threshold':region_threshold,'detector_threshold':detector_threshold,
+                    'coverage':accepted.mean(),'region_f1':f1_score(truth,predicted,zero_division=0),
+                    'end_to_end_f1':f1_score(truth,forced,zero_division=0)})
+    threshold_sensitivity=pd.DataFrame(threshold_rows)
+    threshold_sensitivity.to_csv(tables/'threshold_sensitivity.csv',index=False)
+    fig,axes=plt.subplots(1,2,figsize=(13,5))
+    sns.lineplot(data=threshold_sensitivity,x='region_threshold',y='region_f1',hue='condition',
+                 errorbar='sd',marker='o',ax=axes[0])
+    detector_view=threshold_sensitivity.loc[threshold_sensitivity.region_threshold.eq(cfg['region_threshold'])]
+    sns.lineplot(data=detector_view,x='detector_threshold',y='end_to_end_f1',hue='condition',
+                 errorbar='sd',marker='o',ax=axes[1])
+    axes[0].set_ylim(0,1);axes[1].set_ylim(0,1)
+    axes[0].set_title('Region-threshold sensitivity')
+    axes[1].set_title('Detector-threshold end-to-end sensitivity')
+    save(fig,figures,'sensitivity_thresholds')
 
     # Stability and ranking from paired clean/adversarial region metrics.
     f1=model_metrics.pivot_table(index=['model','seed','region'],columns='condition',values='f1').reset_index();f1['robust_f1']=(f1.clean+f1.adversarial)/2
@@ -83,9 +109,49 @@ def run(config_path):
     ablation.to_csv(tables/'final_ablation_summary.csv',index=False)
     fig,ax=plt.subplots(figsize=(9,5));sns.barplot(data=ablation,x='ablation',y='mean',color='#2671B8',ax=ax);ax.tick_params(axis='x',rotation=35);ax.set_ylim(0,1);ax.set_ylabel('Robust F1')
     ax.set_title('Final feature ablation synthesis');save(fig,figures,'final_ablation')
+    top_models=rank_summary.model.head(3).tolist()
+    score_keys=['POI_ID','seed','region','condition','split','y_true']
+    detector_scores=(defense.drop_duplicates(['POI_ID','seed','condition'])
+                     [['POI_ID','seed','condition','attack_score']])
+    variants={'top3_soft_vote':top_models,'best_single':[top_models[0]]}
+    for removed in top_models:
+        variants[f'top3_drop_{removed}']=[model for model in top_models if model!=removed]
+    defense_ablation=[]
+    for variant,models in variants.items():
+        scores=(region_predictions.loc[region_predictions.model.isin(models)]
+                .groupby(score_keys,as_index=False).y_score.mean()
+                .merge(detector_scores,on=['POI_ID','seed','condition'],validate='many_to_one'))
+        for keys,group in scores.groupby(['seed','region','condition']):
+            seed,region,condition=keys;truth=group.y_true.to_numpy()
+            predicted=(group.y_score.to_numpy()>=cfg['region_threshold']).astype(int)
+            accepted=group.attack_score.to_numpy()<cfg['detector_threshold']
+            forced=predicted.copy();forced[~accepted]=1-truth[~accepted]
+            defense_ablation.append({'variant':variant,'members':','.join(models),'seed':seed,
+                'region':region,'condition':condition,
+                'ungated_f1':f1_score(truth,predicted,zero_division=0),
+                'gated_end_to_end_f1':f1_score(truth,forced,zero_division=0),
+                'coverage':accepted.mean()})
+    defense_ablation=pd.DataFrame(defense_ablation)
+    defense_summary=(defense_ablation.groupby(['variant','members','condition'])
+                     [['ungated_f1','gated_end_to_end_f1','coverage']].mean().reset_index())
+    defense_summary.to_csv(tables/'defense_ablation_summary.csv',index=False)
+    defense_long=defense_ablation.melt(id_vars=['variant','condition','seed','region'],
+        value_vars=['ungated_f1','gated_end_to_end_f1'],var_name='mode',value_name='f1')
+    fig,axes=plt.subplots(1,2,figsize=(17,6),sharey=True)
+    for ax,condition in zip(axes,['clean','adversarial']):
+        sns.barplot(data=defense_long.loc[defense_long.condition.eq(condition)],x='variant',
+            y='f1',hue='mode',errorbar='sd',ax=ax)
+        ax.tick_params(axis='x',rotation=30);ax.set_ylim(0,1);ax.set_title(condition)
+    fig.suptitle('Ensemble-component and detector-gate ablation')
+    fig.tight_layout()
+    save(fig,figures,'defense_ablation')
     sens_json=sens_summary.reset_index();sens_json.columns=['_'.join(filter(None,col if isinstance(col,tuple) else [col])) for col in sens_json.columns]
+    model_count=model_metrics.model.nunique()
     metadata={'status':'complete','scope':'validation synthesis','attack_ratios':cfg['attack_ratios'],
-              'seeds':cfg['seeds'],'seconds':time.time()-started}
+              'seeds':cfg['seeds'],'model_count':model_count,
+              'models':sorted(model_metrics.model.unique()),'ensemble_top3':top_models,
+              'region_thresholds':cfg['region_thresholds'],
+              'detector_thresholds':cfg['detector_thresholds'],'seconds':time.time()-started}
     (out/'metadata.json').write_text(json.dumps(metadata,indent=2)+'\n');(out/'config.yaml').write_text(yaml.safe_dump(cfg,sort_keys=False))
     (out/'metrics.json').write_text(json.dumps({'model_ranking':rank_summary.to_dict(orient='records'),
         'rank_stability':correlations,'sensitivity':sens_json.to_dict(orient='records')},indent=2)+'\n')
@@ -96,11 +162,11 @@ Validation POI에서 공격 혼합 비율 0/10/25/50/75/100%를 재현 가능하
 앙상블 단독과 공격 탐지 방어의 성능·coverage를 비교했다. 방어 end-to-end F1은 공격
 비율 0에서 {zero:.4f}, 100%에서 {full:.4f}였다.
 
-5개 트리 모델의 지역·seed별 robust F1 순위 1위는 `{best.model}`이며 평균 순위는
+{model_count}개 모델의 지역·seed별 robust F1 순위 1위는 `{best.model}`이며 평균 순위는
 {best.mean_rank:.3f}다. Kendall 순위 안정성, metric radar, 지역별 순위 heatmap,
 6단계 feature ablation을 표와 PNG/SVG로 저장했다.
 
-이 결과는 validation 기반 중간 종합이며 TabPFN과 최종 잠금 모델의 test 평가는 포함하지 않는다.
+이 결과는 validation 기반 종합이며 최종 잠금 모델의 test 평가는 별도로 기록한다.
 ''')
     (out.parent/'_SUCCESS_10.json').write_text(json.dumps(metadata,indent=2)+'\n');print(rank_summary.to_string(index=False))
 

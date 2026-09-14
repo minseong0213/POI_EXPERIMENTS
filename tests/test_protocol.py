@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+import pytest
 import yaml
 
 
@@ -30,3 +32,13 @@ def test_tabpfn_config_uses_supported_versions_and_no_secret():
     assert config['versions'] == ['v2.5', 'v2.6', 'v3']
     assert config['device'] == 'cuda'
     assert 'token' not in str(config).lower()
+
+
+def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
+    from poi.final_test import select_model
+
+    ranking = tmp_path / 'ranking.csv'
+    pd.DataFrame({'model': ['lightgbm', 'xgboost'], 'mean': [.98, .97]}).to_csv(
+        ranking, index=False)
+    with pytest.raises(ValueError, match='complete eight-model ranking'):
+        select_model(ranking)
