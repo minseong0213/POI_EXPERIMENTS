@@ -34,7 +34,7 @@ REQUIRED = {
         'figures': {'confusion_matrices_normalized', 'pr_summary_seed_42',
                     'roc_summary_seed_42'},
         'tables': {'metrics_by_region.csv', 'all_predictions.parquet',
-                   'model_ranking_validation.csv'},
+                   'model_ranking_validation.csv', 'tabpfn_validation_performance.csv'},
     },
     '06_model_selection_ablation': {
         'figures': {'ablation_delta', 'ablation_heatmap'},
@@ -193,6 +193,22 @@ def audit(bundle):
     }
     if not final_test_ok:
         failures.append('final test: locked clean/adversarial evaluation is missing')
+
+    tabpfn_validation = reports / '05_region_models' / 'tables' / 'tabpfn_validation_performance.csv'
+    tabpfn_test = reports / '11_locked_test' / 'tables' / 'tabpfn_test_performance.csv'
+    tabpfn_report = bundle / 'TABPFN_PERFORMANCE.md'
+    performance_tables_ok = False
+    if tabpfn_validation.is_file() and tabpfn_test.is_file() and tabpfn_report.is_file():
+        val = pd.read_csv(tabpfn_validation)
+        test_summary = pd.read_csv(tabpfn_test)
+        performance_tables_ok = (
+            len(val) == 6 and set(val.model) == {'tabpfn_v2_5', 'tabpfn_v2_6', 'tabpfn_v3'} and
+            set(val.condition) == {'clean', 'adversarial'} and len(test_summary) == 2 and
+            set(test_summary.model) == {'tabpfn_v2_5'} and
+            set(test_summary.condition) == {'clean', 'adversarial'})
+    checks['tabpfn_performance_tables'] = {'ok': performance_tables_ok}
+    if not performance_tables_ok:
+        failures.append('TabPFN performance tables are missing or incomplete')
 
     return {
         'status': 'complete' if not failures else 'incomplete',

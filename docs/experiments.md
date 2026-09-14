@@ -19,10 +19,11 @@
 | 10 | [강건성 분석](experiments/10_robustness.md) | sensitivity, stability, ranking, 최종 ablation |
 
 01~10단계의 train/validation 결과와 11단계 잠금 test 평가는
-`artifacts/poi-study-final-001/reports/`에 있다. 8개 모델 비교로 TabPFN v2.5를
+`artifacts/poi-study-final-002/reports/`에 있다. 8개 모델 비교로 TabPFN v2.5를
 고정한 뒤 test를 한 번의 평가 범위로 분리했다. 최종 상태는 `complete`이며 자동
-감사 결과는 `artifacts/poi-study-final-001/audit.json`, 원격 보존 위치는
-`r2:ml-experiments/results/poi/poi-study-final-001/`이다.
+감사 결과는 `artifacts/poi-study-final-002/audit.json`, TabPFN 전용 성능표는
+`artifacts/poi-study-final-002/TABPFN_PERFORMANCE.md`, 원격 보존 위치는
+`r2:ml-experiments/results/poi/poi-study-final-002/`이다.
 
 생성 결과는 `artifacts/<EXP_ID>/reports/<NN_stage>/`에 저장한다. 각 단계는
 `report.md`, `tables/`, `figures/`, `metrics.json`, `metadata.json`을 가져야 한다.

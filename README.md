@@ -85,10 +85,11 @@ EXPERIMENT_CONFIG=/home/mlops/orca/projects/poi/experiments/smoke.env \
 
 ## 최종 결과
 
-전체 결과는 `artifacts/poi-study-final-001/`에 있다. 01~10단계 validation 보고서와
+전체 결과는 `artifacts/poi-study-final-002/`에 있다. 01~10단계 validation 보고서와
 11단계 잠금 test 보고서를 각각 분리했으며, `manifest.json`에 파일별 SHA-256과
-데이터 사용 범위를 기록했다. `audit.json`의 모든 완결성 검사가 통과했다.
+데이터 사용 범위를 기록했다. `TABPFN_PERFORMANCE.md`에서 TabPFN 세 버전과 선택
+모델의 test 성능표를 바로 볼 수 있으며, `audit.json`의 모든 완결성 검사가 통과했다.
 
 최종 모델은 validation 순위 1위인 TabPFN v2.5다. 미사용 test에서 평균 F1은
 clean 0.9944, adversarial 0.9831이었다. 원격 보존 위치는
-`r2:ml-experiments/results/poi/poi-study-final-001/`이다.
+`r2:ml-experiments/results/poi/poi-study-final-002/`이다.

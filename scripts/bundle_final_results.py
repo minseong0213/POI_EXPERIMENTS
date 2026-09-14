@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 import shutil
 
+import pandas as pd
+
 
 SOURCES = {
     '01_descriptive': 'artifacts/poi-eda-train-001/reports/01_descriptive',
@@ -42,9 +44,56 @@ def copy_locked_test(source, reports):
     shutil.copy2(source / 'metrics.json', stage10 / 'locked_test_metrics.json')
 
 
+def add_tabpfn_performance_tables(reports, output):
+    validation_dir = reports / '05_region_models'
+    validation = pd.read_csv(validation_dir / 'tables' / 'metrics_summary.csv')
+    validation = validation.loc[validation.model.str.startswith('tabpfn_')].copy()
+    validation.insert(0, 'scope', 'validation')
+    validation.to_csv(validation_dir / 'tables' / 'tabpfn_validation_performance.csv', index=False)
+
+    test_dir = reports / '11_locked_test'
+    test = pd.read_csv(test_dir / 'tables' / 'final_test_summary.csv')
+    test.insert(0, 'split', 'test')
+    test.insert(0, 'model', 'tabpfn_v2_5')
+    test.to_csv(test_dir / 'tables' / 'tabpfn_test_performance.csv', index=False)
+
+    def rows(frame, model_column=True):
+        rendered = []
+        for _, row in frame.iterrows():
+            model = row['model'] if model_column else 'tabpfn_v2_5'
+            rendered.append(
+                f"| {model} | {row['condition']} | "
+                f"{row['precision_mean']:.4f} ± {row['precision_std']:.4f} | "
+                f"{row['recall_mean']:.4f} ± {row['recall_std']:.4f} | "
+                f"{row['f1_mean']:.4f} ± {row['f1_std']:.4f} | "
+                f"{row['accuracy_mean']:.4f} ± {row['accuracy_std']:.4f} | "
+                f"{row['roc_auc_mean']:.6f} ± {row['roc_auc_std']:.6f} |")
+        return '\n'.join(rendered)
+
+    header = ('| Model | Condition | Precision | Recall | F1 | Accuracy | ROC-AUC |\n'
+              '| --- | --- | ---: | ---: | ---: | ---: | ---: |\n')
+    document = f'''# TabPFN 성능표
+
+값은 17개 지역과 3개 seed의 평균 ± 표준편차다.
+
+## Validation 모델 비교
+
+{header}{rows(validation)}
+
+## 잠금 test: 선택 모델 TabPFN v2.5
+
+{header}{rows(test, model_column=False)}
+'''
+    (output / 'TABPFN_PERFORMANCE.md').write_text(document)
+    with (validation_dir / 'report.md').open('a') as stream:
+        stream.write('\n## TabPFN validation 성능표\n\n' + header + rows(validation) + '\n')
+    with (test_dir / 'report.md').open('a') as stream:
+        stream.write('\n## TabPFN v2.5 잠금 test 성능표\n\n' + header + rows(test, model_column=False) + '\n')
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--output', default='artifacts/poi-study-final-001')
+    parser.add_argument('--output', default='artifacts/poi-study-final-002')
     parser.add_argument('--final-test', default='artifacts/poi-final-test-003/final_test')
     args = parser.parse_args()
     output = Path(args.output)
@@ -61,6 +110,7 @@ def main():
     if not (final_test / '_SUCCESS.json').is_file():
         raise FileNotFoundError(f'Incomplete locked test: {final_test}')
     copy_locked_test(final_test, reports)
+    add_tabpfn_performance_tables(reports, output)
     readme = output / 'README.md'
     readme.write_text('''# POI region classification and adversarial robustness study
 
@@ -68,6 +118,8 @@ def main():
 `reports/10_*`까지 validation 분석·모델 비교·설명·공격 탐지·방어·강건성 분석을,
 `reports/11_locked_test`에는 8모델 validation 순위로 고정한 최종 모델의 미사용 test
 평가를 기록했다. 각 단계는 별도 `report.md`, 표, PNG/SVG 그림과 metadata를 갖는다.
+`TABPFN_PERFORMANCE.md`에는 TabPFN 세 버전의 validation 성능과 선택 모델의 잠금
+test 성능을 한 표로 모았다.
 
 `manifest.json`은 번들 파일의 크기와 SHA-256, 선택 모델, 데이터 사용 범위를 기록한다.
 ''')

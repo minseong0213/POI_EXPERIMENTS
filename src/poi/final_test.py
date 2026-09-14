@@ -228,6 +228,10 @@ def run(config_path, output_override=None):
     summary = metrics.groupby('condition')[METRICS].agg(['mean', 'std']).reset_index()
     summary.columns = ['_'.join(filter(None, column)) for column in summary.columns]
     summary.to_csv(tables / 'final_test_summary.csv', index=False)
+    tabpfn_test = summary.copy()
+    tabpfn_test.insert(0, 'split', 'test')
+    tabpfn_test.insert(0, 'model', model_id)
+    tabpfn_test.to_csv(tables / 'tabpfn_test_performance.csv', index=False)
     plot_test(metrics, predictions, figures)
     metadata = {
         'status': 'complete', 'scope': 'locked test', 'model': model_id,
@@ -253,6 +257,7 @@ train+validation {len(development):,}건으로 재학습했다. 이전에 사용
 
 모델 선택 근거 파일의 SHA-256은 `{metadata['selection_ranking_sha256']}`이다. 전체
 지역·seed 지표와 예측, confusion matrix, PR/ROC는 `tables/`와 `figures/`에 있다.
+clean/adversarial 평균·표준편차 성능표는 `tables/tabpfn_test_performance.csv`다.
 ''')
     (output / '_SUCCESS.json').write_text(json.dumps(metadata, indent=2) + '\n')
     print(summary.to_string(index=False))

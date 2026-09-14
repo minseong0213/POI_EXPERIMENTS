@@ -64,6 +64,10 @@ def run(tree_dir, tabpfn_dir, output):
     metrics.to_csv(tables / 'metrics_by_region.csv', index=False)
     predictions.to_parquet(tables / 'all_predictions.parquet', index=False)
     plot_results(metrics, predictions, figures)
+    summary = pd.read_csv(tables / 'metrics_summary.csv')
+    tabpfn_summary = summary.loc[summary.model.str.startswith('tabpfn_')].copy()
+    tabpfn_summary.insert(0, 'scope', 'validation')
+    tabpfn_summary.to_csv(tables / 'tabpfn_validation_performance.csv', index=False)
     robust = metrics.pivot_table(index=['model', 'seed', 'region'], columns='condition',
                                  values='f1').reset_index()
     robust['robust_f1'] = (robust.clean + robust.adversarial) / 2
@@ -96,6 +100,8 @@ seed·지역 표준편차는 {best['std']:.6f}이다. test split은 사용하지
 
 `tables/`에는 전체 지표·예측·순위·시간을, `figures/`에는 normalized confusion
 matrix와 전체 및 17개 지역별 PR/ROC curve를 PNG 300 dpi와 SVG로 저장했다.
+TabPFN 세 버전의 clean/adversarial 평균·표준편차는
+`tables/tabpfn_validation_performance.csv`에 별도 성능표로 기록했다.
 ''')
     (output.parent / '_SUCCESS.json').write_text(json.dumps(metadata, indent=2) + '\n')
     print(ranking.to_string(index=False))
