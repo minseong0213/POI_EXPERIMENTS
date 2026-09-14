@@ -1,0 +1,56 @@
+protocol_version: 1
+task:
+  type: binary_one_vs_rest
+  positive_label: target_region
+  negative_label: other_region
+regions:
+  - Busan
+  - Chungbuk
+  - Chungnam
+  - Daegu
+  - Daejeon
+  - Gangwon
+  - Gwangju
+  - Gyeongbuk
+  - Gyeonggi
+  - Gyeongnam
+  - Incheon
+  - Jeju
+  - Jeonbuk
+  - Jeonnam
+  - Sejong
+  - Seoul
+  - Ulsan
+models:
+  - id: xgboost
+    family: tree
+  - id: lightgbm
+    family: tree
+  - id: random_forest
+    family: tree
+  - id: catboost
+    family: tree
+  - id: decision_tree
+    family: tree
+  - id: tabpfn_v2_5
+    family: transformer_foundation
+    checkpoint_version: v2.5
+  - id: tabpfn_v2_6
+    family: transformer_foundation
+    checkpoint_version: v2.6
+  - id: tabpfn_v3
+    family: transformer_foundation
+    checkpoint_version: v3
+seeds: [42, 202, 340]
+conditions: [clean, adversarial]
+metrics: [precision, recall, f1, accuracy, roc_auc, average_precision]
+selection:
+  primary: validation_robust_f1
+  formula: mean_over_regions((clean_f1 + adversarial_f1) / 2)
+  tie_tolerance_percentage_points: 0.5
+  tie_breakers: [clean_f1, inference_time]
+reporting:
+  image_formats: [png_300dpi, svg]
+  table_formats: [csv, parquet]
+  confidence_interval: paired_bootstrap_95
+  multiple_testing: benjamini_hochberg_fdr

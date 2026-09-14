@@ -1,0 +1,9 @@
+.venv/
+.venv-tabpfn/
+data/
+__pycache__/
+artifacts/
+.pytest_cache/
+*.egg-info/
+build/
+dist/

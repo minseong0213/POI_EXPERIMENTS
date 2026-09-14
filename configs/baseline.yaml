@@ -1,0 +1,19 @@
+name: baseline
+seed: 42
+data:
+  directory: data/poi_34k_seed42
+  verify_hashes: true
+model:
+  name: random_forest
+  params:
+    n_estimators: 200
+    max_depth: null
+    min_samples_leaf: 2
+    class_weight: balanced
+    n_jobs: 2
+sampling:
+  train_per_region: null
+  eval_per_region: null
+evaluation:
+  splits: [validation]
+  threshold: 0.5

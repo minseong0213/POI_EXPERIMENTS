@@ -1,0 +1,8 @@
+data_dir: data/poi_34k_seed42
+output: artifacts/poi-tabpfn-validation-001
+versions: [v2.5, v2.6, v3]
+seeds: [42, 202, 340]
+device: cuda
+n_estimators: 8
+region_batch_size: 2
+threshold: 0.5

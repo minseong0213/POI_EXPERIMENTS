@@ -1,0 +1,8 @@
+region_predictions: artifacts/poi-models-validation-001/reports/05_region_models/tables/all_predictions.parquet
+detector_predictions: artifacts/poi-advanced-validation-001/reports/08_attack_detection/tables/attack_detection_predictions.parquet
+output: artifacts/poi-advanced-validation-001/reports/09_ensemble_defense
+ensemble_models: [lightgbm, catboost, xgboost]
+detector_model: random_forest
+seeds: [42, 202, 340]
+region_threshold: 0.5
+detector_threshold: 0.5

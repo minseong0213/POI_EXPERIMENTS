@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools==75.8.2", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "poi"
+version = "0.1.0"
+description = "Reproducible POI region classification experiments"
+requires-python = ">=3.9,<3.13"
+dependencies = [
+  "numpy==2.0.2", "pandas==2.3.3", "scikit-learn==1.6.1",
+  "PyYAML==6.0.2", "joblib==1.4.2", "boto3==1.42.97",
+  "scipy==1.13.1", "matplotlib==3.9.4", "seaborn==0.13.2",
+  "statsmodels==0.14.5", "umap-learn==0.5.7",
+  "xgboost==2.1.4", "lightgbm==4.6.0", "catboost==1.2.8",
+  "shap==0.46.0", "lime==0.2.0.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.5", "pip-tools==7.4.1", "pip==24.3.1",
+       "setuptools==75.8.2", "wheel==0.45.1"]
+
+[project.scripts]
+poi-train = "poi.train:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
