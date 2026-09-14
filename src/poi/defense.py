@@ -32,6 +32,8 @@ def run(config_path):
     tables=out/'tables';figures=out/'figures';tables.mkdir(parents=True);figures.mkdir()
     region_pred=pd.read_parquet(cfg['region_predictions']);detect=pd.read_parquet(cfg['detector_predictions'])
     region_pred=region_pred.loc[region_pred.model.isin(cfg['ensemble_models'])]
+    if set(region_pred.model.unique()) != set(cfg['ensemble_models']):
+        raise ValueError('One or more configured ensemble models have no predictions')
     ensemble=region_pred.groupby(['POI_ID','seed','region','condition','split','y_true'],as_index=False).y_score.mean()
     ensemble['y_pred']=(ensemble.y_score>=cfg['region_threshold']).astype(int)
     detector=detect.loc[detect.model.eq(cfg['detector_model']),['POI_ID','seed','condition','y_score']].rename(columns={'y_score':'attack_score'})
@@ -83,10 +85,11 @@ def run(config_path):
     (out/'metadata.json').write_text(json.dumps(metadata,indent=2)+'\n');(out/'metrics.json').write_text(json.dumps({'summary':summary.to_dict(orient='records')},indent=2)+'\n')
     (out/'config.yaml').write_text(yaml.safe_dump(cfg,sort_keys=False))
     adv=summary.loc[summary.condition.eq('adversarial')].iloc[0]
+    members='·'.join(cfg['ensemble_models'])
     (out/'report.md').write_text(f'''# 09. 앙상블과 탐지 후 지역분류 방어
 
-LightGBM·CatBoost·XGBoost validation 확률의 soft-voting ensemble을 만들고, 8단계
-Random Forest 공격 탐지기가 정상으로 통과시킨 입력만 지역분류했다. 테스트는 사용하지 않았다.
+validation 상위 3개 모델 {members}의 확률로 soft-voting ensemble을 만들고, 8단계
+Random Forest 공격 탐지기가 정상으로 통과시킨 입력만 지역분류했다. test split은 사용하지 않았다.
 
 Adversarial coverage는 {adv.coverage:.4f}, accepted-only F1은 {adv.accepted_f1:.4f},
 거부를 실패로 포함한 end-to-end F1은 {adv.end_to_end_f1:.4f}다. 높은 공격 거부율만으로

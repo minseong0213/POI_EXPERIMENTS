@@ -56,6 +56,13 @@ def test_selected_model_explanation_is_bounded_and_secret_free():
     assert 'token' not in str(config).lower()
 
 
+def test_final_ensemble_uses_validation_top_three():
+    ranking = pd.read_csv('configs/final_model_selection.csv').sort_values(
+        'mean', ascending=False)
+    config = yaml.safe_load(Path('configs/defense_final.yaml').read_text())
+    assert config['ensemble_models'] == ranking.model.head(3).tolist()
+
+
 def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
     from poi.final_test import select_model
 
