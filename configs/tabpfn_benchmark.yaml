@@ -5,4 +5,6 @@ seeds: [42, 202, 340]
 device: cuda
 n_estimators: 8
 region_batch_size: 2
+batch_retries: 3
+resume_partial: true
 threshold: 0.5

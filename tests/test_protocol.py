@@ -31,6 +31,8 @@ def test_tabpfn_config_uses_supported_versions_and_no_secret():
     config = yaml.safe_load(Path('configs/tabpfn_benchmark.yaml').read_text())
     assert config['versions'] == ['v2.5', 'v2.6', 'v3']
     assert config['device'] == 'cuda'
+    assert config['batch_retries'] == 3
+    assert config['resume_partial'] is True
     assert 'token' not in str(config).lower()
 
 
