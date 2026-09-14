@@ -40,6 +40,7 @@ def test_selected_model_ablation_covers_every_feature_group():
     config = yaml.safe_load(Path('configs/tabpfn_ablation.yaml').read_text())
     assert config['seeds'] == [42, 202, 340]
     assert config['resume_partial'] is True
+    assert config['bootstrap_repeats'] >= 1000
     assert set(config['feature_sets']) == {
         'full', 'no_coordinates', 'coordinates_only', 'drop_x_coord', 'drop_y_coord',
         'drop_lclass', 'drop_mclass', 'drop_sclass',

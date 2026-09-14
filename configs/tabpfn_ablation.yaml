@@ -7,6 +7,8 @@ region_batch_size: 2
 batch_retries: 3
 resume_partial: true
 threshold: 0.5
+bootstrap_seed: 42
+bootstrap_repeats: 2000
 feature_sets:
   full: [X_COORD, Y_COORD, ASORT_LCLASDC, ASORT_MLSFCDC, ASORT_SDASDC]
   no_coordinates: [ASORT_LCLASDC, ASORT_MLSFCDC, ASORT_SDASDC]

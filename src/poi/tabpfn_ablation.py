@@ -146,8 +146,17 @@ def run(config_path, output_override=None):
     paired = result.pivot_table(index=['ablation', 'seed', 'region'],
                                 columns='condition', values='f1').reset_index()
     paired['robust_f1'] = (paired.clean + paired.adversarial) / 2
-    summary = (paired.groupby('ablation').robust_f1.agg(['mean', 'std'])
-               .sort_values('mean', ascending=False).reset_index())
+    bootstrap = np.random.default_rng(cfg['bootstrap_seed'])
+    summary_rows = []
+    for ablation, group in paired.groupby('ablation'):
+        values = group.robust_f1.to_numpy()
+        draws = bootstrap.choice(values, size=(cfg['bootstrap_repeats'], len(values)),
+                                 replace=True).mean(axis=1)
+        summary_rows.append({
+            'ablation': ablation, 'mean': values.mean(), 'std': values.std(ddof=1),
+            'ci_low': np.quantile(draws, .025), 'ci_high': np.quantile(draws, .975),
+        })
+    summary = pd.DataFrame(summary_rows).sort_values('mean', ascending=False).reset_index(drop=True)
     baseline = float(summary.loc[summary.ablation.eq('full'), 'mean'].iloc[0])
     summary['delta_from_full'] = summary['mean'] - baseline
     summary.to_csv(tables / 'ablation_summary.csv', index=False)
@@ -170,6 +179,7 @@ def run(config_path, output_override=None):
         'status': 'complete', 'model': 'tabpfn_v2_5', 'scope': 'validation',
         'seeds': cfg['seeds'], 'regions': len(regions),
         'feature_sets': list(cfg['feature_sets']), 'fits': expected // 2,
+        'bootstrap_repeats': cfg['bootstrap_repeats'],
         'n_estimators': cfg['n_estimators'], 'resumable_shards': len(list(shards.glob('*.csv'))),
         'python': platform.python_version(), 'tabpfn': tabpfn.__version__,
         'torch': torch.__version__, 'cuda': torch.version.cuda,
