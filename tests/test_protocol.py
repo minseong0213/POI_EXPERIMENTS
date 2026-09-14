@@ -36,6 +36,17 @@ def test_tabpfn_config_uses_supported_versions_and_no_secret():
     assert 'token' not in str(config).lower()
 
 
+def test_selected_model_ablation_covers_every_feature_group():
+    config = yaml.safe_load(Path('configs/tabpfn_ablation.yaml').read_text())
+    assert config['seeds'] == [42, 202, 340]
+    assert config['resume_partial'] is True
+    assert set(config['feature_sets']) == {
+        'full', 'no_coordinates', 'coordinates_only', 'drop_x_coord', 'drop_y_coord',
+        'drop_lclass', 'drop_mclass', 'drop_sclass',
+    }
+    assert 'token' not in str(config).lower()
+
+
 def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
     from poi.final_test import select_model
 

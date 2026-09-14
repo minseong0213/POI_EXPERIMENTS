@@ -201,7 +201,8 @@ def run(config_path, output_override=None):
     if output.exists():
         raise FileExistsError(f'Refusing to overwrite {output}')
     model_id = select_model(cfg['selection_ranking'])
-    frames, manifest = load_dataset(cfg['data_dir'], verify_hashes=True)
+    data_dir = os.environ.get('DATA_DIR', cfg['data_dir'])
+    frames, manifest = load_dataset(data_dir, verify_hashes=True)
     development = frames['clean'].loc[frames['clean'].split.isin(['train', 'validation'])].reset_index(drop=True)
     evaluation = {
         'clean': frames['clean'].loc[frames['clean'].split.eq('test')].reset_index(drop=True),
@@ -234,7 +235,7 @@ def run(config_path, output_override=None):
         'selection_ranking_sha256': file_sha256(cfg['selection_ranking']),
         'development_rows': len(development), 'test_rows_per_condition': len(evaluation['clean']),
         'regions': len(regions), 'seeds': cfg['seeds'], 'threshold': cfg['threshold'],
-        'dataset_sha256': {name: sha256(Path(cfg['data_dir']) / name) for name in
+        'dataset_sha256': {name: sha256(Path(data_dir) / name) for name in
                            ['poi_data_region.csv', 'poi_adversarial_data_final.csv',
                             'sample_manifest.csv']},
         'python': platform.python_version(), 'scikit_learn': importlib.metadata.version('scikit-learn'),
