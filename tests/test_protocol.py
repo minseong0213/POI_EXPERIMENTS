@@ -47,6 +47,15 @@ def test_selected_model_ablation_covers_every_feature_group():
     assert 'token' not in str(config).lower()
 
 
+def test_selected_model_explanation_is_bounded_and_secret_free():
+    config = yaml.safe_load(Path('configs/tabpfn_explain.yaml').read_text())
+    assert config['representative_region'] == 'Seoul'
+    assert 1 <= config['explain_per_class'] <= 10
+    assert config['background_rows'] <= 100
+    assert config['resume_partial'] is True
+    assert 'token' not in str(config).lower()
+
+
 def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
     from poi.final_test import select_model
 
