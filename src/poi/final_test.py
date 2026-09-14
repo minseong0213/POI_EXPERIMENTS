@@ -169,10 +169,10 @@ def plot_test(metrics, predictions, figures):
     save_figure(fig, figures, 'final_test_pr_roc')
 
 
-def run(config_path):
+def run(config_path, output_override=None):
     started = time.time()
     cfg = yaml.safe_load(Path(config_path).read_text())
-    output = Path(cfg['output'])
+    output = Path(output_override or cfg['output'])
     if output.exists():
         raise FileExistsError(f'Refusing to overwrite {output}')
     model_id = select_model(cfg['selection_ranking'])
@@ -235,8 +235,9 @@ train+validation {len(development):,}건으로 재학습했다. 이전에 사용
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='configs/final_test.yaml')
+    parser.add_argument('--output')
     args = parser.parse_args()
-    run(args.config)
+    run(args.config, args.output)
 
 
 if __name__ == '__main__':

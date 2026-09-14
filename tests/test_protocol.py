@@ -44,3 +44,9 @@ def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
         ranking, index=False)
     with pytest.raises(ValueError, match='complete eight-model ranking'):
         select_model(ranking)
+
+
+def test_final_model_selection_is_complete_and_selects_tabpfn_v2_5():
+    from poi.final_test import select_model
+
+    assert select_model('configs/final_model_selection.csv') == 'tabpfn_v2_5'
