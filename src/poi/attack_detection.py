@@ -24,7 +24,7 @@ warnings.filterwarnings('ignore', message='X does not have valid feature names')
 
 
 def save(fig,directory,name):
-    fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight');fig.savefig(directory/f'{name}.svg',bbox_inches='tight');plt.close(fig)
+    fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight');plt.close(fig)
 
 
 def run(config_path):

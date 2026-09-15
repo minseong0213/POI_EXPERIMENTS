@@ -25,7 +25,7 @@ warnings.filterwarnings('ignore', message='X does not have valid feature names')
 
 def save(fig, directory, name):
     fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight')
-    fig.savefig(directory/f'{name}.svg',bbox_inches='tight');plt.close(fig)
+    plt.close(fig)
 
 
 def group_name(transformed_name):
@@ -84,14 +84,12 @@ def run(config_path):
     importance=pd.DataFrame(importance);importance.to_csv(tables/'shap_grouped_importance.csv',index=False)
     summary=importance.groupby(['condition','feature']).mean_abs_shap.mean().reset_index()
     summary.to_csv(tables/'shap_global_summary.csv',index=False)
-    fig,ax=plt.subplots(figsize=(9,5));
-    for condition,group in summary.groupby('condition'):
-        ax.plot(group.feature,group.mean_abs_shap,marker='o',label=condition)
-    ax.tick_params(axis='x',rotation=25);ax.set_ylabel('Mean |SHAP|, summed one-hot group');ax.legend();ax.set_title('SHAP importance across 17 OvR models')
-    save(fig,figures,'shap_global_summary')
-
-    shap.summary_plot(seoul_values,seoul_x,feature_names=names,show=False,max_display=15)
-    fig=plt.gcf();fig.suptitle(f"SHAP summary — {cfg['representative_region']} vs others");save(fig,figures,'shap_summary_representative')
+    shap.summary_plot(seoul_values,seoul_x,feature_names=names,plot_type='dot',
+                      color_bar=True,color_bar_label='Feature value',show=False,max_display=15)
+    fig=plt.gcf();plt.gca().axvline(0,color='#444444',linewidth=.8,zorder=0)
+    plt.gca().set_xlabel('SHAP value')
+    fig.suptitle(f"SHAP — {cfg['representative_region']} vs others — clean")
+    save(fig,figures,'shap_beeswarm_representative_clean')
     for feature in NUMERIC:
         index=names.index(f'numeric__{feature}')
         shap.dependence_plot(index,seoul_values,seoul_x,feature_names=names,show=False,interaction_index=None)
@@ -118,7 +116,9 @@ def run(config_path):
     reduced_train=reduced_prep.fit_transform(train);reduced_clean=reduced_prep.transform(clean)
     reduced_model=fit_models(reduced_train,train,[cfg['representative_region']],cfg['model_params'],cfg['seed'])[cfg['representative_region']]
     reduced_names=reduced_prep.get_feature_names_out().tolist();reduced_values=shap_array(shap.TreeExplainer(reduced_model),dense(reduced_clean[positions]))
-    shap.summary_plot(reduced_values,dense(reduced_clean[positions]),feature_names=reduced_names,show=False,max_display=15)
+    shap.summary_plot(reduced_values,dense(reduced_clean[positions]),feature_names=reduced_names,
+                      plot_type='dot',color_bar=True,color_bar_label='Feature value',show=False,max_display=15)
+    plt.gca().axvline(0,color='#444444',linewidth=.8,zorder=0)
     save(plt.gcf(),figures,'shap_summary_no_coordinates')
     pd.DataFrame({'feature':reduced_names,'mean_abs_shap':np.abs(reduced_values).mean(axis=0)}).sort_values(
         'mean_abs_shap',ascending=False).to_csv(tables/'shap_no_coordinates.csv',index=False)

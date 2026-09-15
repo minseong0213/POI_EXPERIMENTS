@@ -50,7 +50,7 @@ selection:
   tie_tolerance_percentage_points: 0.5
   tie_breakers: [clean_f1, inference_time]
 reporting:
-  image_formats: [png_300dpi, svg]
+  image_formats: [png_300dpi]
   table_formats: [csv, parquet]
   confidence_interval: paired_bootstrap_95
   multiple_testing: benjamini_hochberg_fdr

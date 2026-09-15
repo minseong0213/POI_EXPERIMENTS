@@ -16,7 +16,7 @@ import yaml
 
 
 def save(fig,directory,name):
-    fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight');fig.savefig(directory/f'{name}.svg',bbox_inches='tight');plt.close(fig)
+    fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight');plt.close(fig)
 
 
 def run(config_path):
@@ -168,7 +168,7 @@ Validation POI에서 공격 혼합 비율 0/10/25/50/75/100%를 재현 가능하
 
 {model_count}개 모델의 지역·seed별 robust F1 순위 1위는 `{best.model}`이며 평균 순위는
 {best.mean_rank:.3f}다. Kendall 순위 안정성, metric radar, 지역별 순위 heatmap,
-6단계 feature ablation을 표와 PNG/SVG로 저장했다.
+6단계 feature ablation을 표와 PNG 300dpi로 저장했다.
 
 이 결과는 validation 기반 종합이며 최종 잠금 모델의 test 평가는 별도로 기록한다.
 ''')

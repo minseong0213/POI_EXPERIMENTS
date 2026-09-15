@@ -99,7 +99,7 @@ validation robust F1 1위는 `{best['model']}`이며 평균은 {best['mean']:.6f
 seed·지역 표준편차는 {best['std']:.6f}이다. test split은 사용하지 않았다.
 
 `tables/`에는 전체 지표·예측·순위·시간을, `figures/`에는 normalized confusion
-matrix와 전체 및 17개 지역별 PR/ROC curve를 PNG 300 dpi와 SVG로 저장했다.
+matrix와 전체 및 17개 지역별 PR/ROC curve를 PNG 300 dpi로 저장했다.
 TabPFN 세 버전의 clean/adversarial 평균·표준편차는
 `tables/tabpfn_validation_performance.csv`에 별도 성능표로 기록했다.
 ''')

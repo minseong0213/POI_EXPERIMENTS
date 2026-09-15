@@ -69,7 +69,6 @@ def binary_metrics(y_true, y_score, threshold):
 
 def save_figure(fig, figures, name):
     fig.savefig(figures / f'{name}.png', dpi=300, bbox_inches='tight')
-    fig.savefig(figures / f'{name}.svg', bbox_inches='tight')
     plt.close(fig)
 
 
@@ -224,7 +223,7 @@ clean/adversarial 조건을 평가했다. 5개 모델 × 17개 지역 × 3 seeds
 - `tables/metrics_by_region.csv`, `metrics_summary.csv`, `model_ranking_validation.csv`
 - `tables/all_predictions.parquet`, `timing.csv`
 - 모델·조건별 지표 그림, normalized confusion matrix
-- 전체 및 17개 지역별 PR/ROC curve (PNG 300 dpi와 SVG)
+- 전체 및 17개 지역별 PR/ROC curve (PNG 300 dpi)
 
 Accuracy는 약 1:16 불균형으로 높게 보일 수 있으므로 모델 선택에는 robust F1을 사용한다.
 '''

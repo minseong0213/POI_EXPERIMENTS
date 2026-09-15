@@ -17,7 +17,7 @@ from .benchmark import binary_metrics
 
 
 def save(fig,directory,name):
-    fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight');fig.savefig(directory/f'{name}.svg',bbox_inches='tight');plt.close(fig)
+    fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight');plt.close(fig)
 
 
 def end_to_end_metrics(y_true,y_pred,accepted):
@@ -95,7 +95,7 @@ Adversarial coverage는 {adv.coverage:.4f}, accepted-only F1은 {adv.accepted_f1
 거부를 실패로 포함한 end-to-end F1은 {adv.end_to_end_f1:.4f}다. 높은 공격 거부율만으로
 성능이 좋아 보이지 않도록 baseline, coverage, accepted-only, end-to-end를 모두 기록했다.
 
-결과는 `tables/defense_*`, risk-coverage와 gate 결과를 포함한 PNG/SVG 그림에 저장했다.
+결과는 `tables/defense_*`, risk-coverage와 gate 결과를 포함한 PNG 300dpi 그림에 저장했다.
 ''')
     (out.parent/'_SUCCESS_09.json').write_text(json.dumps(metadata,indent=2)+'\n');print(summary.to_string(index=False))
 

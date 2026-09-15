@@ -123,8 +123,8 @@ Selective mode는 4.1의 URE-RF 파이프라인과 비교하고, full-coverage m
 ## 5. 공격 데이터 재생성
 
 기존 `poi_adversarial_data_final.csv`는 공격 방법, 예산, source/victim 모델과 생성
-split이 기록되지 않았다. 기존 결과는 참고 자료로만 보존하고 새로운 최종 강건성 결론에는
-사용하지 않는다.
+split이 기록되지 않았다. 원본 파일은 형식과 문제 확인에만 사용하며 기존 실험 결과는
+삭제했다. 새로운 최종 강건성 결론에는 어느 것도 사용하지 않는다.
 
 ### 5.1 공격군
 
@@ -212,7 +212,7 @@ numeric budget, categorical budget, 원본·공격 피처, 이동 거리, 변경
 - 범주 변경률 bar plot
 - 모든 조건에 같은 축 범위와 색상 사용
 
-결과: PNG 300dpi, SVG, 그림 원자료 CSV/Parquet.
+결과: PNG 300dpi, 그림 원자료 CSV/Parquet. SVG는 생성하지 않는다.
 
 ### 04. t-SNE, UMAP, dendrogram
 
@@ -347,7 +347,7 @@ ensemble은 단일 제안 모델 결과가 고정된 뒤 별도 아이디어 실
 
 ### 13. 설명 가능성, 중요 피처 제거, 통계적 해석
 
-- 제안 모델과 고정 TabPFN 2.5의 SHAP summary
+- 제안 모델과 고정 TabPFN 2.5의 17개 지역별 clean·공격 SHAP beeswarm/dot summary
 - 수치형 SHAP dependency plot
 - 대표 지역 및 오류 표본 SHAP force plot
 - LIME 지역별 대표 사례
@@ -357,6 +357,11 @@ ensemble은 단일 제안 모델 결과가 고정된 뒤 별도 아이디어 실
 
 신경망 파라미터를 직접 odds ratio로 해석하지 않는다. 별도 logistic surrogate를 동일
 피처와 split으로 적합하고, 완전분리된 계수는 `identifiable=false`로 표시한다.
+
+SHAP 시각 증적은 bar chart를 금지한다. x축은 SHAP value이고 0의 왼쪽과 오른쪽에
+음·양의 기여가 나타나야 하며, 낮은 피처값은 파랑, 높은 값은 빨강인 dot plot으로 만든다.
+각 beeswarm의 SHAP 값·피처값·POI_ID·지역·조건 원자료를 함께 저장한다. LIME과 CCA는
+선택 항목이 아니며 각각 이 단계와 05단계 완료 조건에 포함한다.
 
 ### 14. Sensitivity, stability, ranking, 최종 ablation
 
@@ -453,7 +458,7 @@ artifacts/poi-robustness-20260915-001/
 
 - `report.md`: 목적, 방법, 핵심 결과, 한계
 - `tables/`: CSV, Parquet 및 필요한 XLSX
-- `figures/`: PNG 300dpi와 SVG
+- `figures/`: PNG 300dpi만 저장하며 SVG는 생성하지 않음
 - `metrics.json`: 기계 판독 가능한 핵심 지표
 - `metadata.json`: 코드·데이터·모델·GPU·seed·시간 정보
 - `config.yaml`: 실행 당시 설정 스냅샷
@@ -464,16 +469,14 @@ metadata에 기록한다. 실험 종료 후 인스턴스가 삭제됐는지 확�
 
 ## 9. 현재 결과의 취급
 
-기존 `artifacts/poi-study-final-002`와 교수님 전달 폴더는 이전 공격 CSV를 이용한
-완료 결과로 보존한다. 다음 항목은 새 실험의 참고값일 뿐 최종 강건성 근거로 재사용하지
-않는다.
+2026-09-15에 로컬 `artifacts/`와 R2 `results/poi/` 아래 이전 실험 산출물을 삭제했다.
+기존 결과 수치·표·그림은 새 실험의 참고값이나 최종 근거로 재사용하지 않는다.
 
 - 공격 종류가 구분되지 않은 adversarial 성능
 - 기존 Random Forest 공격 감지 성능
 - 기존 detector gate 이후 accepted-only 및 강제 오답 end-to-end 결과
 - 기존 공격에 대한 sensitivity·stability 분석
 
-clean 데이터 EDA와 clean 모델 비교 결과는 데이터·코드·split hash가 동일하면 새
-보고서에서 재현 확인 후 인용할 수 있다. 새 공격별 결론, 감지기 비교, 구조 변경 모델과
-방어 후 지역분류 결과는 모두 새 experiment ID로 다시 생성한다.
-
+clean 데이터 EDA와 clean 모델 비교를 포함한 모든 표·그림·지표를 새 experiment ID로
+다시 생성한다. 과거 코드는 구현 참고용으로만 사용하며, 새 데이터·코드·split hash와
+실행 metadata가 없는 결과는 보고서에 포함하지 않는다.

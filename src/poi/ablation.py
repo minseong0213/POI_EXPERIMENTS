@@ -34,7 +34,7 @@ def transformer(features):
 
 def save(fig, directory, name):
     fig.savefig(directory/f'{name}.png',dpi=300,bbox_inches='tight')
-    fig.savefig(directory/f'{name}.svg',bbox_inches='tight');plt.close(fig)
+    plt.close(fig)
 
 
 def run(config_path):

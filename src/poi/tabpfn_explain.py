@@ -11,7 +11,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import shap
 import statsmodels.api as sm
 from lime.lime_tabular import LimeTabularExplainer
@@ -50,8 +49,28 @@ def representative_positions(frame, region, per_class, seed):
 
 def save(fig, directory, name):
     fig.savefig(directory / f'{name}.png', dpi=300, bbox_inches='tight')
-    fig.savefig(directory / f'{name}.svg', bbox_inches='tight')
     plt.close(fig)
+
+
+def shap_beeswarm(records, features, figures, name, title):
+    """Save a SHAP dot summary with direction and feature-value colour."""
+    order = records.POI_ID.drop_duplicates().tolist()
+    feature_values = (records.pivot(index='POI_ID', columns='feature', values='feature_value')
+                      .loc[order, features].to_numpy())
+    shap_values = (records.pivot(index='POI_ID', columns='feature', values='shap_value')
+                   .loc[order, features].to_numpy())
+    base_values = records.groupby('POI_ID').base_value.first().loc[order].to_numpy()
+    shap.summary_plot(
+        shap_values, feature_values, feature_names=features, plot_type='dot',
+        color_bar=True, color_bar_label='Feature value', show=False,
+        max_display=len(features))
+    figure = plt.gcf()
+    axis = plt.gca()
+    axis.axvline(0, color='#444444', linewidth=.8, zorder=0)
+    axis.set_xlabel('SHAP value')
+    figure.suptitle(title)
+    save(figure, figures, name)
+    return feature_values, shap_values, base_values
 
 
 def explain_values(model, background, values, features, seed):
@@ -190,24 +209,19 @@ def run(config_path, output_override=None):
                .mean_abs_shap.mean())
     summary.to_csv(tables / 'shap_global_summary.csv', index=False)
 
-    fig, ax = plt.subplots(figsize=(9, 5))
-    sns.barplot(data=summary, x='feature', y='mean_abs_shap', hue='condition', ax=ax)
-    ax.tick_params(axis='x', rotation=25)
-    ax.set_title('Permutation SHAP importance across 17 TabPFN OvR models')
-    save(fig, figures, 'shap_global_summary')
+    representative_arrays = {}
+    for region in regions:
+        for condition in evaluations:
+            subset = detailed.loc[
+                detailed.region.eq(region) & detailed.condition.eq(condition)]
+            arrays = shap_beeswarm(
+                subset, FEATURES, figures,
+                f'shap_beeswarm_{region.lower()}_{condition}',
+                f'TabPFN SHAP — {region} vs others — {condition}')
+            if region == cfg['representative_region']:
+                representative_arrays[condition] = arrays
 
-    representative = detailed.loc[
-        detailed.region.eq(cfg['representative_region']) & detailed.condition.eq('clean')]
-    order = representative.POI_ID.drop_duplicates().tolist()
-    values = (representative.pivot(index='POI_ID', columns='feature', values='feature_value')
-              .loc[order, FEATURES].to_numpy())
-    shap_values = (representative.pivot(index='POI_ID', columns='feature', values='shap_value')
-                   .loc[order, FEATURES].to_numpy())
-    base_values = representative.groupby('POI_ID').base_value.first().loc[order].to_numpy()
-    shap.summary_plot(shap_values, values, feature_names=FEATURES, show=False,
-                      max_display=len(FEATURES))
-    plt.gcf().suptitle(f"TabPFN SHAP summary — {cfg['representative_region']} vs others")
-    save(plt.gcf(), figures, 'shap_summary_representative')
+    values, shap_values, base_values = representative_arrays['clean']
     for feature in NUMERIC:
         shap.dependence_plot(FEATURES.index(feature), shap_values, values,
                              feature_names=FEATURES, show=False, interaction_index=None)
@@ -270,9 +284,11 @@ def run(config_path, output_override=None):
         'removed_feature': top_feature,
     }).sort_values('mean_abs_shap', ascending=False)
     reduced_summary.to_csv(tables / 'shap_top_feature_removed.csv', index=False)
-    shap.summary_plot(reduced_explanation.values, reduced_values,
-                      feature_names=reduced_features, show=False,
-                      max_display=len(reduced_features))
+    shap.summary_plot(
+        reduced_explanation.values, reduced_values, feature_names=reduced_features,
+        plot_type='dot', color_bar=True, color_bar_label='Feature value',
+        show=False, max_display=len(reduced_features))
+    plt.gca().axvline(0, color='#444444', linewidth=.8, zorder=0)
     plt.gcf().suptitle(f'SHAP after removing {top_feature}')
     save(plt.gcf(), figures, 'shap_summary_top_feature_removed')
 
@@ -320,8 +336,10 @@ def run(config_path, output_override=None):
 
 최종 선택 모델 `tabpfn_v2_5`의 17개 OvR 모델을 validation clean/adversarial에서
 모델 비종속 permutation SHAP으로 해석했다. 전역 mean |SHAP| 1위 피처는
-`{top_feature}`이다. 대표 `{cfg['representative_region']} vs others`의 SHAP summary,
-좌표 dependence, waterfall/force와 LIME 설명을 표·PNG/SVG·HTML로 저장했다.
+`{top_feature}`이다. 17개 지역의 clean/attack SHAP beeswarm은 SHAP 값 0을 기준으로
+양·음 방향을 표시하고 특성값이 높으면 빨강, 낮으면 파랑인 dot plot으로 저장했다.
+대표 `{cfg['representative_region']} vs others`의 좌표 dependence, waterfall/force와
+LIME 설명은 표·PNG 300dpi·HTML로 저장했다.
 
 가장 중요한 `{top_feature}`를 제거한 뒤 SHAP을 다시 계산했고, 제거 성능은 6단계
 ablation에서 확인할 수 있다. Odds ratio, 95% CI, p-value와 FDR q-value는 예측 모델

@@ -42,7 +42,7 @@ REQUIRED = {
     },
     '07_explainability': {
         'figures': {'lime_representative', 'odds_ratio_forest_representative',
-                    'shap_global_summary', 'shap_dependence_x_coord',
+                    'shap_beeswarm_seoul_clean', 'shap_dependence_x_coord',
                     'shap_dependence_y_coord', 'shap_waterfall_representative'},
         'tables': {'lime_representative.csv', 'odds_ratios.csv',
                    'shap_global_summary.csv'},
@@ -81,6 +81,10 @@ def audit(bundle):
     bundle = Path(bundle)
     reports = bundle / 'reports'
     checks, failures = {}, []
+    svg_files = sorted(str(path.relative_to(bundle)) for path in bundle.rglob('*.svg'))
+    checks['png_only'] = {'ok': not svg_files, 'unexpected_svg_files': svg_files}
+    if svg_files:
+        failures.append('bundle: SVG files are prohibited')
     for stage, requirements in REQUIRED.items():
         stage_dir = reports / stage
         missing_core = [name for name in ['report.md', 'metrics.json', 'metadata.json']
@@ -89,14 +93,25 @@ def audit(bundle):
                                 if not (stage_dir / 'tables' / name).is_file())
         missing_figures = []
         for stem in requirements['figures']:
-            for suffix in ['.png', '.svg']:
-                if not (stage_dir / 'figures' / f'{stem}{suffix}').is_file():
-                    missing_figures.append(f'{stem}{suffix}')
+            suffix = '.png'
+            if not (stage_dir / 'figures' / f'{stem}{suffix}').is_file():
+                missing_figures.append(f'{stem}{suffix}')
         ok = not (missing_core or missing_tables or missing_figures)
         checks[stage] = {'ok': ok, 'missing_core': missing_core,
                          'missing_tables': missing_tables, 'missing_figures': missing_figures}
         if not ok:
             failures.append(f'{stage}: required artifacts missing')
+
+    shap_dir = reports / '07_explainability' / 'figures'
+    shap_beeswarms = sorted(shap_dir.glob('shap_beeswarm_*_*.png'))
+    shap_beeswarm_ok = len(shap_beeswarms) >= 34
+    checks['shap_beeswarm_coverage'] = {
+        'ok': shap_beeswarm_ok,
+        'observed': len(shap_beeswarms),
+        'required_minimum': 34,
+    }
+    if not shap_beeswarm_ok:
+        failures.append('07_explainability: 17 regions x 2 conditions SHAP beeswarms missing')
 
     manifest_path = bundle / 'manifest.json'
     manifest_ok = False

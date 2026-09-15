@@ -42,7 +42,6 @@ def mkdir_stage(root, number, name):
 
 def save_figure(fig, stage, name):
     fig.savefig(stage / 'figures' / f'{name}.png', dpi=300, bbox_inches='tight')
-    fig.savefig(stage / 'figures' / f'{name}.svg', bbox_inches='tight')
     plt.close(fig)
 
 
@@ -100,7 +99,7 @@ def write_stage(stage, title, body, meta, metrics):
     report += [f'- `figures/{name}`' for name in figures]
     report += [f'- `tables/{name}`' for name in tables]
     report += ['', '## 실행 범위', '', f"- 분석 데이터: train split의 paired POI {meta['scope_rows_per_condition']:,}개",
-               f"- Seed: {meta['seed']}", '- PNG 300 dpi와 SVG를 함께 생성함',
+               f"- Seed: {meta['seed']}", '- 모든 그림을 PNG 300 dpi로 생성함',
                '- 상세 수치는 CSV와 metrics.json에 저장함', '']
     (stage / 'report.md').write_text('\n'.join(report))
     (stage / 'metadata.json').write_text(json.dumps(meta, indent=2) + '\n')

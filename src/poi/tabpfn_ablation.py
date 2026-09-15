@@ -52,7 +52,6 @@ def atomic_frame(frame, path):
 
 def save(fig, directory, name):
     fig.savefig(directory / f'{name}.png', dpi=300, bbox_inches='tight')
-    fig.savefig(directory / f'{name}.svg', bbox_inches='tight')
     plt.close(fig)
 
 
@@ -201,7 +200,7 @@ def run(config_path, output_override=None):
 평균을 robust F1으로 사용했으며 test split은 사용하지 않았다.
 
 가장 높은 구성은 `{best.ablation}`이고 robust F1은 {best['mean']:.4f}이다. 전체
-지역별 결과와 full 대비 변화량은 `tables/`에, PNG/SVG 그림은 `figures/`에 있다.
+지역별 결과와 full 대비 변화량은 `tables/`에, PNG 300dpi 그림은 `figures/`에 있다.
 ''')
     (out / '_SUCCESS.json').write_text(json.dumps(metadata, indent=2) + '\n')
     print(summary.to_string(index=False))

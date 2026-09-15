@@ -117,7 +117,7 @@ def main():
 34,000개 paired POI 표본으로 수행한 전체 실험 결과다. `reports/01_*`부터
 `reports/10_*`까지 validation 분석·모델 비교·설명·공격 탐지·방어·강건성 분석을,
 `reports/11_locked_test`에는 8모델 validation 순위로 고정한 최종 모델의 미사용 test
-평가를 기록했다. 각 단계는 별도 `report.md`, 표, PNG/SVG 그림과 metadata를 갖는다.
+평가를 기록했다. 각 단계는 별도 `report.md`, 표, PNG 300dpi 그림과 metadata를 갖는다.
 `TABPFN_PERFORMANCE.md`에는 TabPFN 세 버전의 validation 성능과 선택 모델의 잠금
 test 성능을 한 표로 모았다.
 

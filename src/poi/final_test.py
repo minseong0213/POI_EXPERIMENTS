@@ -42,7 +42,6 @@ def binary_metrics(y_true, y_score, threshold):
 
 def save_figure(fig, figures, name):
     fig.savefig(figures / f'{name}.png', dpi=300, bbox_inches='tight')
-    fig.savefig(figures / f'{name}.svg', bbox_inches='tight')
     plt.close(fig)
 
 

@@ -1,9 +1,9 @@
 # POI 실험 프로젝트
 
-17개 지역 one-vs-rest 이진분류와 기존 공격 데이터에 대한 성능 비교를 재현 가능한
-구조로 실행한다. 34,000개 paired 표본을 이용해 EDA·통계, 트리 모델과 TabPFN 8종
-비교, ablation, SHAP/LIME, 공격 탐지, 앙상블 방어, 강건성 분석과 잠금 test 평가를
-완료했다.
+지역을 직접 나타내는 컬럼을 제외한 5개 피처로 17개 지역 one-vs-rest 이진분류와
+적대적 공격 강건성 실험을 재현 가능한 구조로 실행한다. 기존 결과 산출물은
+2026-09-15에 초기화했으며, 공격 데이터 생성부터 EDA·통계, 8개 지역분류 모델 비교,
+구조 변경 방어 모델, SHAP/LIME, 공격 탐지와 잠금 test 평가까지 새로 수행한다.
 
 ```text
 src/poi/          데이터 검증·전처리, 모델, 학습, 평가
@@ -83,13 +83,11 @@ EXPERIMENT_CONFIG=/home/mlops/orca/projects/poi/experiments/smoke.env \
 [데이터 구조·추출 이력](docs/dataset.md) · [단계별 실험 인덱스](docs/experiments.md) ·
 [전체 모델 행렬](configs/experiment_matrix.yaml)
 
-## 최종 결과
+## 현재 실험 상태
 
-전체 결과는 `artifacts/poi-study-final-002/`에 있다. 01~10단계 validation 보고서와
-11단계 잠금 test 보고서를 각각 분리했으며, `manifest.json`에 파일별 SHA-256과
-데이터 사용 범위를 기록했다. `TABPFN_PERFORMANCE.md`에서 TabPFN 세 버전과 선택
-모델의 test 성능표를 바로 볼 수 있으며, `audit.json`의 모든 완결성 검사가 통과했다.
+기존 로컬 `artifacts/`와 R2 `results/poi/` 산출물은 삭제했다. 이전 성능 수치와 그림은
+새 결론에 사용하지 않는다. [2026-09-15 전체 실험 계획](docs/experiments/2026-09-15_full_robustness_experiment_plan.md)에 따라 새 experiment ID로 단계별 결과를 생성한다.
 
-최종 모델은 validation 순위 1위인 TabPFN v2.5다. 미사용 test에서 평균 F1은
-clean 0.9944, adversarial 0.9831이었다. 원격 보존 위치는
-`r2:ml-experiments/results/poi/poi-study-final-002/`이다.
+모든 그림은 PNG 300 dpi로만 저장한다. SHAP 시각화는 17개 지역별 clean·공격
+beeswarm/dot plot으로 만들며, CCA와 LIME도 필수 분석으로 수행한다. 새 잠금 test가
+끝나기 전에는 최종 모델이나 최종 성능을 확정하지 않는다.

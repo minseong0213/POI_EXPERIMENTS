@@ -3,12 +3,17 @@
 최종 모델에 대해 17개 OvR 과제의 clean/adversarial 설명을 같은 background 표본과
 같은 POI 평가 표본으로 생성한다.
 
-- SHAP summary beeswarm/bar
+- 17개 지역별 clean·공격 SHAP summary beeswarm/dot plot
 - 주요 연속형 피처 SHAP dependence
 - 대표 TP/FP/FN/TN의 SHAP waterfall/force HTML과 정적 대체 그림
 - LIME 지역별 대표 사례와 반복 안정성
 - clean↔adversarial SHAP 변화량과 ranking 변화
 - 주요 피처 제거 후 성능 및 SHAP/LIME 재계산
+
+SHAP 시각 증적은 bar chart로 만들지 않는다. 각 행은 피처, x축은 SHAP value이며 0의
+왼쪽은 음의 기여, 오른쪽은 양의 기여다. 점 색상은 낮은 피처값을 파랑, 높은 값을
+빨강으로 표시한다. 모든 그림은 PNG 300 dpi로만 저장하고, 점을 재현할 SHAP 값과
+피처값을 CSV 또는 Parquet으로 함께 남긴다.
 
 TabPFN v2.5는 train background 32개와 지역별 양성·음성 각 2개 validation POI를 사용한
 model-agnostic permutation SHAP으로 해석한다. 같은 POI의 clean/adversarial 설명을

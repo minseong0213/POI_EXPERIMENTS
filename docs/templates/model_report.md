@@ -42,5 +42,5 @@ test 결과는 최종 잠금 실행에서만 채운다.
 - [ ] 예측 원자료에 POI_ID·score·label·condition 포함
 - [ ] 지표를 예측 원자료에서 재계산해 일치 확인
 - [ ] checkpoint 및 데이터·설정 해시 기록
-- [ ] PNG 300 dpi와 SVG, 표 CSV/Parquet 생성
+- [ ] 모든 그림의 PNG 300 dpi와 표 CSV/Parquet 생성
 - [ ] 출력 경로 덮어쓰기 방지 확인
