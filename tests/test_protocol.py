@@ -57,11 +57,10 @@ def test_selected_model_explanation_is_bounded_and_secret_free():
     assert 'token' not in str(config).lower()
 
 
-def test_final_ensemble_uses_validation_top_three():
-    ranking = pd.read_csv('configs/final_model_selection.csv').sort_values(
-        'mean', ascending=False)
+def test_final_ensemble_uses_fresh_validation_ranking():
     config = yaml.safe_load(Path('configs/defense_final.yaml').read_text())
-    assert config['ensemble_models'] == ranking.model.head(3).tolist()
+    assert config['selection_ranking'].endswith('model_ranking_validation.csv')
+    assert config['ensemble_top_k'] == 3
 
 
 def test_final_bundle_sources_are_all_final_outputs():
@@ -85,7 +84,11 @@ def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):
         select_model(ranking)
 
 
-def test_final_model_selection_is_complete_and_selects_tabpfn_v2_5():
+def test_final_model_selection_uses_the_new_ranking_top_model(tmp_path):
     from poi.final_test import select_model
 
-    assert select_model('configs/final_model_selection.csv') == 'tabpfn_v2_5'
+    ranking = tmp_path / 'ranking.csv'
+    models = ['xgboost', 'lightgbm', 'random_forest', 'catboost', 'decision_tree',
+              'tabpfn_v2_5', 'tabpfn_v2_6', 'tabpfn_v3']
+    pd.DataFrame({'model': models, 'mean': range(len(models))}).to_csv(ranking, index=False)
+    assert select_model(ranking) == 'tabpfn_v3'

@@ -1,4 +1,4 @@
-"""Stage 05: evaluate five tree models on 17 binary one-vs-rest tasks."""
+"""Stage 06: evaluate five tree models on clean 17-region OvR tasks."""
 import argparse
 import importlib.metadata
 import json
@@ -85,20 +85,19 @@ def plot_results(metrics, predictions, figures):
         ax.tick_params(axis='x', rotation=35); ax.set_title(metric); ax.set_ylim(0, 1)
     fig.tight_layout(); save_figure(fig, figures, 'metric_summary')
 
-    pivot = metrics.assign(robust_component=metrics.f1).pivot_table(
-        index='region', columns=['model', 'condition'], values='robust_component', aggfunc='mean')
-    robust = pd.DataFrame({model: (pivot[(model, 'clean')] + pivot[(model, 'adversarial')]) / 2
-                           for model in metrics.model.unique()})
-    robust.to_csv(figures.parent / 'tables' / 'robust_f1_by_region.csv')
+    score_table = metrics.loc[metrics.condition.eq('clean')].pivot_table(
+        index='region', columns='model', values='f1', aggfunc='mean')
+    score_table.to_csv(figures.parent / 'tables' / 'clean_f1_by_region.csv')
     fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(robust, annot=True, fmt='.2f', vmin=0, vmax=1, cmap='viridis', ax=ax)
-    ax.set_title('Validation robust F1 by region and model')
-    save_figure(fig, figures, 'robust_f1_heatmap')
+    sns.heatmap(score_table, annot=True, fmt='.2f', vmin=0, vmax=1, cmap='viridis', ax=ax)
+    ax.set_title('Clean validation F1 by region and model')
+    save_figure(fig, figures, 'clean_f1_heatmap')
 
     selected = predictions.loc[predictions.seed.eq(predictions.seed.min())]
+    conditions = sorted(selected.condition.unique())
     for curve_name in ['roc', 'pr']:
-        fig, axes = plt.subplots(1, 2, figsize=(13, 5))
-        for ax, condition in zip(axes, ['clean', 'adversarial']):
+        fig, axes = plt.subplots(1, len(conditions), figsize=(6.5 * len(conditions), 5), squeeze=False)
+        for ax, condition in zip(axes.flat, conditions):
             for model, group in selected.loc[selected.condition.eq(condition)].groupby('model'):
                 if curve_name == 'roc':
                     x, y, _ = roc_curve(group.y_true, group.y_score); label = f'{model} AUC={roc_auc_score(group.y_true, group.y_score):.3f}'
@@ -113,8 +112,8 @@ def plot_results(metrics, predictions, figures):
     for region in sorted(selected.region.unique()):
         region_data = selected.loc[selected.region.eq(region)]
         for curve_name in ['roc', 'pr']:
-            fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
-            for ax, condition in zip(axes, ['clean', 'adversarial']):
+            fig, axes = plt.subplots(1, len(conditions), figsize=(6 * len(conditions), 4.5), squeeze=False)
+            for ax, condition in zip(axes.flat, conditions):
                 for model, group in region_data.loc[region_data.condition.eq(condition)].groupby('model'):
                     if curve_name == 'roc':
                         x, y, _ = roc_curve(group.y_true, group.y_score); score = roc_auc_score(group.y_true, group.y_score)
@@ -127,8 +126,9 @@ def plot_results(metrics, predictions, figures):
             save_figure(fig, figures, f'{curve_name}_{region.lower()}')
 
     models = sorted(metrics.model.unique())
-    fig, axes = plt.subplots(2, len(models), figsize=(4 * len(models), 7))
-    for row, condition in enumerate(['clean', 'adversarial']):
+    fig, axes = plt.subplots(len(conditions), len(models),
+                             figsize=(4 * len(models), 3.5 * len(conditions)), squeeze=False)
+    for row, condition in enumerate(conditions):
         for col, model in enumerate(models):
             part = metrics.loc[(metrics.condition.eq(condition)) & (metrics.model.eq(model))]
             matrix = np.array([[part.tn.sum(), part.fp.sum()], [part.fn.sum(), part.tp.sum()]])
@@ -138,19 +138,22 @@ def plot_results(metrics, predictions, figures):
     fig.tight_layout(); save_figure(fig, figures, 'confusion_matrices_normalized')
 
 
-def run(config_path):
+def run(config_path, output_override=None):
     started = time.time()
     config_path = Path(config_path)
     config = yaml.safe_load(config_path.read_text())
-    output = Path(config['output'])
+    output = Path(output_override or config['output'])
     if output.exists():
         raise FileExistsError(f'Refusing to overwrite {output}')
     tables, figures = output / 'tables', output / 'figures'
     tables.mkdir(parents=True); figures.mkdir()
     frames, manifest = load_dataset(config['data_dir'], verify_hashes=True)
     train = frames['clean'].loc[frames['clean'].split.eq('train')].reset_index(drop=True)
-    validation = {condition: frames[key].loc[frames[key].split.eq('validation')].reset_index(drop=True)
-                  for condition, key in [('clean', 'clean'), ('adversarial', 'attack')]}
+    if config.get('conditions', ['clean']) != ['clean']:
+        raise ValueError('Clean model selection accepts only conditions: [clean]')
+    validation = {
+        'clean': frames['clean'].loc[frames['clean'].split.eq('validation')].reset_index(drop=True)
+    }
     transform = preprocessor()
     x_train = transform.fit_transform(train)
     x_validation = {condition: transform.transform(frame) for condition, frame in validation.items()}
@@ -186,9 +189,9 @@ def run(config_path):
     pd.DataFrame(timing).to_csv(tables / 'timing.csv', index=False)
     predictions.to_parquet(tables / 'all_predictions.parquet', index=False)
     plot_results(metrics, predictions, figures)
-    robust = metrics.pivot_table(index=['model','seed','region'], columns='condition', values='f1').reset_index()
-    robust['robust_f1'] = (robust.clean + robust.adversarial) / 2
-    ranking = robust.groupby('model').robust_f1.agg(['mean','std']).sort_values('mean', ascending=False).reset_index()
+    ranking = (metrics.loc[metrics.condition.eq('clean')]
+               .groupby('model').f1.agg(['mean', 'std'])
+               .sort_values('mean', ascending=False).reset_index())
     ranking.to_csv(tables / 'model_ranking_validation.csv', index=False)
     try:
         commit = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -209,12 +212,12 @@ def run(config_path):
     (output/'metrics.json').write_text(json.dumps({'ranking':ranking.to_dict(orient='records')},indent=2)+'\n')
     (output/'config.yaml').write_text(yaml.safe_dump(config,sort_keys=False))
     best = ranking.iloc[0]
-    report = f'''# 05. 17개 지역 OvR 트리 모델 비교
+    report = f'''# 06. 17개 지역 OvR 트리 모델 clean 비교
 
 Train 23,800개 POI로 17개 지역별 이진분류기를 학습하고 validation 3,400개 POI의
-clean/adversarial 조건을 평가했다. 5개 모델 × 17개 지역 × 3 seeds = {metadata['fits']}회 학습이다.
+clean 조건만 평가했다. 5개 모델 × 17개 지역 × 3 seeds = {metadata['fits']}회 학습이다.
 
-현재 1위는 `{best['model']}`이며 validation robust F1 평균은 {best['mean']:.4f}이다.
+현재 1위는 `{best['model']}`이며 clean validation Macro F1 평균은 {best['mean']:.4f}이다.
 이 순위는 트리 모델만 포함한 중간 결과이고 TabPFN 3개 모델과 사전 정의한 최종 분석을
 완료하기 전에는 최종 모델로 고정하지 않는다. 테스트 split은 사용하지 않았다.
 
@@ -225,7 +228,7 @@ clean/adversarial 조건을 평가했다. 5개 모델 × 17개 지역 × 3 seeds
 - 모델·조건별 지표 그림, normalized confusion matrix
 - 전체 및 17개 지역별 PR/ROC curve (PNG 300 dpi)
 
-Accuracy는 약 1:16 불균형으로 높게 보일 수 있으므로 모델 선택에는 robust F1을 사용한다.
+Accuracy는 약 1:16 불균형으로 높게 보일 수 있으므로 모델 선택에는 clean Macro F1을 사용한다.
 '''
     (output/'report.md').write_text(report)
     (output.parent/'_TREE_SUCCESS.json').write_text(json.dumps(metadata,indent=2)+'\n')
@@ -234,7 +237,7 @@ Accuracy는 약 1:16 불균형으로 높게 보일 수 있으므로 모델 선�
 
 def main():
     parser=argparse.ArgumentParser(); parser.add_argument('--config',default='configs/tree_benchmark.yaml')
-    args=parser.parse_args(); run(args.config)
+    parser.add_argument('--output'); args=parser.parse_args(); run(args.config, args.output)
 
 
 if __name__=='__main__': main()

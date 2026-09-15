@@ -45,8 +45,8 @@ seeds: [42, 202, 340]
 conditions: [clean, adversarial]
 metrics: [precision, recall, f1, accuracy, roc_auc, average_precision]
 selection:
-  primary: validation_robust_f1
-  formula: mean_over_regions((clean_f1 + adversarial_f1) / 2)
+  primary: validation_clean_macro_f1
+  formula: mean_over_regions(clean_f1)
   tie_tolerance_percentage_points: 0.5
   tie_breakers: [clean_f1, inference_time]
 reporting:

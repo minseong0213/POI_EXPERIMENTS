@@ -1,5 +1,6 @@
 data_dir: data/poi_34k_seed42
-output: artifacts/poi-models-validation-001/reports/05_region_models
+output: artifacts/poi-adversarial-20260915-001/work/tree_benchmark
+conditions: [clean]
 seeds: [42, 202, 340]
 threshold: 0.5
 models:

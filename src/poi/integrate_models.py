@@ -1,4 +1,4 @@
-"""Merge tree and TabPFN Stage 05 outputs into the complete eight-model report."""
+"""Merge tree and TabPFN Stage 06 clean outputs into the eight-model report."""
 import argparse
 import json
 from pathlib import Path
@@ -13,7 +13,7 @@ EXPECTED_MODELS = {
     'decision_tree', 'random_forest', 'xgboost', 'lightgbm', 'catboost',
     'tabpfn_v2_5', 'tabpfn_v2_6', 'tabpfn_v3',
 }
-EXPECTED_CONDITIONS = {'clean', 'adversarial'}
+EXPECTED_CONDITIONS = {'clean'}
 
 
 def _load(tree_dir, tabpfn_dir):
@@ -31,16 +31,16 @@ def _validate(metrics, predictions):
     if models != EXPECTED_MODELS:
         raise ValueError(f'Expected models {sorted(EXPECTED_MODELS)}, got {sorted(models)}')
     if set(metrics.condition.unique()) != EXPECTED_CONDITIONS:
-        raise ValueError('Both clean and adversarial conditions are required')
+        raise ValueError('Clean model selection requires only the clean condition')
     if metrics.region.nunique() != 17 or metrics.seed.nunique() != 3:
         raise ValueError('Expected 17 regions and 3 seeds')
     key = ['model', 'seed', 'region', 'condition']
-    if metrics.duplicated(key).any() or len(metrics) != 8 * 3 * 17 * 2:
+    if metrics.duplicated(key).any() or len(metrics) != 8 * 3 * 17:
         raise ValueError('Metric rows are incomplete or duplicated')
     prediction_key = key + ['POI_ID']
     if predictions.duplicated(prediction_key).any():
         raise ValueError('Prediction rows are duplicated')
-    expected_rows = 8 * 3 * 17 * 2 * 3400
+    expected_rows = 8 * 3 * 17 * 3400
     if len(predictions) != expected_rows or predictions.POI_ID.nunique() != 3400:
         raise ValueError('Prediction rows or validation POI count are incomplete')
     if set(predictions.model.unique()) != EXPECTED_MODELS:
@@ -68,10 +68,8 @@ def run(tree_dir, tabpfn_dir, output):
     tabpfn_summary = summary.loc[summary.model.str.startswith('tabpfn_')].copy()
     tabpfn_summary.insert(0, 'scope', 'validation')
     tabpfn_summary.to_csv(tables / 'tabpfn_validation_performance.csv', index=False)
-    robust = metrics.pivot_table(index=['model', 'seed', 'region'], columns='condition',
-                                 values='f1').reset_index()
-    robust['robust_f1'] = (robust.clean + robust.adversarial) / 2
-    ranking = (robust.groupby('model').robust_f1.agg(['mean', 'std'])
+    ranking = (metrics.loc[metrics.condition.eq('clean')]
+               .groupby('model').f1.agg(['mean', 'std'])
                .sort_values('mean', ascending=False).reset_index())
     ranking.to_csv(tables / 'model_ranking_validation.csv', index=False)
     shutil.copy2(tabpfn_dir / 'timing.csv', tables / 'tabpfn_timing.csv')
@@ -90,17 +88,17 @@ def run(tree_dir, tabpfn_dir, output):
     (output / 'metrics.json').write_text(
         json.dumps({'ranking': ranking.to_dict(orient='records')}, indent=2) + '\n')
     best = ranking.iloc[0]
-    (output / 'report.md').write_text(f'''# 05. 17개 지역 OvR 8개 모델 비교
+    (output / 'report.md').write_text(f'''# 06. 17개 지역 OvR 8개 모델 clean 비교
 
-동일한 train/validation split에서 트리 모델 5개와 TabPFN 3개를 17개 지역 OvR,
-3개 seed로 비교했다. 총 408회 학습과 clean/adversarial 816개 평가 조합이다.
+동일한 clean train/validation split에서 트리 모델 5개와 TabPFN 3개를 17개 지역 OvR,
+3개 seed로 비교했다. 총 408회 학습과 408개 clean 평가 조합이다.
 
-validation robust F1 1위는 `{best['model']}`이며 평균은 {best['mean']:.6f},
+clean validation Macro F1 1위는 `{best['model']}`이며 평균은 {best['mean']:.6f},
 seed·지역 표준편차는 {best['std']:.6f}이다. test split은 사용하지 않았다.
 
 `tables/`에는 전체 지표·예측·순위·시간을, `figures/`에는 normalized confusion
 matrix와 전체 및 17개 지역별 PR/ROC curve를 PNG 300 dpi로 저장했다.
-TabPFN 세 버전의 clean/adversarial 평균·표준편차는
+TabPFN 세 버전의 clean 평균·표준편차는
 `tables/tabpfn_validation_performance.csv`에 별도 성능표로 기록했다.
 ''')
     (output.parent / '_SUCCESS.json').write_text(json.dumps(metadata, indent=2) + '\n')
@@ -109,9 +107,10 @@ TabPFN 세 버전의 clean/adversarial 평균·표준편차는
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tree-dir', default='artifacts/poi-models-validation-001/reports/05_region_models')
-    parser.add_argument('--tabpfn-dir', default='artifacts/poi-tabpfn-validation-001')
-    parser.add_argument('--output', default='artifacts/poi-models-validation-002/reports/05_region_models')
+    root = Path('artifacts/poi-adversarial-20260915-001')
+    parser.add_argument('--tree-dir', default=str(root / 'work/tree_benchmark'))
+    parser.add_argument('--tabpfn-dir', default=str(root / 'work/tabpfn_benchmark'))
+    parser.add_argument('--output', default=str(root / 'reports/06_region_models'))
     args = parser.parse_args()
     run(args.tree_dir, args.tabpfn_dir, args.output)
 

@@ -1,5 +1,6 @@
 data_dir: data/poi_34k_seed42
-output: artifacts/poi-tabpfn-validation-001
+output: artifacts/poi-adversarial-20260915-001/work/tabpfn_benchmark
+conditions: [clean]
 versions: [v2.5, v2.6, v3]
 seeds: [42, 202, 340]
 device: cuda

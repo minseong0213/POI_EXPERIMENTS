@@ -1,4 +1,4 @@
-"""GPU stage 05 runner for TabPFN v2.5, v2.6 and v3 using batched OvR inference."""
+"""GPU stage 06 clean runner for TabPFN v2.5, v2.6 and v3."""
 import argparse
 import hashlib
 import json
@@ -61,10 +61,11 @@ def run(config_path,output_override=None):
     if not os.environ.get('TABPFN_TOKEN'):raise RuntimeError('TABPFN_TOKEN or TABPFN_TOKEN_FILE is required')
     out.mkdir(parents=True,exist_ok=True);work=out/'work';metric_shards=work/'metrics';prediction_shards=work/'predictions';timing_shards=work/'timing'
     metric_shards.mkdir(parents=True,exist_ok=True);prediction_shards.mkdir(exist_ok=True);timing_shards.mkdir(exist_ok=True)
+    if cfg.get('conditions',['clean']) != ['clean']:
+        raise ValueError('Clean model selection accepts only conditions: [clean]')
     frames,manifest=load_dataset(data_dir);train=frames['clean'].loc[frames['clean'].split.eq('train')].reset_index(drop=True)
     clean=frames['clean'].loc[frames['clean'].split.eq('validation')].reset_index(drop=True)
-    attack=frames['attack'].loc[frames['attack'].split.eq('validation')].reset_index(drop=True)
-    x_train=numeric_matrix(train);x_test=np.vstack([numeric_matrix(clean),numeric_matrix(attack)])
+    x_train=numeric_matrix(train);x_test=numeric_matrix(clean)
     regions=sorted(manifest.region.unique());all_metrics=[];all_predictions=[];timings=[]
     for version in cfg['versions']:
         for seed in cfg['seeds']:
@@ -98,7 +99,7 @@ def run(config_path,output_override=None):
                 elapsed=time.time()-tick;batch_metrics=[];batch_predictions=[];batch_timings=[]
                 for batch_index,region in enumerate(batch):
                     score=np.asarray(prob[batch_index])[:,1]
-                    for condition,offset,frame in [('clean',0,clean),('adversarial',len(clean),attack)]:
+                    for condition,offset,frame in [('clean',0,clean)]:
                         values=score[offset:offset+len(frame)];truth=frame.region.eq(region).astype(int).to_numpy()
                         model_id=f'tabpfn_{version.replace(".","_")}'
                         batch_metrics.append({'model':model_id, 'checkpoint_version':version,
@@ -113,8 +114,8 @@ def run(config_path,output_override=None):
                 print(f'completed TabPFN {version} seed={seed} regions={batch}',flush=True)
                 torch.cuda.empty_cache()
     result=pd.DataFrame(all_metrics);pred=pd.concat(all_predictions,ignore_index=True)
-    if len(result)!=len(cfg['versions'])*len(cfg['seeds'])*len(regions)*2:raise RuntimeError('Incomplete TabPFN metric cardinality')
-    if len(pred)!=len(cfg['versions'])*len(cfg['seeds'])*len(regions)*2*len(clean):raise RuntimeError('Incomplete TabPFN prediction cardinality')
+    if len(result)!=len(cfg['versions'])*len(cfg['seeds'])*len(regions):raise RuntimeError('Incomplete TabPFN metric cardinality')
+    if len(pred)!=len(cfg['versions'])*len(cfg['seeds'])*len(regions)*len(clean):raise RuntimeError('Incomplete TabPFN prediction cardinality')
     result.to_csv(out/'metrics_by_region.csv',index=False);pred.to_parquet(out/'all_predictions.parquet',index=False)
     pd.DataFrame(timings).to_csv(out/'timing.csv',index=False)
     cache=Path.home()/'.cache'/'tabpfn';checkpoints=[]
@@ -125,7 +126,7 @@ def run(config_path,output_override=None):
               'resumable_shards':len(list(metric_shards.glob('*.csv'))),'fits':len(cfg['versions'])*len(cfg['seeds'])*len(regions),
               'python':platform.python_version(),'tabpfn':tabpfn.__version__,'torch':torch.__version__,
               'cuda':torch.version.cuda,'gpu':torch.cuda.get_device_name(0),'checkpoints':checkpoints,
-              'data_sha256':{name:sha256(Path(data_dir)/name) for name in ['poi_data_region.csv','poi_adversarial_data_final.csv','sample_manifest.csv']},
+              'data_sha256':{name:sha256(Path(data_dir)/name) for name in ['poi_data_region.csv','sample_manifest.csv']},
               'seconds':time.time()-started}
     (out/'metadata.json').write_text(json.dumps(metadata,indent=2)+'\n');(out/'config.yaml').write_text(yaml.safe_dump(cfg,sort_keys=False))
     (out/'_SUCCESS.json').write_text(json.dumps(metadata,indent=2)+'\n');print(json.dumps(metadata,indent=2))
