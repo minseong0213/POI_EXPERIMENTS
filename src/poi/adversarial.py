@@ -528,7 +528,7 @@ def run(config_path, output_override=None):
         raise FileExistsError(f'Refusing to overwrite completed {output}')
     tables, figures, shards = output / 'tables', output / 'figures', output / 'work' / 'shards'
     experiment_root = output.parent.parent if output.parent.name == 'reports' else output
-    checkpoints = experiment_root / 'checkpoints'
+    checkpoints = Path(os.environ.get('CHECKPOINT_DIR', experiment_root / 'checkpoints'))
     for directory in [tables, figures, shards, checkpoints]:
         directory.mkdir(parents=True, exist_ok=True)
     set_seed(cfg['seed'])
