@@ -348,6 +348,8 @@ def categorical_pcaa(coords, categories, labels, model, encoder, tuples, tuple_v
                                             encoder)).reshape(len(base_coords), k, -1)
             margins = true_margin(output.reshape(-1, output.shape[-1]),
                                   y[:, None].expand(-1, k).reshape(-1)).reshape(len(base_coords), k)
+            hard_allowed = allowed.gather(1, choices)
+            margins = margins.masked_fill(~hard_allowed, -torch.inf)
             best = margins.argmax(1)
             final_choices = choices[torch.arange(len(base_coords), device=device), best].cpu().numpy()
         selected.append(tuples[final_choices])
@@ -674,10 +676,13 @@ def run(config_path, output_override=None):
     ax.set_ylim(0, 1)
     ax.set_title('Attack success, coordinate distance and categorical changes')
     save_figure(fig, figures, 'attack_cost_vs_success')
+    invalid_path = tables / 'invalid_attacks.csv'
     invalid = attacks.loc[~attacks.constraints_valid]
     if len(invalid):
-        invalid.to_csv(tables / 'invalid_attacks.csv', index=False)
+        invalid.to_csv(invalid_path, index=False)
         raise RuntimeError(f'Generated {len(invalid)} constraint-invalid attacks')
+    if invalid_path.exists():
+        invalid_path.unlink()
     metadata = {
         'status': 'complete', 'scope': cfg['splits'], 'test_used': False,
         'seed': cfg['seed'], 'device': str(device), 'torch': torch.__version__,
