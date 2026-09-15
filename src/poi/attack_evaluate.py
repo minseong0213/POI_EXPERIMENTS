@@ -50,7 +50,10 @@ def _attack_frame(rows, clean_order):
     rows = rows.set_index("POI_ID").loc[clean_order].reset_index()
     frame = rows[["POI_ID", "region", "split"]].copy()
     for feature in FEATURES:
-        frame[feature] = rows[f"{feature}_adv"].to_numpy()
+        values = rows[f"{feature}_adv"]
+        if feature in CATEGORICAL:
+            values = pd.to_numeric(values, errors="raise").astype("float64").astype(str)
+        frame[feature] = values.to_numpy()
     return frame
 
 
@@ -108,7 +111,7 @@ def _tree_scores(model_id, cfg, train, frames, regions, seed):
     return result
 
 
-def _tabpfn_scores(model_id, cfg, train, frames, regions, seed):
+def _tabpfn_context(model_id, cfg, train, seed):
     if not os.environ.get("TABPFN_TOKEN"):
         token_path = Path(os.environ.get("TABPFN_TOKEN_FILE", "/root/.config/poi/tabpfn_token"))
         if token_path.is_file():
@@ -124,24 +127,20 @@ def _tabpfn_scores(model_id, cfg, train, frames, regions, seed):
         versions[model_id], device=cfg["device"], n_estimators=cfg["tabpfn_n_estimators"],
         random_state=seed, categorical_features_indices=[2, 3, 4], show_progress_bar=True,
         memory_saving_mode="auto")
-    train_x = _matrix(train)
-    result = {region: {} for region in regions}
-    items = list(frames.items())
-    for condition_start in range(0, len(items), cfg["condition_batch_size"]):
-        condition_batch = items[condition_start:condition_start + cfg["condition_batch_size"]]
-        stacked = np.vstack([_matrix(frame) for _, frame in condition_batch])
-        for region_start in range(0, len(regions), cfg["tabpfn_region_batch_size"]):
-            region_batch = regions[region_start:region_start + cfg["tabpfn_region_batch_size"]]
-            labels = [train.region.eq(region).astype(int).to_numpy() for region in region_batch]
-            probabilities = model.predict_proba_batched(
-                [train_x] * len(region_batch), labels, [stacked] * len(region_batch))
-            for region_index, region in enumerate(region_batch):
-                values = np.asarray(probabilities[region_index])[:, 1]
-                offset = 0
-                for condition, frame in condition_batch:
-                    result[region][condition] = values[offset:offset + len(frame)]
-                    offset += len(frame)
-            torch.cuda.empty_cache()
+    return model, _matrix(train), torch
+
+
+def _tabpfn_frame_scores(model, train_x, torch, cfg, train, frame, regions):
+    frame_x = _matrix(frame)
+    result = {}
+    for region_start in range(0, len(regions), cfg["tabpfn_region_batch_size"]):
+        region_batch = regions[region_start:region_start + cfg["tabpfn_region_batch_size"]]
+        labels = [train.region.eq(region).astype(int).to_numpy() for region in region_batch]
+        probabilities = model.predict_proba_batched(
+            [train_x] * len(region_batch), labels, [frame_x] * len(region_batch))
+        for region_index, region in enumerate(region_batch):
+            result[region] = np.asarray(probabilities[region_index])[:, 1]
+        torch.cuda.empty_cache()
     return result
 
 
@@ -220,19 +219,52 @@ def run(config_path, output_override=None):
         raise ValueError("Expected 32 fully valid validation attack conditions")
     frames = _condition_frames(validation, attacks)
     regions = sorted(manifest.region.unique())
-    work = output / "work" / "seeds"
+    work = output / "work" / "shards"
     work.mkdir(parents=True, exist_ok=True)
     all_metrics, all_predictions = [], []
     for seed in cfg["seeds"]:
+        if model_id.startswith("tabpfn_"):
+            model, train_x, torch = _tabpfn_context(model_id, cfg, train, seed)
+            for condition, frame in frames.items():
+                safe_condition = condition.replace("/", "_")
+                metric_path = work / f"seed{seed}-{safe_condition}.csv"
+                prediction_path = work / f"seed{seed}-{safe_condition}.parquet"
+                if metric_path.exists() and prediction_path.exists():
+                    all_metrics.append(pd.read_csv(metric_path))
+                    all_predictions.append(pd.read_parquet(prediction_path))
+                    print(f"resumed attack evaluation seed={seed} condition={condition}", flush=True)
+                    continue
+                if metric_path.exists() or prediction_path.exists():
+                    raise RuntimeError(f"Incomplete condition shard seed={seed} condition={condition}")
+                condition_scores = _tabpfn_frame_scores(
+                    model, train_x, torch, cfg, train, frame, regions)
+                metric_rows, prediction_rows = [], []
+                for region in regions:
+                    truth = frame.region.eq(region).astype(int).to_numpy()
+                    score = condition_scores[region]
+                    metric_rows.append({"model": model_id, "seed": seed, "region": region,
+                                        "condition": condition, "split": "validation",
+                                        **_metrics(truth, score, cfg["threshold"])})
+                    prediction_rows.append(pd.DataFrame({
+                        "POI_ID": frame.POI_ID, "model": model_id, "seed": seed,
+                        "region": region, "condition": condition, "split": "validation",
+                        "y_true": truth, "y_score": score,
+                        "y_pred": (score >= cfg["threshold"]).astype(int),
+                    }))
+                condition_metrics = pd.DataFrame(metric_rows)
+                condition_predictions = pd.concat(prediction_rows, ignore_index=True)
+                _atomic_frame(condition_metrics, metric_path)
+                _atomic_frame(condition_predictions, prediction_path)
+                all_metrics.append(condition_metrics); all_predictions.append(condition_predictions)
+                print(f"completed attack evaluation seed={seed} condition={condition}", flush=True)
+            continue
         metric_path, prediction_path = work / f"seed{seed}.csv", work / f"seed{seed}.parquet"
         if metric_path.exists() and prediction_path.exists():
             all_metrics.append(pd.read_csv(metric_path)); all_predictions.append(pd.read_parquet(prediction_path))
             continue
         if metric_path.exists() or prediction_path.exists():
             raise RuntimeError(f"Incomplete seed shard {seed}")
-        scores = (_tabpfn_scores(model_id, cfg, train, frames, regions, seed)
-                  if model_id.startswith("tabpfn_") else
-                  _tree_scores(model_id, cfg, train, frames, regions, seed))
+        scores = _tree_scores(model_id, cfg, train, frames, regions, seed)
         metric_rows, prediction_rows = [], []
         for region in regions:
             for condition, frame in frames.items():
