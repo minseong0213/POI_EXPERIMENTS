@@ -10,4 +10,4 @@ elif [[ -x "$PROJECT_ROOT/.venv/bin/python" ]]; then
 else
     python_bin="python"
 fi
-exec "$python_bin" -m poi.train --config "${1:-configs/baseline.yaml}"
+exec "$python_bin" -m poi.train --config "${1:-configs/runs/baseline.yaml}"

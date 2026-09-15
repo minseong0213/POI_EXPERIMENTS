@@ -1,14 +1,15 @@
 # POI 실험 프로젝트
 
 지역을 직접 나타내는 컬럼을 제외한 5개 피처로 17개 지역 one-vs-rest 이진분류와
-적대적 공격 강건성 실험을 재현 가능한 구조로 실행한다. 기존 결과 산출물은
-2026-09-15에 초기화했으며, 공격 데이터 생성부터 EDA·통계, 8개 지역분류 모델 비교,
-구조 변경 방어 모델, SHAP/LIME, 공격 탐지와 잠금 test 평가까지 새로 수행한다.
+적대적 공격 강건성 실험을 재현 가능한 구조로 실행한다. 공격 데이터 생성부터
+EDA·통계, 8개 지역분류 모델 비교, 구조 변경 방어 모델, SHAP/LIME, 공격 탐지와
+잠금 test 평가까지를 00–15단계로 관리한다.
 
 ```text
+.codex/          실험 수행·독립 검수 에이전트의 실행 설정
 src/poi/          데이터 검증·전처리, 모델, 학습, 평가
 scripts/train.sh  공통 학습 진입점
-configs/         모델과 학습 설정 (baseline / smoke)
+configs/         공통 protocol, 실행·단계별 YAML, legacy 호환 설정
 experiments/     gpu-orchestrator의 코드·데이터·명령 연결
 tests/           데이터 무결성, 분할, 학습과 저장 검증
 docs/            데이터 버전과 실험 기준
@@ -26,14 +27,14 @@ python -m venv .venv
 .venv/bin/python -m pip install --require-hashes -r requirements.lock
 .venv/bin/python -m pip install --no-deps --no-build-isolation -e .
 .venv/bin/pytest -q
-EXP_ID=smoke-001 bash scripts/train.sh configs/smoke.yaml
+EXP_ID=smoke-001 bash scripts/train.sh configs/runs/smoke.yaml
 ```
 
 기본 데이터 경로는 `data/poi_34k_seed42/`이다. 다른 위치는 `DATA_DIR`로 지정한다.
 smoke는 지역당 학습 20건·검증 5건만 사용한다. 학습 기준 실험은 다음과 같다.
 
 ```bash
-EXP_ID=baseline-001 bash scripts/train.sh configs/baseline.yaml
+EXP_ID=baseline-001 bash scripts/train.sh configs/runs/baseline.yaml
 ```
 
 기본 baseline은 학습 23,800건으로 학습하고 검증 3,400건의 원본·공격 성능을 측정한다.
@@ -81,12 +82,15 @@ EXPERIMENT_CONFIG=/home/mlops/orca/projects/poi/experiments/smoke.env \
 이 프로젝트 설정은 GPU 인스턴스를 생성하거나 삭제하지 않는다.
 
 [데이터 구조·추출 이력](docs/dataset.md) · [단계별 실험 인덱스](docs/experiments.md) ·
-[전체 모델 행렬](configs/experiment_matrix.yaml)
+[현재 결과와 판정](docs/results.md) · [저장소 구조 규칙](docs/repository_layout.md) ·
+[전체 모델 행렬](configs/protocol.yaml)
 
 ## 현재 실험 상태
 
-기존 로컬 `artifacts/`와 R2 `results/poi/` 산출물은 삭제했다. 이전 성능 수치와 그림은
-새 결론에 사용하지 않는다. [2026-09-15 전체 실험 계획](docs/experiments/2026-09-15_full_robustness_experiment_plan.md)에 따라 새 experiment ID로 단계별 결과를 생성한다.
+검수된 2026-09-15 artifact는 증적과 manifest를 보존한다. 전체 계획의 현재 독립 판정은
+**FAIL**이며 [결과 허브](docs/results.md)에 완료·부분 완료·미실행 범위와 실제 파일을
+구분했다. 새 실행은 [전체 실험 계획](docs/experiments/2026-09-15_full_robustness_experiment_plan.md)에
+따라 새 experiment ID와 canonical 단계 번호로 생성한다.
 
 모든 그림은 PNG 300 dpi로만 저장한다. SHAP 시각화는 17개 지역별 clean·공격
 beeswarm/dot plot으로 만들며, CCA와 LIME도 필수 분석으로 수행한다. 새 잠금 test가

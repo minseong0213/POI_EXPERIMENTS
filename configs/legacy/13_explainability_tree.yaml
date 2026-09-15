@@ -1,0 +1,13 @@
+data_dir: data/poi_34k_seed42
+output: artifacts/poi-advanced-validation-002/reports/13_explainability
+seed: 42
+representative_region: Seoul
+explain_per_region: 50
+lime_samples: 3000
+model_params:
+  n_estimators: 250
+  num_leaves: 31
+  learning_rate: 0.05
+  subsample: 0.9
+  colsample_bytree: 0.9
+  n_jobs: 2

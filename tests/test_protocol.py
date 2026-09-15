@@ -1,4 +1,7 @@
 from pathlib import Path
+import hashlib
+import json
+import re
 
 import pandas as pd
 import pytest
@@ -6,7 +9,7 @@ import yaml
 
 
 def test_experiment_matrix_is_complete_and_unambiguous():
-    matrix = yaml.safe_load(Path('configs/experiment_matrix.yaml').read_text())
+    matrix = yaml.safe_load(Path('configs/protocol.yaml').read_text())
     assert matrix['task']['type'] == 'binary_one_vs_rest'
     assert len(matrix['regions']) == len(set(matrix['regions'])) == 17
     assert len(matrix['models']) == 8
@@ -18,7 +21,7 @@ def test_experiment_matrix_is_complete_and_unambiguous():
 
 def test_all_protocol_stages_are_linked_and_present():
     index = Path('docs/experiments.md').read_text()
-    for stage in range(11):
+    for stage in range(16):
         prefix = f'{stage:02d}_'
         matches = list(Path('docs/experiments').glob(prefix + '*.md'))
         assert len(matches) == 1
@@ -28,7 +31,7 @@ def test_all_protocol_stages_are_linked_and_present():
 
 
 def test_tabpfn_config_uses_supported_versions_and_no_secret():
-    config = yaml.safe_load(Path('configs/tabpfn_benchmark.yaml').read_text())
+    config = yaml.safe_load(Path('configs/stages/06_region_models_tabpfn.yaml').read_text())
     assert config['versions'] == ['v2.5', 'v2.6', 'v3']
     assert config['device'] == 'cuda'
     assert config['batch_retries'] == 3
@@ -37,7 +40,7 @@ def test_tabpfn_config_uses_supported_versions_and_no_secret():
 
 
 def test_selected_model_ablation_covers_every_feature_group():
-    config = yaml.safe_load(Path('configs/tabpfn_ablation.yaml').read_text())
+    config = yaml.safe_load(Path('configs/stages/07_backbone_ablation_tabpfn.yaml').read_text())
     assert config['seeds'] == [42, 202, 340]
     assert config['resume_partial'] is True
     assert config['bootstrap_repeats'] >= 1000
@@ -49,7 +52,7 @@ def test_selected_model_ablation_covers_every_feature_group():
 
 
 def test_selected_model_explanation_is_bounded_and_secret_free():
-    config = yaml.safe_load(Path('configs/tabpfn_explain.yaml').read_text())
+    config = yaml.safe_load(Path('configs/legacy/13_explainability_tabpfn25.yaml').read_text())
     assert config['representative_region'] == 'Seoul'
     assert 1 <= config['explain_per_class'] <= 10
     assert config['background_rows'] <= 100
@@ -57,21 +60,60 @@ def test_selected_model_explanation_is_bounded_and_secret_free():
     assert 'token' not in str(config).lower()
 
 
-def test_final_ensemble_uses_fresh_validation_ranking():
-    config = yaml.safe_load(Path('configs/defense_final.yaml').read_text())
-    assert config['selection_ranking'].endswith('model_ranking_validation.csv')
-    assert config['ensemble_top_k'] == 3
+def test_config_layout_has_no_ambiguous_completion_names():
+    ambiguous = {'defense_final.yaml', 'robustness_complete.yaml',
+                 'robustness_enhanced.yaml', 'robustness_final.yaml'}
+    assert not ambiguous.intersection(path.name for path in Path('configs').rglob('*.yaml'))
+    for path in Path('configs').rglob('*.yaml'):
+        assert yaml.safe_load(path.read_text()) is not None
 
 
-def test_final_bundle_sources_are_all_final_outputs():
-    import runpy
+def test_results_hub_exposes_review_verdict_and_every_stage():
+    hub = Path('docs/results.md').read_text()
+    assert '**FAIL**' in hub
+    for stage in range(16):
+        assert f'| {stage:02d} |' in hub
+    for verdict in ['PASS', 'PARTIAL', 'FAIL', 'NOT_RUN']:
+        assert verdict in hub
 
-    SOURCES = runpy.run_path('scripts/bundle_final_results.py')['SOURCES']
-    assert 'poi-models-validation-002' in SOURCES['05_region_models']
-    assert 'poi-tabpfn-ablation-001' in SOURCES['06_model_selection_ablation']
-    assert 'poi-tabpfn-explain-001' in SOURCES['07_explainability']
-    assert 'poi-final-validation-001' in SOURCES['09_ensemble_defense']
-    assert 'poi-final-validation-001' in SOURCES['10_robustness']
+
+def test_local_markdown_links_resolve():
+    missing = []
+    markdown = [Path('README.md'), *Path('docs').rglob('*.md')]
+    for source in markdown:
+        for target in re.findall(r'\[[^]]+\]\(([^)]+)\)', source.read_text()):
+            if target.startswith(('http://', 'https://', '#')):
+                continue
+            if 'artifacts/' in target:
+                missing.append((source, f'ignored artifact link: {target}'))
+                continue
+            path = target.split('#', 1)[0]
+            if path and not (source.parent / path).resolve().exists():
+                missing.append((source, target))
+    assert not missing
+
+
+def test_documentation_result_assets_match_manifest():
+    root = Path('docs/assets/poi-adversarial-20260915-001')
+    manifest = json.loads((root / 'manifest.json').read_text())
+    assert manifest['overall_verdict'] == 'FAIL'
+    assert len(manifest['files']) >= 1
+    for record in manifest['files']:
+        path = root / record['path']
+        assert path.stat().st_size == record['bytes']
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record['sha256']
+
+
+def test_code_and_run_descriptors_reference_existing_configs():
+    sources = [*Path('src').rglob('*.py'), *Path('scripts').rglob('*.py'),
+               *Path('scripts').rglob('*.sh'),
+               *Path('experiments').glob('*.env')]
+    missing = []
+    for source in (p for p in sources if p.is_file()):
+        for target in re.findall(r'configs/[A-Za-z0-9_./-]+\.yaml', source.read_text()):
+            if not Path(target).is_file():
+                missing.append((source, target))
+    assert not missing
 
 
 def test_final_test_refuses_an_incomplete_model_ranking(tmp_path):

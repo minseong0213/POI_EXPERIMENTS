@@ -354,8 +354,8 @@ def run(data_dir, output_root, seed=42):
     root = Path(output_root)
     root.mkdir(parents=True, exist_ok=True)
     meta = metadata(Path(data_dir), len(clean), seed, started)
-    stages = [mkdir_stage(root, 1, 'descriptive'), mkdir_stage(root, 2, 'distribution'),
-              mkdir_stage(root, 3, 'embedding'), mkdir_stage(root, 4, 'statistics')]
+    stages = [mkdir_stage(root, 2, 'descriptive'), mkdir_stage(root, 3, 'distribution'),
+              mkdir_stage(root, 4, 'embedding_clustering'), mkdir_stage(root, 5, 'statistics')]
     descriptive(clean, attack, stages[0], meta)
     distributions(clean, attack, stages[1], meta)
     embeddings(clean, attack, stages[2], meta)

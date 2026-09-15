@@ -95,5 +95,5 @@ TabPFN 비교 전의 잠정 결과이므로 최종 모델 고정이나 테스트
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/ablation.yaml');run(p.parse_args().config)
+    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/legacy/07_backbone_ablation_tree.yaml');run(p.parse_args().config)
 if __name__=='__main__':main()

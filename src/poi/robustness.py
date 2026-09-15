@@ -176,5 +176,5 @@ Validation POI에서 공격 혼합 비율 0/10/25/50/75/100%를 재현 가능하
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/robustness.yaml');run(p.parse_args().config)
+    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/legacy/14_robustness_analysis.yaml');run(p.parse_args().config)
 if __name__=='__main__':main()

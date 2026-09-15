@@ -111,6 +111,19 @@ DATA_DIR=/workspace/data/poi-34k RUN_DETACH=1 RUN_MAX_SECONDS=14400 /home/mlops/
             if 'RUN ACTIVE' not in verify.stdout and 'RUN FINISHED:' not in verify.stdout:
                 raise RuntimeError('Explanation submission was not confirmed')
 
+    def cleanup_success_files():
+        """Keep the final state, but remove transient local supervisor files on success."""
+        try:
+            fcntl.flock(lock, fcntl.LOCK_UN)
+        finally:
+            lock.close()
+        for name in ('manager.log', 'manager.pid', 'manager.lock'):
+            try:
+                (state_dir / name).unlink(missing_ok=True)
+            except OSError:
+                # Cleanup must not turn a successfully preserved experiment into a failure.
+                pass
+
     try:
         step('evaluation', lambda: wait_run(args.evaluation))
         step('evaluation_sync', lambda: sync(args.evaluation))
@@ -118,14 +131,15 @@ DATA_DIR=/workspace/data/poi-34k RUN_DETACH=1 RUN_MAX_SECONDS=14400 /home/mlops/
         step('explanation_submit', submit_explanation)
         step('explanation', lambda: wait_run(args.explanation))
         step('explanation_sync', lambda: sync(args.explanation))
-        step('explanation_download', lambda: download(args.explanation, '07_explainability'))
+        step('explanation_download', lambda: download(args.explanation, '13_explainability'))
         step('destroy_gpu', lambda: checked([ORCH / 'scripts/vast/destroy_gpu.sh', connection['INSTANCE_ID'],
-            '--yes', ORCH / 'config/vast.env'], 1800, attempts=1))
+            '--yes', ORCH / 'config/vast.env'], 1800, attempts=3))
         step('audit', lambda: checked([sys.executable, ROOT / 'scripts/audit_attack_scope.py']))
         step('delivery', lambda: checked([sys.executable, ROOT / 'scripts/bundle_attack_results.py']))
         step('publish', lambda: checked(RCLONE + ['copy', str(STUDY / 'reports'),
             'r2:ml-experiments/results/poi/poi-adversarial-20260915-001/reports', '--exclude', '**/work/**'], 1800))
         record('complete', status='complete')
+        cleanup_success_files()
     except Exception as error:
         record('failed', status='failed', error=str(error))
         raise

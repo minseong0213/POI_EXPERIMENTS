@@ -133,6 +133,6 @@ def run(config_path,output_override=None):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/tabpfn_benchmark.yaml');p.add_argument('--output')
+    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/stages/06_region_models_tabpfn.yaml');p.add_argument('--output')
     args=p.parse_args();run(args.config,args.output)
 if __name__=='__main__':main()

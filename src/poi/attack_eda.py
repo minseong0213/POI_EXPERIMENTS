@@ -209,8 +209,8 @@ def run(data_dir, attacks_file, output_root, representative="caa_high", seed=42)
     attack = _aligned(clean, representative_rows)
     root = Path(output_root)
     root.mkdir(parents=True, exist_ok=True)
-    stages = [mkdir_stage(root, 1, "descriptive"), mkdir_stage(root, 2, "distribution"),
-              mkdir_stage(root, 3, "embedding"), mkdir_stage(root, 4, "statistics")]
+    stages = [mkdir_stage(root, 2, "descriptive"), mkdir_stage(root, 3, "distribution"),
+              mkdir_stage(root, 4, "embedding_clustering"), mkdir_stage(root, 5, "statistics")]
     meta = {
         "analysis_scope": "train split only", "paired_unit": "POI_ID",
         "scope_rows_per_condition": len(clean), "attack_conditions": int(attacks.attack_condition.nunique()),

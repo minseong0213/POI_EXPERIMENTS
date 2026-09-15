@@ -732,7 +732,7 @@ source 성공 여부를 기록했다. 유효성 검사에서 제약 위반이 �
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='configs/adversarial.yaml')
+    parser.add_argument('--config', default='configs/stages/01_attack_generation.yaml')
     parser.add_argument('--output')
     arguments = parser.parse_args()
     run(arguments.config, arguments.output)

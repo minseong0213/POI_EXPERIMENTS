@@ -124,5 +124,5 @@ Odds ratio는 POI_ID cluster-robust 표준오차를 사용한 별도 logistic GL
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/attack_detection.yaml');run(p.parse_args().config)
+    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/legacy/09_attack_detection_tree.yaml');run(p.parse_args().config)
 if __name__=='__main__':main()

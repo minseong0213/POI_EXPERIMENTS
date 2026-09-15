@@ -1,0 +1,15 @@
+{
+  "status": "failed_review",
+  "overall_verdict": "FAIL",
+  "reviewed_at": "2026-09-16T00:13:22+09:00",
+  "failures": [
+    "Proposed TabPFN defense model and its corruption, reconstruction, reliability-gate, detection, and region heads were not implemented or evaluated.",
+    "URE-RF detector, detector-gated TabPFN 2.5 classification, and full-coverage defense comparisons were not run.",
+    "Ensemble, attack-seed sensitivity, stability, structural ablation, adaptive attack, and locked test stages were not run.",
+    "Attack valid_range does not validate an explicit numeric range, label_preserved is hard-coded true, and victim_model is blank for all 870400 attack rows.",
+    "LIME covers only one Seoul clean example rather than regional and adversarial coverage.",
+    "Required POI-paired bootstrap confidence intervals are absent from clean and adversarial region-classification results.",
+    "The final delivery omits planned defense/test stages, consolidated XLSX, FINAL_REPORT.md, run_manifest.json, and execution logs."
+  ],
+  "success_marker_written": false
+}

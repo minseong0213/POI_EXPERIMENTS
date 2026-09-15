@@ -264,7 +264,7 @@ clean/adversarial 평균·표준편차 성능표는 `tables/tabpfn_test_performa
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='configs/final_test.yaml')
+    parser.add_argument('--config', default='configs/stages/15_locked_test.yaml')
     parser.add_argument('--output')
     args = parser.parse_args()
     run(args.config, args.output)

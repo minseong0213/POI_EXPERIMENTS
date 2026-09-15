@@ -107,8 +107,8 @@ def main():
     parser.add_argument("--data-dir", default="data/poi_34k_seed42")
     parser.add_argument("--attacks-file", default=(
         "artifacts/poi-adversarial-20260915-001/reports/01_attack_generation/tables/attacks.parquet"))
-    parser.add_argument("--tree-config", default="configs/tree_benchmark.yaml")
-    parser.add_argument("--tabpfn-config", default="configs/tabpfn_benchmark.yaml")
+    parser.add_argument("--tree-config", default="configs/stages/06_region_models_tree.yaml")
+    parser.add_argument("--tabpfn-config", default="configs/stages/06_region_models_tabpfn.yaml")
     parser.add_argument("--output", default="artifacts/poi-adversarial-20260915-001/reports/00_protocol")
     args = parser.parse_args()
     run(args.data_dir, args.attacks_file, args.tree_config, args.tabpfn_config, args.output)

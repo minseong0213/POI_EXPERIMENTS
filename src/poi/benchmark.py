@@ -236,7 +236,7 @@ Accuracy는 약 1:16 불균형으로 높게 보일 수 있으므로 모델 선�
 
 
 def main():
-    parser=argparse.ArgumentParser(); parser.add_argument('--config',default='configs/tree_benchmark.yaml')
+    parser=argparse.ArgumentParser(); parser.add_argument('--config',default='configs/stages/06_region_models_tree.yaml')
     parser.add_argument('--output'); args=parser.parse_args(); run(args.config, args.output)
 
 

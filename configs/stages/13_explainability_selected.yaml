@@ -1,0 +1,14 @@
+data_dir: data/poi_34k_seed42
+attacks_file: artifacts/poi-adversarial-20260915-001/reports/01_attack_generation/tables/attacks.parquet
+selection_ranking: artifacts/poi-adversarial-20260915-001/reports/06_region_models/tables/model_ranking_validation.csv
+tree_config: configs/stages/06_region_models_tree.yaml
+output: artifacts/poi-robustness-next/reports/13_explainability
+seed: 42
+device: cuda
+n_estimators: 8
+representative_region: Seoul
+representative_attack: caa_high
+background_rows: 32
+explain_per_class: 2
+lime_background_rows: 5000
+lime_samples: 1000

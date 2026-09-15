@@ -176,5 +176,5 @@ LIME HTML/정적 그림, SHAP summary/dependence/waterfall/force, 전체 지역 
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/explain.yaml');run(p.parse_args().config)
+    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/legacy/13_explainability_tree.yaml');run(p.parse_args().config)
 if __name__=='__main__':main()

@@ -46,14 +46,9 @@ PR curve를 요구하므로 Average Precision(PR-AUC)도 함께 기록한다. �
 FP, FN, TP와 정규화 버전을 모두 둔다. 17개 과제를 같은 비중으로 평균한 macro 지표,
 표준편차, 95% bootstrap CI를 함께 제시한다.
 
-모델 선택용 1차 점수는 17개 과제의 `validation robust F1`이다.
-
-```text
-robust F1 = (clean positive-class F1 + adversarial positive-class F1) / 2
-```
-
-17개 지역 평균이 가장 높은 모델을 선택한다. 차이가 0.5%p 이내면 clean F1이 높은
-모델, 그래도 같으면 추론 시간이 짧은 모델을 고른다. 이 규칙은 테스트 공개 전에
+모델 선택용 1차 점수는 17개 과제의 `validation clean macro F1`이다. 17개 지역 평균이
+가장 높은 모델을 선택한다. 차이가 0.5%p 이내면 추론 시간이 짧은 모델을 고른다.
+공격 성능은 선택 후 별도로 평가한다. 이 규칙은 테스트 공개 전에
 고정한다. Accuracy는 불균형 때문에 선택 기준으로 쓰지 않는다.
 
 ## 반복과 불확실성
@@ -71,9 +66,8 @@ Python/CUDA/GPU, 패키지·모델 checkpoint 버전, seed, 시작·종료 시�
 전 단계에서 동일하게 유지한다. 결과가 실패하거나 가설과 반대여도 보고서에서 제외하지
 않는다.
 
-현재 공격 CSV에는 공격 종류가 없으므로 이 버전에서는 `adversarial` 하나의 조건으로만
-보고한다. PGD/CW/FGSM별 결론은 공격 종류가 명시된 데이터를 다시 만들거나 확보한 뒤에만
-작성한다.
+공격 표는 공격 방법, 예산과 condition을 명시하고 실패 공격도 보존한다. 공격별 결론은
+각 조건의 원자료와 제약 검증이 있는 경우에만 작성한다.
 
 참고: [TabPFN 공식 저장소](https://github.com/PriorLabs/TabPFN),
 [scikit-learn 데이터 누수 가이드](https://scikit-learn.org/stable/common_pitfalls.html).

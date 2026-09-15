@@ -1,0 +1,9 @@
+feature,type,role,reason
+X_COORD,numeric,model_input,
+Y_COORD,numeric,model_input,
+ASORT_LCLASDC,categorical,model_input,
+ASORT_MLSFCDC,categorical,model_input,
+ASORT_SDASDC,categorical,model_input,
+region,label,excluded,classification target
+POI_ID,identifier,excluded,row identity only
+address/name/admin-area fields,leakage,excluded,directly reveals region

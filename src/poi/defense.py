@@ -101,5 +101,5 @@ Adversarial coverage는 {adv.coverage:.4f}, accepted-only F1은 {adv.accepted_f1
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/defense.yaml');run(p.parse_args().config)
+    p=argparse.ArgumentParser();p.add_argument('--config',default='configs/legacy/10_filtered_region_classification.yaml');run(p.parse_args().config)
 if __name__=='__main__':main()

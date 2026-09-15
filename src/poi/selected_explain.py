@@ -328,7 +328,7 @@ def run(config_path, output_override=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/selected_explain.yaml")
+    parser.add_argument("--config", default="configs/stages/13_explainability_selected.yaml")
     parser.add_argument("--output")
     args = parser.parse_args(); run(args.config, args.output)
 

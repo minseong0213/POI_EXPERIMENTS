@@ -317,7 +317,7 @@ def run(config_path, output_override=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/attack_evaluate.yaml")
+    parser.add_argument("--config", default="configs/stages/06_attack_evaluation.yaml")
     parser.add_argument("--output")
     args = parser.parse_args()
     run(args.config, args.output)

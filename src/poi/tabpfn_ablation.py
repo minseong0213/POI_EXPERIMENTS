@@ -208,7 +208,7 @@ def run(config_path, output_override=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='configs/tabpfn_ablation.yaml')
+    parser.add_argument('--config', default='configs/stages/07_backbone_ablation_tabpfn.yaml')
     parser.add_argument('--output')
     args = parser.parse_args()
     run(args.config, args.output)

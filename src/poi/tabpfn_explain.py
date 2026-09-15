@@ -351,7 +351,7 @@ ablation에서 확인할 수 있다. Odds ratio, 95% CI, p-value와 FDR q-value�
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='configs/tabpfn_explain.yaml')
+    parser.add_argument('--config', default='configs/legacy/13_explainability_tabpfn25.yaml')
     parser.add_argument('--output')
     args = parser.parse_args()
     run(args.config, args.output)

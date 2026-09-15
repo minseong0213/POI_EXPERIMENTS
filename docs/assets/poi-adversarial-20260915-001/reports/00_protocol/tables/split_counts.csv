@@ -1,0 +1,4 @@
+split,rows,regions
+test,6800,17
+train,23800,17
+validation,3400,17

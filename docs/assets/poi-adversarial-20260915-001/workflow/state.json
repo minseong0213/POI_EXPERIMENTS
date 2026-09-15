@@ -1,0 +1,21 @@
+{
+  "completed": [
+    "evaluation",
+    "evaluation_sync",
+    "evaluation_download",
+    "explanation_submit",
+    "explanation",
+    "explanation_sync",
+    "explanation_download",
+    "destroy_gpu",
+    "audit",
+    "delivery",
+    "publish"
+  ],
+  "phase": "complete",
+  "updated_at": "2026-09-15T14:54:50.134556+00:00",
+  "progress": [
+    "completed attack evaluation seed=340 condition=pgd_m50"
+  ],
+  "status": "complete"
+}

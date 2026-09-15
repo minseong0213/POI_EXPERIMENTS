@@ -93,7 +93,7 @@ def run(config_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', default='configs/baseline.yaml')
+    parser.add_argument('--config', default='configs/runs/baseline.yaml')
     args = parser.parse_args()
     run(args.config)
 
