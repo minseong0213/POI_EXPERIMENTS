@@ -160,14 +160,15 @@ def run(config_path, output_override=None):
     output = Path(output_override or cfg["output"])
     if (output / "_SUCCESS.json").exists():
         raise FileExistsError(f"Refusing to overwrite completed {output}")
-    ranking = pd.read_csv(cfg["selection_ranking"])
+    ranking_path = os.environ.get("SELECTION_RANKING", cfg["selection_ranking"])
+    ranking = pd.read_csv(ranking_path)
     if set(ranking.model) != EXPECTED_MODELS or ranking.model.duplicated().any():
         raise ValueError("Complete eight-model clean ranking is required")
     model_id = ranking.sort_values("mean", ascending=False).iloc[0].model
     clean, manifest = _load_clean(os.environ.get("DATA_DIR", cfg["data_dir"]))
     train = clean.loc[clean.split.eq("train")].reset_index(drop=True)
     validation = clean.loc[clean.split.eq("validation")].reset_index(drop=True)
-    attacks = pd.read_parquet(cfg["attacks_file"])
+    attacks = pd.read_parquet(os.environ.get("ATTACKS_FILE", cfg["attacks_file"]))
     attack_rows = attacks.loc[attacks.split.eq("validation") &
                               attacks.attack_condition.eq(cfg["representative_attack"])]
     attack = _attack_frame(attack_rows, validation.POI_ID.tolist())

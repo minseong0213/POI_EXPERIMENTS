@@ -208,11 +208,12 @@ def run(config_path, output_override=None):
     output = Path(output_override or cfg["output"])
     if (output / "_SUCCESS.json").exists():
         raise FileExistsError(f"Refusing to overwrite completed {output}")
-    model_id = _select_model(cfg["selection_ranking"])
+    ranking_path = os.environ.get("SELECTION_RANKING", cfg["selection_ranking"])
+    model_id = _select_model(ranking_path)
     clean, manifest = _load_clean(os.environ.get("DATA_DIR", cfg["data_dir"]))
     train = clean.loc[clean.split.eq("train")].reset_index(drop=True)
     validation = clean.loc[clean.split.eq("validation")].reset_index(drop=True)
-    attacks_path = Path(cfg["attacks_file"])
+    attacks_path = Path(os.environ.get("ATTACKS_FILE", cfg["attacks_file"]))
     attacks = pd.read_parquet(attacks_path)
     attacks = attacks.loc[attacks.split.eq("validation")].reset_index(drop=True)
     if attacks.attack_condition.nunique() != 32 or (~attacks.constraints_valid.astype(bool)).any():
@@ -264,7 +265,7 @@ def run(config_path, output_override=None):
     metadata = {"status": "complete", "model": model_id, "scope": "validation only",
                 "test_used": False, "seeds": cfg["seeds"], "regions": 17,
                 "attack_conditions": 32, "metric_rows": len(metrics),
-                "prediction_rows": len(predictions), "selection_ranking_sha256": _hash(cfg["selection_ranking"]),
+                "prediction_rows": len(predictions), "selection_ranking_sha256": _hash(ranking_path),
                 "attacks_sha256": _hash(attacks_path), "python": platform.python_version(),
                 "seconds": time.time() - started}
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
