@@ -1,8 +1,14 @@
 data_dir: data/poi_34k_seed42
-output: artifacts/poi-robustness-next/reports/01_attack_generation
-seed: 42
+output: artifacts/poi-remediation-20261001/reports/01_attack_generation
+surrogate_seed: 42
+generation_seeds: [42, 202, 340]
 device: cuda
 splits: [train, validation]
+boundary_config: configs/geospatial/korea_adm1_consensus.yaml
+distance_validation:
+  metric: local_equirectangular_wgs84_approximation
+  numeric_budget_tolerance_m: 0.05
+  categorical_only_tolerance_m: 0.000001
 attack_batch_size: 1024
 numeric_budgets_m: [10, 50, 100, 500, 1000]
 categorical_budgets_l0: [1, 2, 3]

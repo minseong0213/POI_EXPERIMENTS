@@ -1,0 +1,83 @@
+policy: unanimous_expected_region
+coordinate_crs: OGC:CRS84
+original_poi_label_boundary_vintage: unknown_not_supplied
+provenance_limitations:
+  - Both local polygon files are checksummed third-party GitHub derivatives.
+  - Official original bytes, source independence, transformation chain, and licensing were not independently authenticated.
+  - Agreement across the supplied 2020 and 2023 derivatives does not establish the unknown vintage used to assign the original POI labels.
+expected_regions:
+  - Busan
+  - Chungbuk
+  - Chungnam
+  - Daegu
+  - Daejeon
+  - Gangwon
+  - Gwangju
+  - Gyeongbuk
+  - Gyeonggi
+  - Gyeongnam
+  - Incheon
+  - Jeju
+  - Jeonbuk
+  - Jeonnam
+  - Sejong
+  - Seoul
+  - Ulsan
+sources:
+  - id: sgis_adm1_2020
+    path: resources/geospatial/kr_sido_sgis_2020_crs84.geojson.gz
+    sha256: 30207e76ef9fa79cd4260a05a01c4152522f09663878acec84bf43728213aa75
+    original_url: https://raw.githubusercontent.com/swcho/korea-maps/d5f8ea3208f19a73a01f865847d20cc195ae91ba/json/%EC%A0%84%EA%B5%AD_%EC%8B%9C%EB%8F%84_%EA%B2%BD%EA%B3%84.json
+    original_sha256: bbcbee0741f0293192409102d62f20b7dbbcedab259e4d42249c1237674f05fe
+    original_crs: EPSG:5179
+    conversion: pyproj-3.6.1 EPSG:5179 to OGC:CRS84; coordinates rounded to 8 decimals; gzip mtime 0
+    boundary_vintage: 2020
+    provider: Statistics Korea SGIS Open API
+    license: source repository states KOSTAT data are free to share or remix
+    region_field: title
+    region_map:
+      서울특별시: Seoul
+      부산광역시: Busan
+      대구광역시: Daegu
+      인천광역시: Incheon
+      광주광역시: Gwangju
+      대전광역시: Daejeon
+      울산광역시: Ulsan
+      세종특별자치시: Sejong
+      경기도: Gyeonggi
+      강원도: Gangwon
+      충청북도: Chungbuk
+      충청남도: Chungnam
+      전라북도: Jeonbuk
+      전라남도: Jeonnam
+      경상북도: Gyeongbuk
+      경상남도: Gyeongnam
+      제주특별자치도: Jeju
+  - id: vworld_adm1_2023
+    path: resources/geospatial/kr_sido_vworld_2023.geojson
+    sha256: c90ca4db1c97435da3946b4fce738efe65a9cf32936e9685cda2152cdb2cc62b
+    original_url: https://raw.githubusercontent.com/KnellBalm/kr-admin-geojson/3a859f2a45be8acf8237d9eefd9565f99cc603da/ctprvn.geojson
+    original_crs: EPSG:4326
+    conversion: upstream CRS84 reprojection and 0.0005-degree simplification
+    boundary_vintage: 2023-07-29
+    provider: National Spatial Data Infrastructure / VWorld derivative
+    license: Korea Open Government License Type 1 attribution
+    region_field: CTP_ENG_NM
+    region_map:
+      Seoul: Seoul
+      Busan: Busan
+      Daegu: Daegu
+      Incheon: Incheon
+      Gwangju: Gwangju
+      Daejeon: Daejeon
+      Ulsan: Ulsan
+      Sejong-si: Sejong
+      Gyeonggi-do: Gyeonggi
+      Gangwon-do: Gangwon
+      Chungcheongbuk-do: Chungbuk
+      Chungcheongnam-do: Chungnam
+      Jeollabuk-do: Jeonbuk
+      Jellanam-do: Jeonnam
+      Gyeongsangbuk-do: Gyeongbuk
+      Gyeongsangnam-do: Gyeongnam
+      Jeju-do: Jeju
