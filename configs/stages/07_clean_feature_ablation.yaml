@@ -47,7 +47,7 @@ feature_sets:
   - ASORT_LCLASDC
   - ASORT_MLSFCDC
 model_ids:
-- tabpfn_v3
 - tabpfn_v2_5
+- tabpfn_v3
 tree_config: configs/stages/06_region_models_tree.yaml
 resume_partial: true
