@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import types
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -59,6 +60,8 @@ class ProposedTabPFNDefense(nn.Module):
         nn.init.normal_(self.region_weights, std=embedding_dim**-0.5)
         self.activation_checkpointing = activation_checkpointing
         self.unfrozen_block_count = 0
+        if activation_checkpointing:
+            _install_checkpoint_safe_v25_block_forwards(self.base_model)
         self.freeze_official_model()
 
     @property
@@ -120,12 +123,6 @@ class ProposedTabPFNDefense(nn.Module):
             raise ValueError("context_region_indices is outside the 17-region vocabulary")
 
         structural = self.adapter(encoded_features)
-        # Exact clean reconstruction targets need the train-only scaler.  Attach the
-        # buffers to the per-forward output without duplicating them in checkpoints.
-        structural.numeric_statistics = (  # type: ignore[attr-defined]
-            self.adapter.numeric_mean,
-            self.adapter.numeric_scale,
-        )
         repaired = structural.repaired_features
         region_count = len(self.regions)
         x_prompt = repaired.unsqueeze(1).expand(-1, region_count, -1)
@@ -236,3 +233,41 @@ def _sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _install_checkpoint_safe_v25_block_forwards(base_model: nn.Module) -> None:
+    """Work around v8.1.0's mutable-list activation-checkpointing incompatibility.
+
+    ``TabPFNV2p5.forward`` gives each block a length-one list, and the official block
+    pops the tensor to reduce peak references.  PyTorch's non-reentrant checkpoint
+    retains that same Python list for recomputation, where it is then empty.  Copying
+    the container at the block boundary preserves the official block computation,
+    checkpoint keys, and parameters while making recomputation valid.  This explicit
+    instance patch can be removed when the upstream architecture stops mutating its
+    checkpoint input.
+    """
+    if not type(base_model).__module__.endswith("tabpfn_v2_5"):
+        return
+    blocks = getattr(base_model, "blocks", None)
+    if blocks is None:
+        raise TypeError("Official TabPFN v2.5 model does not expose transformer blocks")
+    for block in blocks:
+        if getattr(block, "_poi_checkpoint_safe_forward", False):
+            continue
+        official_forward = block.forward
+
+        def safe_forward(
+            self: nn.Module,
+            tensor_container: list[torch.Tensor],
+            *args: Any,
+            _official_forward: Any = official_forward,
+            **kwargs: Any,
+        ) -> Any:
+            if len(tensor_container) != 1:
+                raise RuntimeError(
+                    "TabPFN v2.5 checkpoint wrapper expected a length-one tensor container"
+                )
+            return _official_forward([tensor_container[0]], *args, **kwargs)
+
+        block.forward = types.MethodType(safe_forward, block)
+        block._poi_checkpoint_safe_forward = True
