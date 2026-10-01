@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -216,7 +218,8 @@ def test_unseen_unchanged_tuple_is_quarantined_under_train_only_rule():
 
 def test_real_validation_has_six_unseen_source_tuples_and_all_are_quarantined():
     clean, _ = load_clean_splits(
-        'data/poi_34k_seed42', splits=('train', 'validation'), verify_hashes=False)
+        os.environ.get('DATA_DIR', 'data/poi_34k_seed42'),
+        splits=('train', 'validation'), verify_hashes=False)
     for feature in FEATURES:
         clean[feature] = pd.to_numeric(clean[feature], errors='raise')
     train = clean.loc[clean.split.eq('train')].reset_index(drop=True)
