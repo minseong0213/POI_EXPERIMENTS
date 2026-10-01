@@ -1,0 +1,53 @@
+data_dir: data/poi_34k_seed42
+output: artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation
+seeds:
+- 42
+- 202
+- 340
+device: cuda
+n_estimators: 8
+threshold: 0.5
+feature_sets:
+  full:
+  - X_COORD
+  - Y_COORD
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+  no_coordinates:
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+  coordinates_only:
+  - X_COORD
+  - Y_COORD
+  drop_x_coord:
+  - Y_COORD
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+  drop_y_coord:
+  - X_COORD
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+  drop_lclass:
+  - X_COORD
+  - Y_COORD
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+  drop_mclass:
+  - X_COORD
+  - Y_COORD
+  - ASORT_LCLASDC
+  - ASORT_SDASDC
+  drop_sclass:
+  - X_COORD
+  - Y_COORD
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+model_ids:
+- tabpfn_v3
+- tabpfn_v2_5
+tree_config: configs/stages/06_region_models_tree.yaml
+resume_partial: true

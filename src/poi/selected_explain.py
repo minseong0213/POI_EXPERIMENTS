@@ -113,7 +113,7 @@ class ModelFactory:
             model.fit(_matrix(self.train, features), truth)
             self.tabpfn_runtime = {"tabpfn": tabpfn.__version__, "torch": torch.__version__,
                                    "cuda": torch.version.cuda,
-                                   "gpu": torch.cuda.get_device_name(0)}
+                                   "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}
             return lambda values: model.predict_proba(np.asarray(values, dtype=np.float32))[:, 1]
         from .ablation import transformer
         from .benchmark import estimator
