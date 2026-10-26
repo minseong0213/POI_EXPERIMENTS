@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import platform
 import subprocess
+import shutil
 import time
 
 import matplotlib
@@ -27,7 +28,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
-from .data import CATEGORICAL, NUMERIC, load_dataset, sha256
+from .data import CATEGORICAL, NUMERIC, load_clean_splits, sha256
 
 METRICS = ['precision', 'recall', 'f1', 'accuracy', 'roc_auc', 'average_precision']
 
@@ -147,12 +148,19 @@ def run(config_path, output_override=None):
         raise FileExistsError(f'Refusing to overwrite {output}')
     tables, figures = output / 'tables', output / 'figures'
     tables.mkdir(parents=True); figures.mkdir()
-    frames, manifest = load_dataset(config['data_dir'], verify_hashes=True)
-    train = frames['clean'].loc[frames['clean'].split.eq('train')].reset_index(drop=True)
+    provenance = output / 'provenance'
+    provenance.mkdir()
+    sources = [Path(__file__), Path(__file__).with_name('data.py'), config_path]
+    source_hashes = {str(path):sha256(path) for path in sources}
+    for path in sources:
+        shutil.copy2(path, provenance/path.name)
+    (provenance/'source_hashes.json').write_text(json.dumps(source_hashes,indent=2)+'\n')
+    clean_frame, manifest = load_clean_splits(config['data_dir'], splits=('train', 'validation'), verify_hashes=True)
+    train = clean_frame.loc[clean_frame.split.eq('train')].reset_index(drop=True)
     if config.get('conditions', ['clean']) != ['clean']:
         raise ValueError('Clean model selection accepts only conditions: [clean]')
     validation = {
-        'clean': frames['clean'].loc[frames['clean'].split.eq('validation')].reset_index(drop=True)
+        'clean': clean_frame.loc[clean_frame.split.eq('validation')].reset_index(drop=True)
     }
     transform = preprocessor()
     x_train = transform.fit_transform(train)
@@ -198,7 +206,7 @@ def run(config_path, output_override=None):
         dirty = bool(subprocess.check_output(['git','status','--porcelain'], text=True).strip())
     except subprocess.CalledProcessError:
         commit, dirty = None, True
-    metadata = {'status':'complete', 'scope':'validation only', 'task':'17 binary one-vs-rest',
+    metadata = {'status':'generated_pending_independent_review', 'source_sha256':source_hashes, 'scope':'validation only', 'task':'17 binary one-vs-rest',
                 'models':list(config['models']), 'seeds':config['seeds'], 'threshold':config['threshold'],
                 'fits':len(config['models'])*len(config['seeds'])*len(regions),
                 'train_rows':len(train), 'validation_rows':len(validation['clean']),
@@ -231,8 +239,8 @@ clean 조건만 평가했다. 5개 모델 × 17개 지역 × 3 seeds = {metadata
 Accuracy는 약 1:16 불균형으로 높게 보일 수 있으므로 모델 선택에는 clean Macro F1을 사용한다.
 '''
     (output/'report.md').write_text(report)
-    (output.parent/'_TREE_SUCCESS.json').write_text(json.dumps(metadata,indent=2)+'\n')
-    print(ranking.to_string(index=False)); print(json.dumps({'status':'complete','seconds':metadata['seconds']},indent=2))
+    (output/'_GENERATED.json').write_text(json.dumps(metadata,indent=2)+'\n')
+    print(ranking.to_string(index=False)); print(json.dumps({'status':'generated_pending_independent_review','seconds':metadata['seconds']},indent=2))
 
 
 def main():

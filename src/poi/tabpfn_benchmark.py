@@ -17,7 +17,7 @@ import tabpfn
 import torch
 import yaml
 
-from .data import CATEGORICAL, NUMERIC, load_dataset, sha256
+from .data import CATEGORICAL, NUMERIC, load_clean_splits, sha256
 
 VERSION_MAP={'v2.5':ModelVersion.V2_5,'v2.6':ModelVersion.V2_6,'v3':ModelVersion.V3}
 
@@ -63,8 +63,8 @@ def run(config_path,output_override=None):
     metric_shards.mkdir(parents=True,exist_ok=True);prediction_shards.mkdir(exist_ok=True);timing_shards.mkdir(exist_ok=True)
     if cfg.get('conditions',['clean']) != ['clean']:
         raise ValueError('Clean model selection accepts only conditions: [clean]')
-    frames,manifest=load_dataset(data_dir);train=frames['clean'].loc[frames['clean'].split.eq('train')].reset_index(drop=True)
-    clean=frames['clean'].loc[frames['clean'].split.eq('validation')].reset_index(drop=True)
+    clean_frame,manifest=load_clean_splits(data_dir,splits=('train','validation'));train=clean_frame.loc[clean_frame.split.eq('train')].reset_index(drop=True)
+    clean=clean_frame.loc[clean_frame.split.eq('validation')].reset_index(drop=True)
     x_train=numeric_matrix(train);x_test=numeric_matrix(clean)
     regions=sorted(manifest.region.unique());all_metrics=[];all_predictions=[];timings=[]
     for version in cfg['versions']:

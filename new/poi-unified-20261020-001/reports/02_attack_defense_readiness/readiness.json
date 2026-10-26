@@ -1,0 +1,301 @@
+{
+  "attack_source": {
+    "attack_conditions": 32,
+    "bytes": 82026298,
+    "constraints": {
+      "boundary_config_sha256": "26ee6367c79299310b77815d6699b13092ca233ee25077287067aea9c8c6dd03",
+      "numeric_train_bounds_path": "artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/numeric_constraints_train.csv",
+      "numeric_train_bounds_sha256": "96aeedbef05b16e5b180b142d6dd27268b0766c683f38de17b07d7f2eb0f8816",
+      "same_region_boundary_consensus_primary": true,
+      "train_observed_category_tuple_count": 94,
+      "train_observed_category_tuples_path": "artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/valid_category_tuples_train.csv",
+      "train_observed_category_tuples_sha256": "0a178b9e71ffa940d48d5041bdb49c5564eb8416f6ce78bb92dfb506784da656"
+    },
+    "generation_identity_sha256": "2bdbfec4ca5f3fed2dfd495e2f5ce61020012f8f8d677d583838855c5917f05c",
+    "generation_seeds": [
+      42,
+      202,
+      340
+    ],
+    "invalid_or_quarantined_rows": 45070,
+    "limitations": [
+      {
+        "detail": "The 94 train-observed tuples and unit categorical costs are an operational constraint, not an authenticated official hierarchy or transition-cost codebook.",
+        "item": "category_semantics",
+        "verdict": "PARTIAL"
+      },
+      {
+        "detail": "The two checksummed polygon sources are third-party derivatives and the vintage that produced the original POI labels is unknown. Consensus does not prove original-label authority.",
+        "item": "boundary_authority_and_vintage",
+        "verdict": "PARTIAL"
+      },
+      {
+        "detail": "Earlier exploratory access included all 34,000 coordinates. This run forbids test-feature reads but cannot restore historically pristine isolation.",
+        "item": "historical_test_isolation",
+        "verdict": "PARTIAL"
+      },
+      {
+        "detail": "The artifact is direct white-box evaluation of one MLP surrogate source/victim. It is not evidence of transfer, adaptive attacks against the detectors, or exact reference-algorithm equivalence.",
+        "item": "attack_transfer_and_adaptation",
+        "verdict": "PARTIAL"
+      }
+    ],
+    "mask_policy": "reuse_verbatim_do_not_relabel_or_recompute",
+    "path": "artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet",
+    "primary_mask_column": "primary_evaluation_eligible",
+    "provenance": {
+      "generation_request_sha256": "30bba95dc5b79e259fb9290743175e012567b2648a74df8d209c6ff6f16c41d9",
+      "metadata_sha256": "9dc89fb1c1967559fde616b02cd1240af617fedc46bfa2942be652b6b5d7d758",
+      "shard_manifest_sha256": "913858f67d13d893c807ee9bdf0aeec7b06abaa7832b4980f48ee8ac7ca3a316"
+    },
+    "quarantine_path": "artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/quarantined_attacks.parquet",
+    "quarantine_sha256": "eaabb612dcd57748903708c02a08e8d2369ddf47ab7e791f2c7bfff487c1e334",
+    "rows": 2611200,
+    "schema_version": "poi-attack-generation-v2",
+    "sha256": "d9c8819753be61db3817ef38959e58fdc2829905a6c0246a18b0bd7301c2a2a5",
+    "source_model": "poi_mlp_surrogate_v1",
+    "split_rows": {
+      "train": 2284800,
+      "validation": 326400
+    },
+    "surrogate_checkpoint_sha256": "04100308af012a3567b7590d43c59ea5cbac4d4c67ee9c0fa5df923b47a503af",
+    "transfer_evaluated": false,
+    "unique_poi_ids": {
+      "train": 23800,
+      "validation": 3400
+    },
+    "victim_evaluation_scope": "direct_white_box_source_model",
+    "victim_model": "poi_mlp_surrogate_v1"
+  },
+  "critical_blockers": [
+    "No real 51-state TabPFN-v3 replay contract or clean-calibrated regional thresholds yet.",
+    "No empirical one-state one-grid TabPFN-v3 attack inference timing yet.",
+    "No measured real TabPFN-v3 fit-state archive size yet.",
+    "Attack-effect and filtered-defense stage execution are NOT_RUN.",
+    "Fresh independent review of final source and actual artifacts is still required."
+  ],
+  "detector_checkpoints": {
+    "cpu_restore": {
+      "proposed_restored": 3,
+      "runtime": ".venv-tabpfn Python; CUDA hidden/unavailable",
+      "status": "PASS",
+      "test_feature_rows_read": 0,
+      "ure_rf_restored": 3
+    },
+    "proposed": {
+      "classification_threshold_in_detector_checkpoint": 0.5,
+      "files": [
+        {
+          "bytes": 2814177,
+          "path": "artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed42.pt",
+          "seed": 42,
+          "sha256": "f7415bfd1e03d8ac79d5b6dd9910a99a263591be665b5725f5289663ab03646a"
+        },
+        {
+          "bytes": 2814315,
+          "path": "artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed202.pt",
+          "seed": 202,
+          "sha256": "4c8559cb0d4b93431a00811279fe96a9111018f9af2d0398b9fb1ed58afe1788"
+        },
+        {
+          "bytes": 2814315,
+          "path": "artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed340.pt",
+          "seed": 340,
+          "sha256": "dc4f8a44edb13e88d43f8c8bfc83c2db417fe854cb3f5ef6484bb2596670c434"
+        }
+      ],
+      "format": "poi-proposed-tabpfn25-v3",
+      "official_backbone_checkpoint_sha256": "5d7170e2d3af01f9c501bb09ec3bd12e9944f8604de18002c647873c6ec04a12",
+      "region_heads_per_seed": 17
+    },
+    "ure_rf": {
+      "embedding_features_for_rf": 40,
+      "files": [
+        {
+          "forest_path": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed42.joblib",
+          "forest_sha256": "174286da8999bf1604b0c5fb540c4b74a8d50162d194d6d5efeee553dda049c9",
+          "seed": 42,
+          "torch_path": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed42.pt",
+          "torch_sha256": "4fddf9e50215306c5abdf9c91986df7ba43574e20b7e07d26b03ba844e263d53"
+        },
+        {
+          "forest_path": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed202.joblib",
+          "forest_sha256": "9bf8588295ab483ddcc1c2a5cc785751a74c65845e2301271d277dfedb05fadb",
+          "seed": 202,
+          "torch_path": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed202.pt",
+          "torch_sha256": "e50b2a9f18cacc61fd18a32cec4cf2005853c72200116aaefcd247027f378dc6"
+        },
+        {
+          "forest_path": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed340.joblib",
+          "forest_sha256": "19744d3d469a6168d525b14b471526f2f495fdf9271d3de2d857c356ab7e31ce",
+          "seed": 340,
+          "torch_path": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed340.pt",
+          "torch_sha256": "46ffbc4831612671bb5d82a9beb348a4df3ed16d7e10e005b2d0c18f8144cf37"
+        }
+      ],
+      "format": "poi-ure-rf-v2",
+      "random_forest_trees": 500
+    }
+  },
+  "detector_reuse_eligibility": {
+    "evaluation_interpretation": "EXPLORATORY_PREVIOUSLY_OBSERVED",
+    "executed_source_manifest": "artifacts/poi-remediation-20261001/reports/08_proposed_model_preflight/revision6_execution/preserved_execution/source_manifest.json",
+    "executed_source_manifest_sha256": "4f1fd0b3330c529f9a3c497e31ec9abd65ed664688935de3dcb39fdf4e130dc2",
+    "limitation": "The 1,707 evaluation IDs did not affect either fitted detector, but URE results on this cohort were already emitted and inspected. The unified comparison is not a pristine confirmatory evaluation.",
+    "proposed": {
+      "checkpoint_evidence": "all three checkpoints record model_selection_split=validation_calibration_ids and evaluation_ids_used_for_model_selection=0",
+      "evaluation_ids_used_for_training_or_selection": 0,
+      "fit": "23,544 clean-train fit IDs after a 256-row clean-train context, plus eligible train-split attack variants",
+      "model_selection": "only the 1,693 validation calibration IDs and their attack variants; calibration_clean_macro_f1 then validation loss"
+    },
+    "proposed_executed_train_source_sha256": "b0e935fbe9a208527da31091c2e3b2bb4df6f06a560ee266e5872a665693ae48",
+    "refit_required_for_evaluation_leakage": false,
+    "status": "PASS_REUSABLE_FIXED_CHECKPOINTS_WITH_EXPLORATORY_EVALUATION",
+    "ure_executed_train_source_sha256": "e11bd0ad97f7f0bec6f0b01828290e7bd82ab90f99c9b18e03c2f365e8ca9e19",
+    "ure_rf": {
+      "checkpoint_evidence": "all three checkpoints record evaluation_ids_used_for_training_or_selection=0",
+      "evaluation_ids_used_for_training_or_selection": 0,
+      "fit": "23,800 clean-train rows for the embedding and clean-train plus train-split attack variants for the RF",
+      "model_selection": "none_fixed_30_epochs",
+      "post_fit_evaluation_history": "The immutable checkpoint was written before post-fit reporting, but that report scored all 3,400 validation IDs and their attack variants. The saved table has 989,400 rows and was independently reviewed."
+    }
+  },
+  "fixed_downstream": {
+    "actual_fitted_state_artifacts": "NOT_RUN: no real tabpfn_v3 .tabpfn_fit archives currently exist.",
+    "clean_contract_requirements": [
+      "51 unique seed-by-region state archives with SHA-256 and byte size",
+      "one exact fitted state shared by no-defense, proposed-accepted, and URE-RF-accepted views",
+      "clean-train ordered feature/truth hashes and official checkpoint hash",
+      "restored probe prediction hash per state",
+      "clean-calibration F1-selected threshold per seed and OvR region",
+      "clean calibration and evaluation ID/order hashes with 1693/1707 rows",
+      "clean calibration score evidence and test_rows_read=0"
+    ],
+    "feature_set": [
+      "X_COORD",
+      "Y_COORD",
+      "ASORT_LCLASDC",
+      "ASORT_MLSFCDC",
+      "ASORT_SDASDC"
+    ],
+    "immutable_state_api_source_support": "PASS: ModelFactory uses TabPFNClassifier.save_fit_state/load_from_fit_state and exact restored-probe hash checks.",
+    "legacy_v3_reuse": "BLOCKED: the legacy v3 clean run contains predictions and metrics but no immutable fitted-state archives.",
+    "model_seeds": [
+      42,
+      202,
+      340
+    ],
+    "official_checkpoint_sha256": "d0d865d54dfbc524f5703104be90620182dca7e5fb2c16de72e9959ea18f3988",
+    "regions": 17,
+    "required_fitted_states": 51,
+    "required_model": "tabpfn_v3"
+  },
+  "format": "poi-unified-attack-defense-readiness-v1",
+  "generated_at": "2026-10-20T17:20:00+09:00",
+  "planned_cardinality": {
+    "accepted_attack_region_metric_rows_two_populations": 78336,
+    "accepted_clean_region_metric_rows": 408,
+    "attack_detector_scores": 983232,
+    "attack_evaluation_grids": 96,
+    "clean_calibration_and_evaluation_detector_scores": 20400,
+    "detector_attack_pass_rows_two_populations": 4608,
+    "detector_threshold_rows": 24,
+    "downstream_state_loads": 51,
+    "no_defense_attack_metric_rows_two_populations": 9792,
+    "raw_attack_row_region_scores": 8357472,
+    "raw_clean_evaluation_row_region_scores": 87057,
+    "raw_region_grid_predictions": 4896
+  },
+  "planned_jobs": [
+    {
+      "name": "clean_v3_state_export",
+      "owner": "shared_clean_stage",
+      "status": "NOT_RUN_BLOCKING"
+    },
+    {
+      "name": "v3_one_state_one_grid_timing_probe",
+      "owner": "attack_effect_stage",
+      "status": "NOT_RUN_BLOCKING_FOR_RUNTIME_ESTIMATE"
+    },
+    {
+      "name": "no_defense_attack_effect",
+      "owner": "attack_effect_stage",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "clean_calibrated_detector_scoring",
+      "owner": "defense_stage",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "accepted_subset_regional_comparison",
+      "owner": "defense_stage",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "full_coverage_repair_comparison",
+      "owner": "separate_future_scope",
+      "reason": "The proposed native repair has no URE-RF counterpart. A common repair can be studied separately only with its own frozen comparable contract.",
+      "status": "PENDING_SEPARATE_NOT_RUN"
+    }
+  ],
+  "runtime_and_storage": {
+    "active_instance_id": 56861298,
+    "initial_budget_compute_and_disk_usd": 1.16,
+    "initial_budget_hours": 6,
+    "initial_budget_note": "The six-hour allocation is an initial measured-run cap, not evidence that the full workload fits in six hours.",
+    "known_input_bytes": {
+      "attack_table": 82026298,
+      "proposed_checkpoints_total": 8442807,
+      "tabpfn_v3_official_checkpoint": 212804803,
+      "ure_rf_checkpoint_parts_total": 349420642
+    },
+    "provisioning_budget_started_utc": "2026-10-20T08:17:00Z",
+    "recorded_offer_path": "new/poi-unified-20261020-001/runtime/offer-retry2.json",
+    "recorded_offer_total_hour_usd": 0.19333333333333333,
+    "runtime_estimate_status": "NOT_MEASURED",
+    "runtime_gate": "After the clean fits finish and their actual-result review passes, restore one actual clean-v3 state; measure state load, first and steady complete 1707-row attack-grid prediction, first-16/full-context equivalence, and configured whole-grid chunk equivalence. Extrapolate prediction work only; state fits are not repeated.",
+    "state_storage_estimate_status": "NOT_MEASURED",
+    "storage_gate": "Measure the first real .tabpfn_fit archive and project 51 archives plus outputs before remote deployment. Refuse a 60 GB disk plan without margin.",
+    "weak_historical_upper_context": "A legacy 51-grid fit-plus-clean-predict run took about 18 minutes on RTX 3090. Multiplying it by 96 would confound repeated fit/load with prediction and is not an approved launch estimate."
+  },
+  "scope": [
+    "attack_effect_preparation",
+    "filtered_defense_comparison_preparation"
+  ],
+  "selected_input_copy": {
+    "bytes": 495406037,
+    "files": 26,
+    "path": "new/poi-unified-20261020-001/inputs/attack_defense/input_copy_manifest.json",
+    "physical_copy": true,
+    "sha256": "a5d886f5418f299882bbc93f8a1266d9444c5d2bdef76700d2433632479f52d6",
+    "status": "COPIED_HASH_VERIFIED_PENDING_SOURCE_REVIEW",
+    "symlink_entries": 0,
+    "test_feature_rows_copied": 0
+  },
+  "status": "PARTIAL_BLOCKED_NOT_RUN",
+  "test_feature_rows_read": 0,
+  "validation_partition": {
+    "calibration_attack_intent_rows": 162528,
+    "calibration_attack_primary_valid_rows": 159561,
+    "calibration_poi_ids": 1693,
+    "evaluation_attack_boundary_status": {
+      "ambiguous": 4,
+      "consensus_match": 160876,
+      "label_mismatch": 648,
+      "source_disagreement": 351,
+      "unclassified": 1993
+    },
+    "evaluation_attack_changed_rows": 163686,
+    "evaluation_attack_excluded_rows": 3301,
+    "evaluation_attack_intent_rows": 163872,
+    "evaluation_attack_primary_valid_rows": 160571,
+    "evaluation_attack_unchanged_rows": 186,
+    "evaluation_poi_ids": 1707,
+    "identical_ure_copy": "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json",
+    "overlap": 0,
+    "path": "artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json",
+    "sha256": "45ad393346514482f91c90ceb20c00808f2dd5c4db7aacce741f2a78f8456c9d",
+    "threshold_policy": "Detector thresholds use clean calibration rows only. Attack calibration rows are not threshold inputs."
+  }
+}

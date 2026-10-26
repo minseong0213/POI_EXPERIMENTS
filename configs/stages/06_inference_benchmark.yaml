@@ -1,0 +1,39 @@
+format: poi-eight-model-inference-benchmark-v1
+data_dir: data/poi_34k_seed42  # overridden only by an explicit DATA_DIR environment variable
+output: artifacts/poi-remediation-20261001/reports/06_inference_reproducibility
+existing_clean_predictions: artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/all_predictions.parquet
+existing_clean_macro_summary: artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/macro_seed_summary.csv
+tree_config: configs/stages/06_region_models_tree.yaml
+models: [decision_tree, random_forest, xgboost, lightgbm, catboost, tabpfn_v2_5, tabpfn_v2_6, tabpfn_v3]
+seeds: [42, 202, 340]
+expected_regions: 17
+expected_train_rows: 23800
+expected_validation_rows: 3400
+classification_threshold: 0.5
+device: cuda:0
+tree_cpu_threads: 2
+tabpfn_n_estimators: 8
+tabpfn_checkpoints:
+  tabpfn_v2_5:
+    path: /home/mlops/.cache/tabpfn/tabpfn-v2.5-classifier-v2.5_default.ckpt
+    sha256: 5d7170e2d3af01f9c501bb09ec3bd12e9944f8604de18002c647873c6ec04a12
+  tabpfn_v2_6:
+    path: /home/mlops/.cache/tabpfn/tabpfn-v2.6-classifier-v2.6_default.ckpt
+    sha256: 0578fa56f97e11024e31735aaec2c4e7332584b7730242fbaf6c0bbd0299206a
+  tabpfn_v3:
+    path: /home/mlops/.cache/tabpfn/tabpfn-v3-classifier-v3_default.ckpt
+    sha256: d0d865d54dfbc524f5703104be90620182dca7e5fb2c16de72e9959ea18f3988
+timing:
+  warmup_repeats: 1
+  measured_repeats: 5
+  rows_per_repeat: 3400
+selection_rule:
+  performance_metric: clean_validation_macro_f1
+  absolute_f1_tolerance: 0.005
+  candidate_boundary: inclusive
+  timing_statistic: equal_mean_of_seed_region_fit_median_validation_batch_seconds
+prediction_comparison:
+  absolute_tolerance: 1.0e-12
+  relative_tolerance: 0.0
+frozen_metric_tolerance: 1.0e-12
+existing_common_downstream: tabpfn_v2_5

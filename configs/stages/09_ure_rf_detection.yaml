@@ -1,0 +1,45 @@
+data_dir: data/poi_34k_seed42
+attack_table: artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+attack_generation_config: configs/stages/01_attack_generation.yaml
+surrogate_artifact_dir: artifacts/poi-remediation-20261001/reports/01_attack_generation/work/surrogate
+output: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf
+device: cuda
+seeds: [42, 202, 340]
+clean_retention: 0.95
+calibration_fraction: 0.5
+calibration_seed: 340
+model_selection: none_fixed_epochs
+preflight_output: artifacts/poi-remediation-20261001/reports/08_proposed_model_preflight/data_integrity_full_revision6
+ure:
+  numeric_bins: 10
+  embedding_dim: 8
+  hidden_dim: 128
+  # Paper Algorithm 3: merge the closest 10% of pairwise embedding distances using
+  # complete-linkage Euclidean clustering, fitted on clean-train embeddings only.
+  merge_percentile: 0.10
+  transition_costs_npz: null
+  build_poi_additive_costs: true
+  numeric_cost_unit_m: 100.0
+  categorical_change_cost: 1.0
+  training:
+    epochs: 30
+    batch_size: 512
+    classifier_learning_rate: 0.001
+    embedding_learning_rate: 0.01
+    weight_decay: 0.0005
+    attack_budget: 2.0
+    attack_steps: 5
+    attack_step_size: 0.5
+    embedding_adversarial_steps_per_clean_step: 1
+random_forest:
+  n_estimators: 500
+  min_samples_leaf: 2
+  attack_training_pois: 23800
+comparison_contract:
+  detector_name: URE-RF attack detector
+  detector_is_modified_tabpfn: false
+  selective_downstream_model: tabpfn_v2_5
+  downstream_training_split: clean_train
+  expected_downstream_checkpoint_sha256: 5d7170e2d3af01f9c501bb09ec3bd12e9944f8604de18002c647873c6ec04a12
+  detector_labels: {normal: 0, attack: 1}
+  accept_rule: attack_probability_lte_threshold

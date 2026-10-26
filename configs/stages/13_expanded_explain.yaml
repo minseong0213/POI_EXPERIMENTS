@@ -1,0 +1,15 @@
+data_dir: data/poi_34k_seed42
+attacks_file: artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+output: artifacts/poi-remediation-20261001/reports/13_explainability/tabpfn_v2_5
+model_id: tabpfn_v2_5
+tree_config: configs/stages/06_region_models_tree.yaml
+seed: 42
+attack_seed: 42
+attack_conditions: all
+device: cuda
+n_estimators: 8
+background_rows: 32
+explain_per_class: 10
+lime_background_rows: 5000
+lime_samples: 1000
+lime_per_class: 1

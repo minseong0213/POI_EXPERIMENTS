@@ -1,0 +1,15 @@
+{
+  "status": "PRESERVED_DOWNLOAD_SHA256_VERIFIED",
+  "completed_utc": "2026-10-23T02:58:48.164611+00:00",
+  "r2_prefix": "r2:ml-experiments/results/poi/poi-unified-20261020-001/provenance/attack_terminal_repair_revision14/bundle",
+  "bundle_root": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle",
+  "readback_root": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/attack_defense_revision14/r2_readback",
+  "manifest_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json",
+  "manifest_sha256": "d739c3a4b4af2448e6fb01b3c1ee420495f9e2c7ba6930ebd650a5d9a9e86651",
+  "payload_file_count": 183,
+  "downloaded_file_count": 184,
+  "all_downloaded_sizes_sha256_match": true,
+  "repair_receipt_sha256": "02da0b108b7d70fde26cd6e084d12bd26427c0023870f2681c2f8476a2797c69",
+  "scientific_numerical_review": "NOT_RUN",
+  "no_gpu_rented_by_this_preservation": true
+}

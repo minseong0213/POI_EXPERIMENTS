@@ -1,0 +1,7 @@
+data_dir: data/poi_34k_seed42
+attacks_file: artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+output: artifacts/poi-remediation-20261001/reports/05_expanded_analysis
+seed: 42
+attack_seeds: [42, 202, 340]
+visualization_attack_seed: 42
+cca_permutations: 499

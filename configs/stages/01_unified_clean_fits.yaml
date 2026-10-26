@@ -1,0 +1,46 @@
+run_root: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001
+protocol_file: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/configs/protocol.json
+data_dir: data/poi_34k_seed42
+tree_config: configs/stages/06_region_models_tree.yaml
+
+fit_source_freeze_manifest: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/clean_fit_source_freeze_revision2.json
+fit_source_review_verdict: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_fit_source_revision2/verdict.json
+fit_source_files:
+  - src/poi/unified_clean_fit.py
+  - src/poi/selected_explain.py
+  - src/poi/data.py
+  - src/poi/ablation.py
+  - src/poi/benchmark.py
+  - configs/stages/06_region_models_tree.yaml
+
+outputs:
+  coordinate_trees: work/01_clean_feature_fits/coordinate_trees
+  coordinate_tabpfn26: work/01_clean_feature_fits/coordinate_tabpfn26
+  full_tabpfn3_states: work/01_clean_feature_fits/full_tabpfn3_states
+
+partition_files:
+  - artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json
+  - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json
+expected_partition_sha256: 45ad393346514482f91c90ceb20c00808f2dd5c4db7aacce741f2a78f8456c9d
+expected_train_rows: 23800
+expected_validation_rows: 3400
+expected_calibration_rows: 1693
+expected_evaluation_rows: 1707
+expected_regions: 17
+seeds: [42, 202, 340]
+fixed_threshold: 0.5
+repeat_prediction_absolute_tolerance: 1.0e-12
+
+tabpfn_v2_6:
+  device: cuda
+  n_estimators: 8
+  official_checkpoint: /home/mlops/.cache/tabpfn/tabpfn-v2.6-classifier-v2.6_default.ckpt
+  expected_checkpoint_sha256: 0578fa56f97e11024e31735aaec2c4e7332584b7730242fbaf6c0bbd0299206a
+  require_checkpoint_attestation: true
+
+tabpfn_v3:
+  device: cuda
+  n_estimators: 8
+  official_checkpoint: /home/mlops/.cache/tabpfn/tabpfn-v3-classifier-v3_default.ckpt
+  expected_checkpoint_sha256: d0d865d54dfbc524f5703104be90620182dca7e5fb2c16de72e9959ea18f3988
+  require_checkpoint_attestation: true

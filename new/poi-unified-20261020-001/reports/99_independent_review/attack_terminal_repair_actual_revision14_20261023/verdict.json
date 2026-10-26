@@ -1,0 +1,489 @@
+{
+  "status": "PASS",
+  "numeric_result_status": "PASS",
+  "overall_study_status": "PARTIAL",
+  "role": "independent_experiment_audit",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "medium",
+  "fork_context": "none",
+  "launch_mode": "collaboration.spawn_agent",
+  "agent_task": "/root/attack_actual_r14_audit_20261023",
+  "review_scope": "attack_terminal_repair_actual_revision14_20261023",
+  "review_date_utc": "2026-10-23T03:09:23.418657+00:00",
+  "cli_header_path": null,
+  "cli_header_explanation": "No CLI header exists for this collaboration.spawn_agent launch.",
+  "test_feature_rows_read": 0,
+  "source_sha256": "6f1f7956272b2d12f05162c438fad3ba0262b836c82e82f2e53a7dcded124536",
+  "config_sha256": "ae48bddd20f1241a66003b082ee31dbdf448eef1f55b378863a78a3eb66fb495",
+  "source_review_sha256": "a981186be1547fa71d8c1f0098fb6aa211ec1802e84191a169a0d6a5ed756fd7",
+  "source_freeze_sha256": "80077178a769b73c7c2c2642d6a77def08dd892b9fbf7f405349a32ff5724bd8",
+  "timing_probe_sha256": "50f52e238b258ea1416d998e8471e5b2df26ad9ec94079e2db27b46bcbf6e790",
+  "attack_effect_marker_sha256": "c3b955b76a39efe1dec97f7113c9d33cbd68316e9ba98a6d93f9f81a98993f45",
+  "inventory_sha256": "d739c3a4b4af2448e6fb01b3c1ee420495f9e2c7ba6930ebd650a5d9a9e86651",
+  "repair_receipt_sha256": "02da0b108b7d70fde26cd6e084d12bd26427c0023870f2681c2f8476a2797c69",
+  "r2_preservation_receipt_sha256": "c056ec27edc5f72be1d3cc8f9a290d84d74e5584ddd0172cc265e254eded19fa",
+  "repair_source_sha256": "1eb3b8d8123c6b7b1b6cd5bc6376d0e2ca43b0541cdb4bccff49a2725a431a2c",
+  "repair_config_sha256": "e17a4a7295f1b773e0ab28286b8f59723eb88e839168228a638fdfdaa2dfe6b5",
+  "repair_source_review_sha256": "f28f75f620642140335b3d8f4c0d79c7d1124026869b6ca5ab0ddca3bbbefa61",
+  "selected_input_copy_manifest_sha256": "d8d63560c81f9e0d00bd582583d31e8d83e1c9ff595d69cb0e2f3f920b81770b",
+  "transitive_runtime_manifest_sha256": "ad96b1e00e98351e93c4eed7ddb9b1d186dac0dea9e3733b6c99a5b873077943",
+  "clean_contract_sha256": "14003cfa801c7bc183f0d7e29ff4f547c92c3efc819834080fa06dfa1bb05f2f",
+  "clean_result_review_sha256": "f0da6a427ae3f04cf304497002934afa0e7bfa1ef4b6982954fee9de7db758ed",
+  "requirements": [
+    {
+      "requirement": "review_execution_identity",
+      "expected": "Separate independent fresh-context reviewer, gpt-6-astra medium",
+      "observed": "collaboration.spawn_agent; role independent_experiment_audit; requested_model gpt-6-astra; reasoning_effort medium; fork_turns none",
+      "verdict": "PASS",
+      "evidence": [
+        ".codex/agents/independent-experiment-audit.toml",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/independent_check.py"
+      ],
+      "limitation": "Actual collaboration launch has no CLI header; none fabricated or required."
+    },
+    {
+      "requirement": "original_requirements_and_scope",
+      "expected": "Original full plan and unified protocol; bounded preserved-score review",
+      "observed": "Original plan and protocol read; overall study remains PARTIAL",
+      "verdict": "PASS",
+      "evidence": [
+        "docs/experiments/2026-09-15_full_robustness_experiment_plan.md",
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "new/poi-unified-20261020-001/runtime/actual_review_preparation/attack_actual_review_prompt_revision14_20261023.txt"
+      ],
+      "limitation": "This PASS row records scope compliance, not whole-study completion. Protocol status is PREPARING_NOT_FROZEN; immutable R11 config supplies the executed numeric contract."
+    },
+    {
+      "requirement": "immutable_source_config_and_review_authentication",
+      "expected": "Supplied frozen SHA256 identities, source-review role/scope/PASS, clean-replay dependency",
+      "observed": "Supplied identities verified; 51 clean fit records; three linked reviews role/scope/PASS checked; all transitive runtime source bytes authenticated",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/attack_defense/revision11/source_freeze.json",
+        "new/poi-unified-20261020-001/source/unified_attack_defense_revision11.py",
+        "new/poi-unified-20261020-001/configs/attack_defense_revision11.yaml",
+        "new/poi-unified-20261020-001/reports/99_independent_review/attack_defense_source_revision11/verdict.json",
+        "new/poi-unified-20261020-001/work/01_clean_feature_fits/full_tabpfn3_states/replay_contract.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "Linked clean and source reviews are dependencies, not replacements for this raw-score recomputation."
+    },
+    {
+      "requirement": "preservation_and_readback",
+      "expected": "183 payloads plus manifest in local bundle and downloaded copy; exact paths/sizes/SHA256",
+      "observed": "183 canonical payloads authenticated; 184 regular files in each preserved/readback tree; 0 differences",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/r2_preservation_receipt.json",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/r2_readback",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "Offline inspection of preserved download and receipt; no new network/object-store request."
+    },
+    {
+      "requirement": "original_archive_and_exact_repair",
+      "expected": "Immutable166 files; only4 permitted changed/added paths;260+14 corrections",
+      "observed": "166 original files hash-verified; exactly3 changed files and1 added marker;260 attack cells(27AUC+233AP),14 paired-clean cells(1AUC+13AP); each old value>1 and within1e-12, new value=1",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision11/terminal_failure/preserved_report03_manifest.sha256",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision11/terminal_failure/report03",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/repair_receipt.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "Predictions, fitted states, thresholds, bootstrap and full-clean table were not rewritten."
+    },
+    {
+      "requirement": "durable_transaction_and_receipt",
+      "expected": "Committed journal,3 verified rollback copies, exact prepared/published receipt",
+      "observed": "COMMITTED;3 backups match original archive;4 final mutations match after hashes; prepared receipt equals published receipt",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/repair_receipt.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/attack_defense_revision14/transactions/txn-7467fb4e043b66ba8597cb3d",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": ""
+    },
+    {
+      "requirement": "offline_ast_derivation_and_live_gate",
+      "expected": "Only separate historical runtime gate, exact round-trip state CSV parser; live gate unchanged",
+      "observed": "Independently reconstructed AST hashes match receipt:3 current-runtime statements removed;1 call renamed;1 float_precision=round_trip added; original live timing gate retained",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/source/repair_attack_terminal_revision14.py",
+        "new/poi-unified-20261020-001/source/unified_attack_defense_revision11.py",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/independent_provenance_check.py",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "No experiment module imported/executed, no model deserialization or inference."
+    },
+    {
+      "requirement": "terminal_hash_chain",
+      "expected": "Marker, metadata,9 table/bootstrap/state dependencies and fingerprint consistent",
+      "observed": "Every marker dependency hash matched; exact marker schema/status; independent fingerprint equals metadata/progress; source/config snapshots exact",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/reports/03_attack_effect/_GENERATED_PENDING_REVIEW.json",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/work/progress.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": ""
+    },
+    {
+      "requirement": "split_and_partition_identity",
+      "expected": "23800 train;1693 calibration;1707 evaluation;6800 locked test;17 regions",
+      "observed": "Manifest34000 unique IDs; exact split counts and disjoint calibration/evaluation union3400;17 regions",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/inputs/attack_defense/clean/sample_manifest.csv",
+        "new/poi-unified-20261020-001/inputs/attack_defense/partition/calibration_ids.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "Only identifier/region/split manifest read; clean feature CSV never parsed in this review."
+    },
+    {
+      "requirement": "stage_feature_leakage_and_test_isolation",
+      "expected": "Five adversarial input columns;zero stage locked-test features materialized/parsed/inferred",
+      "observed": "Exact five *_adv columns in metadata and source projection;7 nested/top-level test-feature disclosures all exact integer0; reviewer test_feature_rows_read=0",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/source/unified_attack_defense_revision11.py",
+        "src/poi/data.py",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "Unchanged transported CSV contains6800 raw test records with populated feature bytes per original contract; this review neither parses their values nor inspects field presence. Historical isolation remains separately PARTIAL."
+    },
+    {
+      "requirement": "attack_grids_keys_and_provenance",
+      "expected": "3 generation seeds42/202/340 x32 conditions;96 grids x1707",
+      "observed": "163872 evaluation attacks;160571 historical-primary rows;96 complete grids; POI/generation/condition unique; regions match frozen identity; MLP provenance digests authenticated",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/inputs/attack_defense/attack/attacks.parquet",
+        "new/poi-unified-20261020-001/configs/attack_defense_revision11.yaml",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "Primary mask reused unchanged. Historical constraint authority is not newly certified."
+    },
+    {
+      "requirement": "all_state_and_raw_score_identities",
+      "expected": "51 states;51 attack+51 clean shards;8357472 attack+87057 clean scores",
+      "observed": "All51 immutable state bytes/digests, restored probe identities, metadata, full-grid chunk contract, model seed/region/threshold, POI keys, attack method/mask/change flags, label truth, finite[0,1] score values checked",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/reports/03_attack_effect/tables/state_prediction_manifest.csv",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/work/states",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/predictions/attack",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/predictions/clean_evaluation",
+        "new/poi-unified-20261020-001/work/01_clean_feature_fits/full_tabpfn3_states/replay_contract.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "Preserved-score authentication; fresh inference NOT_RUN."
+    },
+    {
+      "requirement": "all_point_metrics_and_condition_matched_clean",
+      "expected": "9792 attack+9792 exact-same-POI clean rows,51 full-clean;6 metrics each",
+      "observed": "19635 metric rows/117810 metric cells independently recomputed; no undefined metrics; max absolute discrepancy3.3306690738754696e-16; n/positives/population/exclusions/threshold checked",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/reports/03_attack_effect/tables/no_defense_attack_region_metrics.csv",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/tables/paired_clean_reference_region_metrics.csv",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/tables/clean_full_evaluation_region_metrics.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/independent_point_metrics.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/independent_check.py"
+      ],
+      "limitation": "Tolerance2e-12; ROC-AUC tie-aware trapezoidal ROC and average precision from independently computed weighted rank counts. Full-clean is separate, never substituted for primary-valid comparator."
+    },
+    {
+      "requirement": "shared_bootstrap_weights",
+      "expected": "Exact1707 POI order;uint16(2000,1707);seed20261020;each sum1707",
+      "observed": "3,414,000 multiplicities checked against deterministic multinomial generation; exact order, shape, dtype and all2,000 row sums; shared matrix in source and direct replay",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/reports/03_attack_effect/work/bootstrap/bootstrap_poi_order.csv",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/work/bootstrap/bootstrap_poi_weights.npy",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/work/bootstrap/metadata.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/independent_check.py"
+      ],
+      "limitation": ""
+    },
+    {
+      "requirement": "all_stored_bootstrap_replicates_and_intervals",
+      "expected": "320 interval keys;640000 replicates;2000 finite per key;153 paired strata",
+      "observed": "All640000 rows finite; every difference recomputed; exact key/schema/replicate-index domains; all320 interval endpoints and raw-score point estimates checked; max endpoint error1.1102230246251565e-16",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/reports/03_attack_effect/tables/no_defense_paired_bootstrap_replicates.parquet",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/tables/no_defense_paired_bootstrap_intervals.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "Tolerance2e-12. No dropping, imputation or full2000-draw re-inference/rebuild."
+    },
+    {
+      "requirement": "predeclared_bounded_score_to_replicate_replay",
+      "expected": "Draws0,999,1999;first/middle/last conditions;both populations;5 metrics;153 strata",
+      "observed": "Conditions caa_high,fgsm_m10,pgd_m500;90 macro replicate rows rebuilt from raw scores/shared weights across all153 strata each; maximum difference0",
+      "verdict": "PASS",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/predeclared_replay_subset.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/independent_replay_metrics.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/check_evidence.json"
+      ],
+      "limitation": "All point metrics and stored replicate/CI arithmetic checked fully; only declared subset of bootstrap replicates directly rebuilt from raw scores. Does not claim exhaustive640000 score-to-replicate rebuild."
+    },
+    {
+      "requirement": "timing_v2_configured_mode",
+      "expected": "Null/full-grid1707, strict configured/full-grid/repeat evidence",
+      "observed": "R11 only1707 mode; full-grid/configured/repeat/prefix gates true; exact frozen1707x5 float32 matrix hash reconstructed; full-grid delta0 and decision flips0; first=6.343193756008986s, steady=6.403800773026887s",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/v3_attack_timing_probe_revision11/timing_probe.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "Measured historical evidence only; no forecast. Conditional detector-passing subsets filter fixed full1707 scores after inference and are not re-inferred."
+    },
+    {
+      "requirement": "historical_R10_diagnostics_distinct",
+      "expected": "Authenticate prior-version source and disclose unsupported modes/deltas/flips",
+      "observed": "R10 only:chunks16/128/512 max deltas0.0006268024444580078/0.00042682886123657227/0.00038117170333862305;all exceed1e-6;fixed-threshold all/primary decision flips0/0 for each;three modes unsupported",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/v3_attack_timing_probe_revision10/timing_probe.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "R10 diagnostics not R11 measurements; zero flips do not establish batch-equivalent probabilities. Raw diagnostic prediction vectors not supplied, so deltas are authenticated stored observations, not new recomputations."
+    },
+    {
+      "requirement": "historical_GPU_vs_CPU_and_exits",
+      "expected": "Original GPU/timing/runtime internally consistent;CPU repair separate;original failure retained",
+      "observed": "Historical RTX3090 UUID6a2a2acd-ac51-1250-4483-9b7d8ba7ef76 matches timing/metadata/attestation;duration34380.65115427971s;original exit1 strict metric-range failure;offline repair exit0;current review CUDA unavailable/device_count0",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision11/terminal_failure/attack_effect_execution_status.json",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision11/terminal_failure/attack_effect.log",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/execution/execution_status.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "No current-vs-historical UUID equality requirement. CPU repair success is not rerun GPU inference."
+    },
+    {
+      "requirement": "historical_boundary_category_and_original_attack_constraints",
+      "expected": "Authoritative original-vintage boundaries/categories, budgets and label-preserving constraints",
+      "observed": "Unchanged historical masks and IDs authenticated; current authority/vintage not established by this numeric repair",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json",
+        "new/poi-unified-20261020-001/inputs/attack_defense/attack/attacks.parquet"
+      ],
+      "limitation": "No new boundary/category validation or attack regeneration. No direct-v3 or adaptive-defense robustness claim; these are MLP-surrogate attacks transferred to fixedv3."
+    },
+    {
+      "requirement": "historical_test_isolation_and_confirmatory_validity",
+      "expected": "Pristine test isolation and evaluation provenance across original study",
+      "observed": "Protocol explicitly historical_test_isolation=PARTIAL_not_repaired_by_this_run; evaluation previously observed/exploratory",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "new/poi-unified-20261020-001/configs/attack_defense_revision11.yaml"
+      ],
+      "limitation": "Current-stage zero test reads cannot repair historical provenance."
+    },
+    {
+      "requirement": "eight_model_clean_comparison_and_ablation",
+      "expected": "8 models x17 regions x3 seeds and requested feature conditions/ablation",
+      "observed": "Only immutable fixedv3 51-state dependency inspected within this scope; full8-model comparison not audited here",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "new/poi-unified-20261020-001/work/01_clean_feature_fits/full_tabpfn3_states/replay_contract.json"
+      ],
+      "limitation": "No broad clean-stage completion approval."
+    },
+    {
+      "requirement": "defense_and_full_coverage_repair",
+      "expected": "Proposed,URE-RF,rawRF detection;retention/coverage-matched regional metrics;shared repair",
+      "observed": "No defense result evidence audited in supplied inventory",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json",
+        "new/poi-unified-20261020-001/configs/attack_defense_revision11.yaml"
+      ],
+      "limitation": "Defense, shared full-coverage repair, coverage-matched curves and defense reports pending separate reviewed scope."
+    },
+    {
+      "requirement": "SHAP_regional_clean_and_adversarial",
+      "expected": "17 regions xclean/adversarial=34 beeswarm/dot panels per required model, source values;no bar substitute",
+      "observed": "0 supplied SHAP panels/source bundles in preserved attack inventory",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json"
+      ],
+      "limitation": "Not an assertion that other workspace figures do not exist; they were not attached or reviewed."
+    },
+    {
+      "requirement": "LIME_regional_coverage",
+      "expected": "Regional representative cases with requested clean/adversarial coverage",
+      "observed": "0 supplied LIME case artifacts in preserved attack inventory",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json"
+      ],
+      "limitation": "No explainability completion claim."
+    },
+    {
+      "requirement": "CCA_correlation_paired_statistics_FDR",
+      "expected": "CCA,Pearson/Spearman,paired tests,Bowker/chi-square,effect sizes andBH-FDR",
+      "observed": "Not present in supplied bounded numeric inventory",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json"
+      ],
+      "limitation": "Paired bootstrap checks do not stand in for these analysis requirements."
+    },
+    {
+      "requirement": "figures_and_reports",
+      "expected": "PNG300dpi,noSVG;associated plot source tables and stage reports",
+      "observed": "0 attached figure files; figure/report rendering not reviewed",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json"
+      ],
+      "limitation": "No unattached figure bundle is approved."
+    },
+    {
+      "requirement": "ensemble_sensitivity_stability_ranking_ablation",
+      "expected": "Required ensemble,mixture,retention,seed/ranking,leave-one-out and module ablations",
+      "observed": "Not reviewed in this preserved attack-result scope",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "docs/experiments/2026-09-15_full_robustness_experiment_plan.md",
+        "new/poi-unified-20261020-001/provenance/attack_defense_revision14/preserved_bundle/manifest.json"
+      ],
+      "limitation": ""
+    },
+    {
+      "requirement": "new_cross_boundary_adaptive_and_locked_test",
+      "expected": "Separate frozen attacks and one-time6800 locked-test evaluation",
+      "observed": "No generation or locked-test inference performed",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/provenance_evidence.json"
+      ],
+      "limitation": "No live GPU probe/inference or final-study completion approved."
+    }
+  ],
+  "deterministic_replay_subset": {
+    "draw_indices": [
+      0,
+      999,
+      1999
+    ],
+    "condition_rule": "lexicographically first, middle(index16), last of32",
+    "populations": [
+      "all_intent",
+      "primary_valid"
+    ],
+    "metrics": [
+      "f1",
+      "precision",
+      "recall",
+      "accuracy",
+      "roc_auc"
+    ],
+    "strata_per_key": 153,
+    "conditions": [
+      "caa_high",
+      "fgsm_m10",
+      "pgd_m500"
+    ]
+  },
+  "observed_cardinalities": {
+    "attack_rows": 8357472,
+    "clean_rows": 87057,
+    "states": 51,
+    "point_rows": 19635,
+    "undefined_metrics": 0,
+    "max_point_error": 3.3306690738754696e-16,
+    "replicate_rows": 640000,
+    "interval_rows": 320,
+    "finite_rows": 640000,
+    "max_ci_error": 1.1102230246251565e-16,
+    "max_replay_error": 0,
+    "direct_replay_macro_rows": 90,
+    "all_weights_exact": true
+  },
+  "numerical_tolerance_absolute": 2e-12,
+  "blocking_defects": [],
+  "historical_limitations": [
+    {
+      "requirement": "historical_boundary_category_and_original_attack_constraints",
+      "expected": "Authoritative original-vintage boundaries/categories, budgets and label-preserving constraints",
+      "observed": "Unchanged historical masks and IDs authenticated; current authority/vintage not established by this numeric repair",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json",
+        "new/poi-unified-20261020-001/inputs/attack_defense/attack/attacks.parquet"
+      ],
+      "limitation": "No new boundary/category validation or attack regeneration. No direct-v3 or adaptive-defense robustness claim; these are MLP-surrogate attacks transferred to fixedv3."
+    },
+    {
+      "requirement": "historical_test_isolation_and_confirmatory_validity",
+      "expected": "Pristine test isolation and evaluation provenance across original study",
+      "observed": "Protocol explicitly historical_test_isolation=PARTIAL_not_repaired_by_this_run; evaluation previously observed/exploratory",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "new/poi-unified-20261020-001/configs/protocol.json",
+        "new/poi-unified-20261020-001/configs/attack_defense_revision11.yaml"
+      ],
+      "limitation": "Current-stage zero test reads cannot repair historical provenance."
+    }
+  ],
+  "not_run_scopes": [
+    "eight_model_clean_comparison_and_ablation",
+    "defense_and_full_coverage_repair",
+    "SHAP_regional_clean_and_adversarial",
+    "LIME_regional_coverage",
+    "CCA_correlation_paired_statistics_FDR",
+    "figures_and_reports",
+    "ensemble_sensitivity_stability_ranking_ablation",
+    "new_cross_boundary_adaptive_and_locked_test"
+  ],
+  "whole_study_approved": false,
+  "defense_approved": false,
+  "scientific_completion": false,
+  "bounded_approval": "Preserved Revision11 fixed-v3 attack-effect scores and Revision14 terminal numeric repair only; historical limitations remain visible.",
+  "sampling_limit": "All point metrics and all stored640000 replicate/320CI arithmetic checked; only predeclared90 macro replicates rebuilt from raw scores across153 strata; no full2000draw rerun.",
+  "current_review_runtime": {
+    "python": "3.11.13",
+    "torch": "2.14.0+cu130",
+    "cuda_available": false,
+    "cuda_device_count": 0,
+    "mode": "CPU OFFLINE_PRESERVED_EVIDENCE",
+    "network_actions": 0,
+    "model_deserializations": 0,
+    "inference_calls": 0,
+    "test_feature_rows_read": 0
+  },
+  "evidence_files": {
+    "independent_check.py": "74e31c41007f6316c3f6ab3b420985e4285998300735ebbf4117338c675e77a2",
+    "check.log": "7fcbd5a8892256cd209bf3d8963593ac48cad47b5794c667e555c4bec320a570",
+    "predeclared_replay_subset.json": "324d3aa8c33e4c0bef8a5c84f20ee9ec579a75cef0e1992843b743453c8d8531",
+    "check_evidence.json": "8d4b35ad97946b4eb99bdf00d86345e39fc85650ec9cbf6582344893ccf3cedf",
+    "independent_point_metrics.csv": "7c8253d92c6b9000093fa59216f3bffb8444147d20d13223c4aa5d58f0d5b44e",
+    "independent_replay_metrics.csv": "27c005f8689276559235dc05d37ceeafb938a00c1014922638a8d87c30236ac6",
+    "independent_provenance_check.py": "d6be62aa2bd11704c116140075a485e994cb94f890649ac00a58bdb3fb50b82e",
+    "provenance_check.log": "2bcd625ef035c2140d1abf2df5c31130b86708627546cc516c77884e17f1ceb5",
+    "provenance_evidence.json": "da68a26b157d5f94756739c6dda9ba3d15c5f714a20c9a9d7e32af2d1e799af8",
+    "write_verdict.py": "72a68f5d04b277467ae6642df384334ea883c4ea4dd8585814ae3f7b912d7031"
+  }
+}

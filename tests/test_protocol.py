@@ -68,13 +68,18 @@ def test_config_layout_has_no_ambiguous_completion_names():
         assert yaml.safe_load(path.read_text()) is not None
 
 
-def test_results_hub_exposes_review_verdict_and_every_stage():
+def test_results_hub_exposes_current_verdict_and_public_result_scopes():
     hub = Path('docs/results.md').read_text()
-    assert '**FAIL**' in hub
-    for stage in range(16):
-        assert f'| {stage:02d} |' in hub
+    assert '전체 연구 판정은 **PARTIAL**' in hub
     for verdict in ['PASS', 'PARTIAL', 'FAIL', 'NOT_RUN']:
         assert verdict in hub
+    for scope in [
+        '01_clean_feature_comparison',
+        '02_attack_defense_readiness',
+        '03_attack_effect_summary_revision1',
+        '99_independent_review',
+    ]:
+        assert scope in hub
 
 
 def test_local_markdown_links_resolve():

@@ -1,0 +1,22 @@
+task_id,task,current_status,evidence,limitation
+gpu_lifecycle,GPU 대여·보존 검증·자동 삭제,LIVE_R8_QUARANTINED_R9_REPAIR,runtime/deployment_revision8_live_quarantine_20261023/receipt.json,실제 jq 오류 발견; 대여 전 정확한 cron만 중지; GPU 대여0
+attack_numeric,기존 공격 예측 지표 복구·불확실성 검수,BOUNDED_NUMERIC_PASS,attack terminal repair revision14,historical boundary/test provenance PARTIAL
+attack_reporting,공격 결과 표·그림 전달,BOUNDED_NUMERIC_AND_PRESENTATION_PASS,reports/99_independent_review/classification_curves_layout_revision2_20261023/verdict.json,전체 연구·SHAP/LIME·방어 단계 승인이 아님
+eda_reuse,지역·공격별 Table One·분포·임베딩,BOUNDED_REUSE_PASS,reports/99_independent_review/reporting_reuse_actual_revision1_20261023/verdict.json,기존 통계 한계 유지
+statistics,CCA·correlation·paired tests·categorical tests,PARTIAL,corrected legacy CCA/association supplements,sparse chi-square unresolved; conditional fixed-direction CCA intervals
+clean_feature_comparison,3피처 조건 ×8모델 clean 비교,BOUNDED_NUMERIC_AND_PLOT_PASS,reports/01_clean_feature_comparison,historical provenance PARTIAL; v3 F1 point winner not significant superiority
+selected_feature_ablation,선택 v3 단일 피처 제거 ablation,SOURCE_PASS_ACTUAL_NOT_RUN,reports/99_independent_review/selected_feature_ablation_source_revision2_20261023/verdict.json,실제255 fit 미수행
+defense_primary,두 탐지기 뒤 동일 v3 실제 재추론,SOURCE_PASS_ACTUAL_NOT_RUN,selective_defense_revision3; clean retention0.95,historical score filtering과 실제 filter-first를 구분
+raw_rf_detector,Raw RF 공격 탐지 보조 비교,SOURCE_R2_FAIL_R3_REPAIR_IN_PROGRESS,reports/99_independent_review/raw_rf_auxiliary_detector_source_revision2_20261023/verdict.json,보조 탐지기 실학습·결과 미수행
+native_structural_outputs,제안 구조 native 지역분류·복원 출력,NOT_RUN_CURRENT_GRID,selective runner native output preservation,고정 v3에 복원 피처를 넣은 결과와 다름
+full_coverage,복원 포함 전체 표본 및 외부 robust 기준,NOT_RUN_CURRENT_UNIFIED_SCOPE,original plan stage11,shared repair comparison contract remains to be frozen
+ensemble,모델 고정 후 calibration·앙상블,NOT_RUN,fixed individual model outputs,prior clean scores alone do not supply all attack-model scores
+explanations,제안 모델·고정 지역분류기 SHAP/LIME,NOT_RUN_CURRENT_REQUIRED_MODEL_SCOPE,original stage13 adapted common winner v3,legacy 5tree figures are auxiliary; no substitution for selected/proposed models
+important_feature_removal,중요 피처 제거 후 성능·설명,NOT_RUN,frozen explanation/ranking criteria,evaluation results cannot be used to retune thresholds
+odds_ratio,탐지 logistic surrogate OR·CI·p·q,ASSOCIATION_REUSE_PARTIAL_SURROGATE_NOT_RUN,reports/99_independent_review/auxiliary_detector_or_reuse_20261023/verdict.json,기존 공격 여부 연관성 OR은 탐지 결정 대리모델 OR이 아님
+retention_sensitivity,retention 90/97.5/99% 추가 비교,QUEUED_NOT_RUN,primary0.95 then three budget-gated stages,no silent grid shortening for cost
+stability_ranking,혼합비·seed·공격예산·ranking,NOT_RUN_CURRENT_SCOPE,primary/sensitivity outputs,conditional bootstrap not training-algorithm uncertainty
+generalization_attacks,leave-one-attack/source 및 adaptive 공격,NOT_RUN_CURRENT_SCOPE,original stage14,current MLP transfer attacks do not cover these
+structural_ablation,encoder/gate/reconstruction/corruption/consistency/fine-tuning 제거,NOT_RUN_CURRENT_SCOPE,stage14 six configured variants x3seeds,native-output preservation alone does not train ablations
+locked_test,모든 선택 고정 후 잠금 test,LOCKED_NOT_RUN,all preceding selection gates,현재 작업에서는 열지 않음
+delivery,실험 순서 최종 보고서·XLSX·보존,PARTIAL,docs/results.md,워크북 수치 PASS·실제 화면 배치 미검증; 전체 연구 미완료

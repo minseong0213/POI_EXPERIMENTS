@@ -194,6 +194,16 @@ def plot_test(metrics, predictions, figures):
 
 
 def run(config_path, output_override=None):
+    raise RuntimeError(
+        'Legacy final_test uses the historical unvalidated attack file and does not '
+        'evaluate the two frozen defense pipelines. Locked test remains disabled '
+        'until the remediation protocol, detector checkpoints, thresholds, attack '
+        'configuration and independent development review are frozen together.'
+    )
+
+
+def _legacy_run_disabled(config_path, output_override=None):
+    """Historical implementation retained for provenance; not an experiment entry point."""
     started = time.time()
     cfg = yaml.safe_load(Path(config_path).read_text())
     output = Path(output_override or cfg['output'])

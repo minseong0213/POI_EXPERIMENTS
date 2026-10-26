@@ -1,0 +1,26 @@
+format: poi-stage05-cca-association-supplement-v1
+data_dir: data/poi_34k_seed42
+attacks_file: artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+output: artifacts/poi-remediation-20261001/reports/05_cca_association_supplement
+
+analysis_split: train
+attack_seeds: [42, 202, 340]
+expected_train_pois: 23800
+expected_conditions: 32
+expected_regions: 17
+
+# Matches the established Stage-05 heldout_cca design.
+cca_split_seed: 42
+cca_components: 3
+pca_components_max: 8
+cca_permutations: 499
+
+# POI-paired inference with all encoder/PCA/CCA directions held fixed.
+bootstrap_repeats: 2000
+bootstrap_seed: 20261001
+bootstrap_chunk_size: 16
+association_bootstrap_chunk_size: 64
+
+# Operational ceiling for a local supplementary run.
+thread_limit: 1
+memory_limit_mb: 1500

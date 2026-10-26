@@ -1,0 +1,71 @@
+run_root: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001
+protocol_file: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/configs/protocol.json
+data_dir: data/poi_34k_seed42
+
+source_freeze_manifest: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/clean_aggregate_source_freeze_revision3.json
+source_review_verdict: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_aggregate_source_revision3/verdict.json
+fit_source_freeze_manifest: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/clean_fit_source_freeze_revision2.json
+fit_source_review_verdict: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_fit_source_revision2/verdict.json
+source_files:
+  - src/poi/unified_clean_features.py
+  - src/poi/no_coordinate_experiment.py
+  - src/poi/selected_explain.py
+  - src/poi/attack_evaluate.py
+  - src/poi/uncertainty.py
+  - src/poi/data.py
+  - src/poi/clean_ablation_subset_report.py
+  - tests/test_unified_clean_features.py
+
+feature_sets:
+  full: [X_COORD, Y_COORD, ASORT_LCLASDC, ASORT_MLSFCDC, ASORT_SDASDC]
+  coordinates_only: [X_COORD, Y_COORD]
+  no_coordinates: [ASORT_LCLASDC, ASORT_MLSFCDC, ASORT_SDASDC]
+models: [decision_tree, random_forest, xgboost, lightgbm, catboost, tabpfn_v2_5, tabpfn_v2_6, tabpfn_v3]
+seeds: [42, 202, 340]
+
+outputs:
+  tree_relative: work/01_clean_feature_fits/coordinate_trees
+  tabpfn26_relative: work/01_clean_feature_fits/coordinate_tabpfn26
+  full_v3_relative: work/01_clean_feature_fits/full_tabpfn3_states
+  aggregate_relative: reports/01_clean_feature_comparison
+
+legacy_inputs:
+  full:
+    predictions: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/all_predictions.parquet
+    evidence:
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/_GENERATED.json
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/metadata.json
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/independent_review.md
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/independent_review_verdict.json
+  no_coordinates:
+    predictions: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/all_validation_predictions.parquet
+    evidence:
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/_GENERATED_PENDING_REVIEW.json
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/metadata.json
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/independent_review.md
+      - /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/independent_review_verdict.json
+  ablation_root: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_coordinate_tabpfn
+  ablation_source_archive: /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_coordinate_tabpfn/source/ablation_source.tar
+  expected_prediction_sha256:
+    full: 51b5fd9830f0acfa92913619ec25eca23059f432ccaf96d7b73ec08ddabfc73e
+    no_coordinates: cd47696f2d9f72f4ff7aed5f929831a68cc1e083bd36d183ac2bf420f4a0ed5e
+
+partition_files:
+  - artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json
+  - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json
+expected_train_rows: 23800
+expected_validation_rows: 3400
+expected_calibration_rows: 1693
+expected_evaluation_rows: 1707
+expected_regions: 17
+fixed_threshold: 0.5
+bootstrap_repeats: 2000
+bootstrap_seed: 20261020
+confidence_level: 0.95
+
+fit_input_contract:
+  tree_config: /home/mlops/orca/projects/poi/configs/stages/06_region_models_tree.yaml
+  tabpfn_v2_6_checkpoint: /home/mlops/.cache/tabpfn/tabpfn-v2.6-classifier-v2.6_default.ckpt
+  tabpfn_v2_6_checkpoint_sha256: 0578fa56f97e11024e31735aaec2c4e7332584b7730242fbaf6c0bbd0299206a
+  tabpfn_v3_checkpoint: /home/mlops/.cache/tabpfn/tabpfn-v3-classifier-v3_default.ckpt
+  tabpfn_v3_checkpoint_sha256: d0d865d54dfbc524f5703104be90620182dca7e5fb2c16de72e9959ea18f3988

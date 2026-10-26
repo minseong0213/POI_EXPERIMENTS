@@ -1,0 +1,48 @@
+stage10_output: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification
+prediction_manifest: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/prediction_manifest.csv
+calibration_detector_scores: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/calibration_detector_scores.parquet
+output: artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking
+
+model_seeds: [42, 202, 340]
+generation_seeds: [42, 202, 340]
+seed_design: full_model_by_generation_seed_cross
+canonical_clean_generation_seed: -1
+expected_regions: 17
+expected_attack_conditions: 32
+attack_mixture_ratios: [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]
+clean_retention_targets: [0.90, 0.95, 0.975, 0.99]
+primary_clean_retention: 0.95
+classification_threshold: 0.5
+mixture_seed: 20261001
+
+detector_members:
+  - proposed_tabpfn25_attack_head
+  - URE-RF attack detector
+detector_ensembles:
+  primary: predefined_mean_score
+  calibration_logistic:
+    enabled: true
+    generation_seed_fit_scope: all_generation_seeds_balanced_factorial_per_model_seed
+    class_weight: balanced
+    max_iter: 1000
+    random_state: 20261001
+
+ranking:
+  reference_pipeline: predefined_mean_score__shared_nearest_train_repair
+  score: robust_f1
+  bootstrap_repeats: 2000
+  bootstrap_seed: 20261001
+  confidence_level: 0.95
+  selection_conditional: true
+
+ablation_matrix: configs/stages/14_proposed_structure_ablation.yaml
+ablation_required_files:
+  - metadata.json
+  - training_history.csv
+strict_attack_provenance: true
+available_attack_source_models: [surrogate_mlp]
+required_extended_experiments:
+  - leave_one_attack_out_generalization
+  - leave_one_source_model_out_transfer
+  - adaptive_detector_evasion_attack
+  - regional_probability_ensemble_calibration

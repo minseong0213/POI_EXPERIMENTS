@@ -1,0 +1,171 @@
+{
+  "bootstrap": {
+    "conditional_on_fits_and_thresholds": true,
+    "fit_aggregation": "equal_mean_over_3_model_seeds_and_17_regions",
+    "paired": true,
+    "repeats": 2000,
+    "seed": 20261020,
+    "uncertainty_scope": "POI_resampling_conditional_on_51_fixed_fits_and_calibration_selected_thresholds; not_a_full_training_algorithm_distribution",
+    "unit": "POI_ID"
+  },
+  "calibration_rows": 1693,
+  "common_downstream_selection": "user-specified highest full-feature calibrated evaluation F1 point estimate; tabpfn_v3 retained; paired conditional CI reported; no statistical-superiority claim",
+  "common_partition": {
+    "calibration_poi_order_sha256": "70321d007236baccd72e4f1906bb56cf2fc129c3fa8eced85fbd772f993df0e0",
+    "calibration_rows": 1693,
+    "evaluation_poi_order_sha256": "dbcf82b4692942dc9b0f101f3f35300335c3c831872dc5458cd43679f0827a8e",
+    "evaluation_rows": 1707,
+    "paths": [
+      "artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json",
+      "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json"
+    ],
+    "payload_sha256": "d5e1ce8a9dd9ae1a3bf48b349aeda3ccf8101067ea47052162a025e5836a9dba",
+    "selection_rule": "thresholds use calibration IDs only; evaluation IDs are score-only",
+    "sha256": {
+      "artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json": "45ad393346514482f91c90ceb20c00808f2dd5c4db7aacce741f2a78f8456c9d",
+      "artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json": "45ad393346514482f91c90ceb20c00808f2dd5c4db7aacce741f2a78f8456c9d"
+    }
+  },
+  "downstream_full_v3_replay_contract": {
+    "fit_count": 51,
+    "path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/work/01_clean_feature_fits/full_tabpfn3_states/replay_contract.json",
+    "role": "attack_and_defense_primary; diagnostic delta only in clean feature table",
+    "sha256": "14003cfa801c7bc183f0d7e29ff4f547c92c3efc819834080fa06dfa1bb05f2f"
+  },
+  "evaluation_interpretation": "exploratory_validation_previously_observed; not_pristine_confirmatory",
+  "evaluation_rows": 1707,
+  "execution_completed_utc": "2026-10-20T09:31:23.424125+00:00",
+  "feature_sets": {
+    "coordinates_only": [
+      "X_COORD",
+      "Y_COORD"
+    ],
+    "full": [
+      "X_COORD",
+      "Y_COORD",
+      "ASORT_LCLASDC",
+      "ASORT_MLSFCDC",
+      "ASORT_SDASDC"
+    ],
+    "no_coordinates": [
+      "ASORT_LCLASDC",
+      "ASORT_MLSFCDC",
+      "ASORT_SDASDC"
+    ]
+  },
+  "figure_count": 31,
+  "figure_format": "PNG_300_DPI_no_SVG",
+  "fixed_0p5_auxiliary": "reported on the same 1707 evaluation IDs; no threshold-effect comparison mixes full validation",
+  "format": "poi-unified-clean-three-feature-comparison-v1",
+  "historical_test_isolation": "PARTIAL: prior whole-dataset coordinate access is known and cannot be undone; this run reads train/validation only",
+  "input_snapshot_sha256": "0a348745cb31bf964be58737477552b37973b1a3cc7f6adc102d7b77618f6990",
+  "legacy_ablation_evidence": {
+    "executed_factory_source_sha256": "68261168dd46cac50242a5c1f2b44d3e9e6f78bb1061253bf48865879fb83eca",
+    "executed_feature_source_sha256": "4c786c217bd85546187f1ed9890ba1ed110c47c2d4e6690fb17cd3310f0f6c11",
+    "fingerprint_sha256": "5fa96e02d816c0f5c029039d172464e35185ac014830c095d1b089ec69ec3a9e",
+    "source_archive_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_coordinate_tabpfn/source/ablation_source.tar",
+    "source_archive_sha256": "c4dff958e29027cd6f6fe5d224360140cce5d7507cf6f493a3ced26570bec423",
+    "status": "PARTIAL_no_per_fit_attestation"
+  },
+  "legacy_evidence": {
+    "full": {
+      "accepted_bounded_field": "clean_comparison_arithmetic_verdict",
+      "broader_scope_verdict": "PARTIAL",
+      "metadata_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/metadata.json",
+      "metadata_sha256": "004c76a7fe2ac2c0f59750f0668bc82fe1880be2411fd60c9ba46de18d5da227",
+      "verdict_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_full/independent_review_verdict.json",
+      "verdict_sha256": "27fa4fc015c10b54da2696e5ab148be182796dac29eecb66bce97190ab321425"
+    },
+    "no_coordinates": {
+      "accepted_bounded_field": "bounded_computational_scope",
+      "broader_scope_verdict": "PARTIAL",
+      "metadata_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/metadata.json",
+      "metadata_sha256": "5c3dcd132c2a6c699254c212d425a03eb8afc3cb651152fd76c2b278bc7200cd",
+      "verdict_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/inputs/legacy_no_coordinates/independent_review_verdict.json",
+      "verdict_sha256": "0bcef2ab545df75ef6d6ab10ca4cb229bc80688bc1b971fa937765f95b061a3e"
+    }
+  },
+  "limitations": [
+    "Clean validation comparison only; no attack or defense evidence is produced here.",
+    "Tree models use balanced OvR sample weights while TabPFN fits are unweighted; fixed-0.5 F1 is therefore not a pure feature-information comparison.",
+    "Intervals condition on the fitted models and calibration-selected thresholds.",
+    "Intervals are marginal rather than simultaneous and omit training, threshold-selection, spatial-dependence, and model-selection uncertainty.",
+    "Independent result review is pending."
+  ],
+  "metrics": [
+    "f1",
+    "precision",
+    "recall",
+    "accuracy",
+    "roc_auc",
+    "average_precision"
+  ],
+  "models": [
+    "decision_tree",
+    "random_forest",
+    "xgboost",
+    "lightgbm",
+    "catboost",
+    "tabpfn_v2_5",
+    "tabpfn_v2_6",
+    "tabpfn_v3"
+  ],
+  "prediction_rows": 4161600,
+  "regions": [
+    "Busan",
+    "Chungbuk",
+    "Chungnam",
+    "Daegu",
+    "Daejeon",
+    "Gangwon",
+    "Gwangju",
+    "Gyeongbuk",
+    "Gyeonggi",
+    "Gyeongnam",
+    "Incheon",
+    "Jeju",
+    "Jeonbuk",
+    "Jeonnam",
+    "Sejong",
+    "Seoul",
+    "Ulsan"
+  ],
+  "scientific_completion": false,
+  "seconds": 239.37184643745422,
+  "seeds": [
+    42,
+    202,
+    340
+  ],
+  "source_gate": {
+    "manifest_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/clean_aggregate_source_freeze_revision3.json",
+    "manifest_sha256": "72166b91610562cc02c45778667da6348368db348a431ae5d2cd0f0e6ad6de17",
+    "verdict_path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_aggregate_source_revision3/verdict.json",
+    "verdict_sha256": "08e83ba5275c20b26ef1e3915f233f45fc9a8e74d627c4d296afa1f11cc7a8b1"
+  },
+  "status": "GENERATED_PENDING_INDEPENDENT_REVIEW",
+  "table_cardinality": {
+    "interval_rows": 144,
+    "macro_by_seed_rows": 216,
+    "macro_seed_summary_rows": 72,
+    "metric_rows": 3672,
+    "pair_rows": 1656,
+    "replicate_rows": 288000,
+    "same_model_feature_pair_rows": 144,
+    "threshold_rows": 1224
+  },
+  "test_features_read": 0,
+  "test_rows_read": 0,
+  "threshold_rule": "per feature_set/model/seed/region F1 threshold selected only on 1693 calibration IDs; inclusive score>=threshold",
+  "training_weight_policy": {
+    "catboost": "balanced_OvR_sample_weight_n_over_2class_count",
+    "decision_tree": "balanced_OvR_sample_weight_n_over_2class_count",
+    "lightgbm": "balanced_OvR_sample_weight_n_over_2class_count",
+    "random_forest": "balanced_OvR_sample_weight_n_over_2class_count",
+    "tabpfn_v2_5": "TabPFN_default_unweighted_fit",
+    "tabpfn_v2_6": "TabPFN_default_unweighted_fit",
+    "tabpfn_v3": "TabPFN_default_unweighted_fit",
+    "xgboost": "balanced_OvR_sample_weight_n_over_2class_count"
+  },
+  "validation_rows": 3400
+}

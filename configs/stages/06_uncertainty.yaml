@@ -1,0 +1,15 @@
+clean_predictions: artifacts/poi-adversarial-20260915-001/reports/06_region_models/tables/all_predictions.parquet
+attack_predictions: artifacts/poi-adversarial-20260915-001/reports/06_attack_evaluation/tables/all_predictions.parquet
+output: artifacts/poi-uncertainty-20261001-001/reports/06_uncertainty
+bootstrap_repeats: 2000
+bootstrap_seed: 20261001
+confidence_level: 0.95
+threshold: 0.5
+reference_model: tabpfn_v3
+reference_condition: clean
+expected_models: 8
+expected_attack_conditions: 32
+expected_pois: 3400
+expected_regions: 17
+expected_seeds: [42, 202, 340]
+metrics: [f1, precision, recall, accuracy, roc_auc]

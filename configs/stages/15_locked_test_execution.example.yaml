@@ -1,0 +1,56 @@
+# Template only.  Copy to a new immutable execution-specific file after every development stage,
+# F1-F7 freeze input, Stage-14 blocker, backend byte, and independent review has passed.  The
+# shipped repository intentionally has no authorization artifact, so this example cannot open data.
+format: poi-locked-test-execution-config-v1
+execution_id: REPLACE_WITH_UNIQUE_EXECUTION_ID
+freeze_manifest: artifacts/poi-remediation-20261001/protocol_freeze_manifest.json
+selection_contract: artifacts/poi-remediation-20261001/locked_test_selection.json
+execution_review: artifacts/poi-remediation-20261001/reports/99_independent_review/locked_test_execution_verdict.json
+authorization: artifacts/poi-remediation-20261001/locked_test_one_shot_authorization.json
+
+data:
+  # This path is retained as an uninspected string until every non-data gate passes and an
+  # exclusive one-shot reservation has been written.
+  clean_dataset_dir: data/poi_34k_seed42
+  split: test
+  expected_test_rows: 6800
+
+execution_backend:
+  # This backend generates the frozen test attacks and runs both reviewed defense pipelines.
+  # Its exact source bytes must be bound by the execution review and authorization.
+  module: poi.locked_test_backend
+  callable: run_locked_test_backend
+  source_path: src/poi/locked_test_backend.py
+
+# The frozen selection contract also supplies a `locked_test_backend` mapping with format
+# `poi-locked-test-backend-inputs-v1`.  It names the byte-frozen attack/boundary/defense configs,
+# generation request and identity, surrogate bundle, primary detection-threshold table, fixed
+# replay contract and runtime_environment.json, all three proposed checkpoints, and all three URE
+# .pt/.joblib pairs.  The replay's 51 official .tabpfn_fit states are also mandatory inputs; the
+# backend restores them and performs zero test-time classifier fits.  Every repository path must
+# also appear with the same SHA-256 in selection.frozen_files and in the protocol-freeze catalog;
+# the external TabPFN checkpoint remains bound by
+# selection.fixed_downstream_checkpoint.  `device` is frozen there as either `cuda` or `cpu`.
+#
+# Required mapping inside locked_test_selection.json (paths shown schematically):
+# locked_test_backend:
+#   format: poi-locked-test-backend-inputs-v1
+#   attack_config: configs/stages/01_attack_generation.yaml
+#   boundary_config: configs/geospatial/korea_adm1_consensus.yaml
+#   generation_request: <stage01>/work/generation_request.json
+#   generation_identity: <stage01>/work/generation_identity.json
+#   surrogate: {checkpoint: <stage01>/work/surrogate/surrogate.pt,
+#               encoder: <stage01>/work/surrogate/surrogate_encoder.json,
+#               training_history: <stage01>/work/surrogate/surrogate_training.csv}
+#   defense_config: configs/stages/10_defense_pipeline.yaml
+#   detection_thresholds: <stage10>/tables/detection_thresholds.csv
+#   fixed_replay_contract: <stage10>/fixed_downstream_replay_contract.json
+#   runtime_environment: <stage10>/runtime_environment.json
+#   proposed_checkpoints: {'42': <stage08-42>, '202': <stage08-202>, '340': <stage08-340>}
+#   ure_checkpoints:
+#     '42': {detector: <stage09-42.pt>, random_forest: <stage09-42.joblib>}
+#     '202': {detector: <stage09-202.pt>, random_forest: <stage09-202.joblib>}
+#     '340': {detector: <stage09-340.pt>, random_forest: <stage09-340.joblib>}
+#   device: cuda
+
+output: artifacts/poi-remediation-20261001/reports/15_locked_test/REPLACE_WITH_UNIQUE_EXECUTION_ID

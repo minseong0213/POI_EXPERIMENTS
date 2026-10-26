@@ -1,0 +1,65 @@
+data_dir: data/poi_34k_seed42
+attack_table: artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+attack_generation_config: configs/stages/01_attack_generation.yaml
+surrogate_artifact_dir: artifacts/poi-remediation-20261001/reports/01_attack_generation/work/surrogate
+output: artifacts/poi-remediation-20261001/reports/08_proposed_model
+run_label: full_model
+ablation_kind: reference
+official_checkpoint: null
+expected_official_checkpoint_sha256: 5d7170e2d3af01f9c501bb09ec3bd12e9944f8604de18002c647873c6ec04a12
+download_checkpoint_if_missing: true
+token_file_environment_variable: TABPFN_TOKEN_FILE
+device: cuda
+seeds: [42, 202, 340]
+epochs: 20
+context_rows: 256
+query_batch_size: 64
+train_pairs_per_epoch: 4096
+validation_pairs_per_epoch: 1024
+attack_sampling: balanced_by_generation_seed_and_condition_one_per_poi
+mixed_precision: true
+calibration_fraction: 0.5
+calibration_seed: 340
+model_selection_partition: validation_calibration_ids
+model_selection_metric: calibration_clean_macro_f1
+model_selection_attack_sample: fixed_per_model_seed
+classification_threshold: 0.5
+regional_decision_rule: independent_ovr_probability_gte_threshold
+preflight_output: artifacts/poi-remediation-20261001/reports/08_proposed_model_preflight/data_integrity_full_revision6
+model:
+  hidden_dim: 64
+  numeric_scales: [0.25, 1.0, 4.0, 16.0]
+  activation_checkpointing: true
+  unfreeze_last_blocks: 0
+  use_reliability_gate: true
+  use_reconstruction_path: true
+  use_multiscale_encoder: true
+  use_feature_encoders: true
+  use_category_relations: true
+  use_corruption_heads: true
+fine_tuning:
+  mode: staged
+  warmup_epochs: 10
+  stability_window: 3
+  max_clean_macro_f1_std: 0.01
+  unfreeze_last_blocks: 1
+optimizer:
+  learning_rate: 0.0003
+  base_learning_rate: 0.000001
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+loss_weights:
+  adversarial_region: 1.0
+  consistency: 0.25
+  feature_detection: 1.0
+  reconstruction: 1.0
+  attack_detection: 1.0
+  region_positive_weight: 16.0
+comparison_contract:
+  detector_name: proposed_tabpfn25_attack_head
+  model_name: proposed_tabpfn25_structural_defense
+  detector_is_structural_tabpfn_adapter: true
+  selective_downstream_model: tabpfn_v2_5
+  downstream_training_split: clean_train
+  detector_labels: {normal: 0, attack: 1}
+  accept_rule: attack_probability_lte_threshold

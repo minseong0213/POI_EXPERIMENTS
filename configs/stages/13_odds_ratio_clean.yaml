@@ -1,0 +1,3 @@
+data_dir: data/poi_34k_seed42
+mode: region
+output: artifacts/poi-remediation-20261001/reports/13_odds_ratio_clean_revision2

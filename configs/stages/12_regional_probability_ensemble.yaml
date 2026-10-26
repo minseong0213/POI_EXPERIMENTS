@@ -1,0 +1,97 @@
+format: poi-regional-probability-ensemble-v1
+
+# Stage 06 must first assemble all eight clean validation prediction sources.
+clean_predictions: artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/all_predictions.parquet
+
+# This is the immutable validation calibration/evaluation split written before
+# Stage 08 scoring.  The runner has no partition-derivation fallback.
+validation_partition: artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json
+
+# Future Stage 12 input.  It must use the
+# poi-eight-model-regional-attack-predictions-v1 wide-shard contract documented in
+# src/poi/regional_probability_ensemble.py.  It is intentionally absent until all
+# eight already-fitted classifiers have scored the regenerated attacks.
+attack_prediction_manifest: artifacts/poi-remediation-20261001/reports/12_regional_probability_ensemble_inputs/attack_prediction_manifest.json
+output: artifacts/poi-remediation-20261001/reports/12_regional_probability_ensemble
+
+models:
+  - decision_tree
+  - random_forest
+  - xgboost
+  - lightgbm
+  - catboost
+  - tabpfn_v2_5
+  - tabpfn_v2_6
+  - tabpfn_v3
+model_seeds: [42, 202, 340]
+generation_seeds: [42, 202, 340]
+regions:
+  - Busan
+  - Chungbuk
+  - Chungnam
+  - Daegu
+  - Daejeon
+  - Gangwon
+  - Gwangju
+  - Gyeongbuk
+  - Gyeonggi
+  - Gyeongnam
+  - Incheon
+  - Jeju
+  - Jeonbuk
+  - Jeonnam
+  - Sejong
+  - Seoul
+  - Ulsan
+attack_conditions:
+  - fgsm_m10
+  - fgsm_m50
+  - fgsm_m100
+  - fgsm_m500
+  - fgsm_m1000
+  - pgd_m10
+  - pgd_m50
+  - pgd_m100
+  - pgd_m500
+  - pgd_m1000
+  - cw_l2_m10
+  - cw_l2_m50
+  - cw_l2_m100
+  - cw_l2_m500
+  - cw_l2_m1000
+  - capgd_m10
+  - capgd_m50
+  - capgd_m100
+  - capgd_m500
+  - capgd_m1000
+  - category_exact_l1
+  - category_exact_l2
+  - category_exact_l3
+  - pcaa_l1
+  - pcaa_l2
+  - pcaa_l3
+  - moeva_low
+  - moeva_medium
+  - moeva_high
+  - caa_low
+  - caa_medium
+  - caa_high
+
+expected_validation_pois: 3400
+expected_regions: 17
+selection_partition: validation_calibration_half
+scoring_partition: validation_evaluation_half
+classification_threshold: 0.5
+top_k: 3
+calibration_variants:
+  - uncalibrated
+  - validation_clean
+  - validation_clean_attack
+
+# Optional train-scoped alternative: add train_oof to calibration_variants and set
+# train_oof_predictions only after out-of-fold train probabilities exist.  In-sample
+# train predictions are not accepted as calibration evidence.
+# train_oof_predictions: artifacts/poi-remediation-20261001/reports/12_regional_probability_ensemble_inputs/train_oof_predictions.parquet
+
+bootstrap_repeats: 2000
+bootstrap_seed: 20261001

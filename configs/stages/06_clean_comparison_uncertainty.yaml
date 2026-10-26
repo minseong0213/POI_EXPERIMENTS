@@ -1,0 +1,12 @@
+data_dir: data/poi_34k_seed42
+clean_predictions: artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/all_predictions.parquet
+output: artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty
+bootstrap_repeats: 2000
+bootstrap_seed: 20261001
+confidence_level: 0.95
+threshold: 0.5
+models: [decision_tree, random_forest, xgboost, lightgbm, catboost, tabpfn_v2_5, tabpfn_v2_6, tabpfn_v3]
+expected_pois: 3400
+expected_regions: 17
+expected_seeds: [42, 202, 340]
+metrics: [f1, precision, recall, accuracy, roc_auc]

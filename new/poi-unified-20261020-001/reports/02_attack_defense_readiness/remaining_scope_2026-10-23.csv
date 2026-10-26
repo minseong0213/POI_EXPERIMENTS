@@ -1,0 +1,22 @@
+task_id,task,status,dependency,required_evidence,limitation
+gpu_lifecycle,GPU 대여·보존 검증·자동 삭제,SOURCE_PASS_LIVE_NOT_RUN,lifecycle revision6 + concrete deployment,live instance ledger; exact R2 readback; API absence,실제 구체 배포 연결 구현 중
+attack_numeric,기존 공격 예측 지표 복구·불확실성 검수,BOUNDED_NUMERIC_PASS,attack terminal repair revision14,19635 point rows; 640000 replicates; 320 CIs,historical boundary/test provenance PARTIAL
+attack_reporting,공격 결과 표·그림 전달,PENDING_REPORT_REVIEW,attack_effect_summary_revision1,8 PNG + source tables + report; add confusion PR ROC,원예측 수치 검수와 그림 검수를 구분
+eda_reuse,지역·공격별 Table One·분포·임베딩,PENDING_FRESH_REUSE_REVIEW,analysis_reuse_20261023,1008 authenticated files /366 PNG; reader indices,train-only; plotting seed42 vs all-seed statistical coverage
+statistics,CCA·correlation·paired tests·categorical tests,PARTIAL,corrected legacy CCA/association supplements,valid tests and explicit estimands /limits,sparse chi-square unresolved; conditional fixed-direction CCA intervals
+clean_feature_comparison,3피처 조건 ×8모델 clean 비교,BOUNDED_NUMERIC_AND_PLOT_PASS,reports/01_clean_feature_comparison,same calibration/evaluation IDs; 5metrics; paired CI,historical provenance PARTIAL; v3 F1 point winner not significant superiority
+selected_feature_ablation,선택 v3 단일 피처 제거 ablation,NOT_RUN_UNIFIED_SELECTED_V3,fixed full TabPFN v3 selection,same split and calibration threshold rule; clean/attack performance,과거 v2.5 피처 제거는 새 v3 결과가 아님
+defense_primary,두 탐지기 뒤 동일 v3 실제 재추론,SOURCE_PASS_ACTUAL_NOT_RUN,selective_defense_revision3; clean retention0.95,2detectors x3seeds x17regions x32conditions x3generationseeds,historical score filtering과 실제 filter-first를 구분
+raw_rf_detector,Raw RF 공격 탐지 보조 비교,REQUIRES_LEGACY_SCOPE_AUTHENTICATION_OR_RERUN,original plan stage09,"same split, attack labels and clean-only threshold",두 주 탐지기의 비교를 대체하지 않음
+native_structural_outputs,제안 구조 native 지역분류·복원 출력,NOT_RUN_CURRENT_GRID,selective runner native output preservation,"native heads, repaired features, reliability/projection diagnostics",고정 v3에 복원 피처를 넣은 결과와 다름
+full_coverage,복원 포함 전체 표본 및 외부 robust 기준,NOT_RUN_CURRENT_UNIFIED_SCOPE,original plan stage11,same population 5metrics; augmentation; URE region; numeric-only GROOT,shared repair comparison contract remains to be frozen
+ensemble,모델 고정 후 calibration·앙상블,NOT_RUN,fixed individual model outputs,calibration-only selection; paired performance and latency/memory,prior clean scores alone do not supply all attack-model scores
+explanations,제안 모델·고정 지역분류기 SHAP/LIME,NOT_RUN_CURRENT_REQUIRED_MODEL_SCOPE,original stage13 adapted common winner v3,"17regions clean/attack beeswarm, numeric dependence, force, regional LIME",legacy 5tree figures are auxiliary; no substitution for selected/proposed models
+important_feature_removal,중요 피처 제거 후 성능·설명,NOT_RUN,frozen explanation/ranking criteria,same clean/attack cohorts and rerun explanations,evaluation results cannot be used to retune thresholds
+odds_ratio,탐지 logistic surrogate OR·CI·p·q,REQUIRES_SCOPE_AUTHENTICATION_OR_RERUN,stage13 identical feature/split contract,surrogate coefficients /95CI /p /FDRq /identifiable flag,neural weights are not odds ratios
+retention_sensitivity,retention 90/97.5/99% 추가 비교,QUEUED_NOT_RUN,primary0.95 then three budget-gated stages,same full grids; risk-coverage and AURC,no silent grid shortening for cost
+stability_ranking,혼합비·seed·공격예산·ranking,NOT_RUN_CURRENT_SCOPE,primary/sensitivity outputs,"mixtures0,.1,.25,.5,.75,1; Kendall/Spearman; intervals",conditional bootstrap not training-algorithm uncertainty
+generalization_attacks,leave-one-attack/source 및 adaptive 공격,NOT_RUN_CURRENT_SCOPE,original stage14,separate regenerated/trained/evaluated contracts,current MLP transfer attacks do not cover these
+structural_ablation,encoder/gate/reconstruction/corruption/consistency/fine-tuning 제거,NOT_RUN_CURRENT_SCOPE,stage14 six configured variants x3seeds,matched training and paired downstream comparisons,native-output preservation alone does not train ablations
+locked_test,모든 선택 고정 후 잠금 test,LOCKED_NOT_RUN,all preceding selection gates,one frozen final evaluation,현재 작업에서는 열지 않음
+delivery,실험 순서 최종 보고서·XLSX·보존,PENDING,all required results and independent reviews,"linked stage reports, table workbook, PNG, hashes, limits",실행 완료·과학적 승인·GPU 삭제는 별도 상태

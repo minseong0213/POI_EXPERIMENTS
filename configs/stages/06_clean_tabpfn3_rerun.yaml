@@ -1,0 +1,23 @@
+data_dir: data/poi_34k_seed42
+output: artifacts/poi-remediation-20261001/reports/06_clean_tabpfn3
+seeds:
+- 42
+- 202
+- 340
+device: cuda
+n_estimators: 8
+threshold: 0.5
+feature_sets:
+  full:
+  - X_COORD
+  - Y_COORD
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+model_ids:
+- tabpfn_v3
+tree_config: configs/stages/06_region_models_tree.yaml
+resume_partial: true
+official_checkpoint: /root/.cache/tabpfn/tabpfn-v3-classifier-v3_default.ckpt
+expected_checkpoint_sha256: d0d865d54dfbc524f5703104be90620182dca7e5fb2c16de72e9959ea18f3988
+require_checkpoint_attestation: true

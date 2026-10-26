@@ -1,0 +1,125 @@
+{
+  "attack_inventory": {
+    "attack_rows": 163872,
+    "conditions": 32,
+    "downstream_states": 51,
+    "evaluation_rows_per_grid": 1707,
+    "generation_seeds": 3,
+    "primary_rows": 160571
+  },
+  "bootstrap_planning_only": {
+    "compile_seconds": 0.3960253410041332,
+    "draws": 2000,
+    "fixture_rows": 1707,
+    "host": "local CPU, not target GPU host",
+    "limitation": "Synthetic helper measurement only; not a target-host stage forecast. Actual runtime remains NOT_RUN.",
+    "planned_helper_calls": 19584,
+    "runtime": "numba 0.60.0 / numpy 2.0.2 / two threads",
+    "steady_seconds": [
+      0.06901542469859123,
+      0.06374826282262802
+    ]
+  },
+  "bounded_validation": {
+    "environment": ".venv-tabpfn, CUDA_VISIBLE_DEVICES empty",
+    "model_fit_or_inference_run": false,
+    "pytest": "9 passed"
+  },
+  "created_utc": "2026-10-20T08:49:53.553301+00:00",
+  "defense_inventory": {
+    "clean_retentions": [
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "common_downstream": "same authenticated TabPFN-v3 state score shards",
+    "detectors": [
+      "proposed",
+      "ure_rf"
+    ]
+  },
+  "files": {
+    "config": {
+      "bytes": 5419,
+      "path": "new/poi-unified-20261020-001/configs/attack_defense_revision2.yaml",
+      "sha256": "9c4a5454cee874378cfb6f5bad6ce8b6c0ce2a3ae1c0f091d8161ee43a8e82d0"
+    },
+    "input_manifest": {
+      "bytes": 14812,
+      "path": "new/poi-unified-20261020-001/inputs/attack_defense/input_copy_manifest_revision2.json",
+      "sha256": "d8d63560c81f9e0d00bd582583d31e8d83e1c9ff595d69cb0e2f3f920b81770b"
+    },
+    "prior_failed_review": {
+      "bytes": 26467,
+      "path": "new/poi-unified-20261020-001/reports/99_independent_review/attack_defense_source_revision1/verdict.json",
+      "sha256": "f94cd8721629b837a3a3bd2d11b0612e07d70d16c0fb5b1f13938a43729ab797"
+    },
+    "source": {
+      "bytes": 107021,
+      "path": "new/poi-unified-20261020-001/source/unified_attack_defense_revision2.py",
+      "sha256": "0973c4b8f9605f7046dad11f963c1820f4d4041c24f35e31a51174778f0329c1"
+    },
+    "tests": {
+      "bytes": 12458,
+      "path": "new/poi-unified-20261020-001/tests/test_unified_attack_defense_revision2.py",
+      "sha256": "2281de633003a3b15be7c9d6dcd3450e785909490143e61a1f35f69974421ce8"
+    },
+    "transitive_runtime_manifest": {
+      "bytes": 4126,
+      "path": "new/poi-unified-20261020-001/runtime/attack_defense/revision2/transitive_runtime_manifest.json",
+      "sha256": "ad96b1e00e98351e93c4eed7ddb9b1d186dac0dea9e3733b6c99a5b873077943"
+    }
+  },
+  "format": "poi-unified-attack-defense-readiness-revision2-v1",
+  "not_run": [
+    "fresh Revision 2 independent source review",
+    "actual clean replay-contract consumption",
+    "CUDA timing probe",
+    "attack effect",
+    "defense comparison",
+    "coverage-matched detector curves",
+    "shared full-coverage repair",
+    "new cross-boundary attacks",
+    "adaptive or transfer attacks",
+    "locked-test evaluation",
+    "fresh actual-result review"
+  ],
+  "partial": [
+    "historical boundary vintage and external category/coordinate authority",
+    "previously observed validation cohort makes detector comparison exploratory"
+  ],
+  "preimport_runtime_guard": {
+    "path": "new/poi-unified-20261020-001/runtime/attack_defense/revision2/verify_runtime_freeze.py",
+    "selected_input_bytes": 495406037,
+    "selected_input_files": 26,
+    "sha256": "ec118177a581fdceeed9267f358b9a745c522dabfeee97111dbd99d90de05460",
+    "status": "PASS_RUNTIME_FREEZE_PREIMPORT",
+    "transitive_runtime_files": 22
+  },
+  "prior_review": {
+    "blocking_findings": [
+      "timing probe clean-review SHA gate",
+      "attack marker/shard authentication and lossless joins",
+      "truthful raw test transport attestation",
+      "transitive runtime/resume binding"
+    ],
+    "revision1_preserved": true,
+    "status": "FAIL"
+  },
+  "revision2_source_changes_pending_independent_verdict": [
+    "bind timing evidence to the current clean actual-review SHA and current pinned runtime identity",
+    "authenticate the terminal attack marker, all terminal tables, all 51 attack/clean score shards, bootstrap evidence, key completeness, and lossless defense joins",
+    "attest 6800 raw test rows and populated feature fields transported byte-for-byte while runtime parsing remains forbidden; disclose prior review field-presence inspection",
+    "bind and verify exact transitive runtime source and package-pin manifests in preflight, timing, attack, defense, and resume fingerprints"
+  ],
+  "scientific_completion": false,
+  "split_contract": {
+    "clean_calibration": 1693,
+    "clean_evaluation": 1707,
+    "locked_test_runtime_feature_rows_authorized": 0,
+    "locked_test_transported": 6800,
+    "train": 23800
+  },
+  "status": "SOURCE_REVISION2_PREPARED_PENDING_FRESH_INDEPENDENT_REVIEW"
+}

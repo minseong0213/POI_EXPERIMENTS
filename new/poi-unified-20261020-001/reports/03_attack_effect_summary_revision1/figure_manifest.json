@@ -1,0 +1,72 @@
+{
+  "status": "GENERATED_PENDING_INDEPENDENT_FIGURE_REVIEW",
+  "source_sha256": "e3bf1addc051a7af07c246306d7543646c1b250a41f62525f9d4ae933a4ad407",
+  "input_tables_sha256": {
+    "no_defense_paired_bootstrap_intervals.csv": "90bfb6728c962d9a03531908603782c7ed92f2102d0b4f7e04684f73c291ac51",
+    "no_defense_attack_region_metrics.csv": "a70f020c2b0fc9da77d87294d9151ab59afe41d31877f543ef51967ff642c592",
+    "paired_clean_reference_region_metrics.csv": "bab6c41585d8935db7f9fdd3ba41e25db772a5c41a41b7e1321490ff115b87ee"
+  },
+  "numeric_review_sha256": "661b93f00dec5e5a15e41b571e02b980e2aad82087baf3532550b43a93d3c1ae",
+  "figures": [
+    {
+      "path": "figures/paired_metric_change_all_intent.png",
+      "source": "no_defense_paired_bootstrap_intervals.csv",
+      "note": "32 conditions; 3 model seeds x 3 attack seeds x 17 regions. Dots: equal-stratum macro means.\n95% percentile CI: 2,000 paired original-POI bootstrap draws; fixed states/thresholds; no simultaneous-comparison correction.\nMLP-surrogate transfer attacks. Each clean comparator uses the same eligible POI IDs. Panel x-scales differ.",
+      "dpi": 300,
+      "sha256": "253079c203872f763dc01726aa8a9f2990b85d807d0230471c7941a012798713"
+    },
+    {
+      "path": "figures/paired_metric_change_primary_valid.png",
+      "source": "no_defense_paired_bootstrap_intervals.csv",
+      "note": "32 conditions; 3 model seeds x 3 attack seeds x 17 regions. Dots: equal-stratum macro means.\n95% percentile CI: 2,000 paired original-POI bootstrap draws; fixed states/thresholds; no simultaneous-comparison correction.\nMLP-surrogate transfer attacks. Each clean comparator uses the same eligible POI IDs. Panel x-scales differ.",
+      "dpi": 300,
+      "sha256": "be406c6e56d1666f5d59c85eeb461e526d92c020fcead1a16834cd9837a8f7c5"
+    },
+    {
+      "path": "figures/regional_f1_primary_valid.png",
+      "source": "no_defense_attack_region_metrics.csv",
+      "note": "Each cell averages 3 fixed model seeds x 3 attack generation seeds; point estimates, no CI shown.\nHistorical primary-valid population differs by condition/generation. Calibration thresholds fixed before evaluation.\nMLP-surrogate transfer attacks; direct/adaptive robustness and pristine confirmatory evaluation are not established.",
+      "dpi": 300,
+      "sha256": "7efaa1fa33ecb35f0aba98d688b117d3bdbee30f528b57baa9b6de82391092d7"
+    },
+    {
+      "path": "figures/regional_precision_primary_valid.png",
+      "source": "no_defense_attack_region_metrics.csv",
+      "note": "Each cell averages 3 fixed model seeds x 3 attack generation seeds; point estimates, no CI shown.\nHistorical primary-valid population differs by condition/generation. Calibration thresholds fixed before evaluation.\nMLP-surrogate transfer attacks; direct/adaptive robustness and pristine confirmatory evaluation are not established.",
+      "dpi": 300,
+      "sha256": "05ad4823f18746540bf9ec15f20249b5b8a94679170da54905a18d87c4f75d11"
+    },
+    {
+      "path": "figures/regional_recall_primary_valid.png",
+      "source": "no_defense_attack_region_metrics.csv",
+      "note": "Each cell averages 3 fixed model seeds x 3 attack generation seeds; point estimates, no CI shown.\nHistorical primary-valid population differs by condition/generation. Calibration thresholds fixed before evaluation.\nMLP-surrogate transfer attacks; direct/adaptive robustness and pristine confirmatory evaluation are not established.",
+      "dpi": 300,
+      "sha256": "f42b8a139d99402017cf351089f0baa1140372c171db5fd0d285d40df62e1df6"
+    },
+    {
+      "path": "figures/regional_accuracy_primary_valid.png",
+      "source": "no_defense_attack_region_metrics.csv",
+      "note": "Each cell averages 3 fixed model seeds x 3 attack generation seeds; point estimates, no CI shown.\nHistorical primary-valid population differs by condition/generation. Calibration thresholds fixed before evaluation.\nMLP-surrogate transfer attacks; direct/adaptive robustness and pristine confirmatory evaluation are not established.",
+      "dpi": 300,
+      "sha256": "b9574b8dd278ef1d5503216ddd617224909ce7da644cb5d8e008e29e817e1844"
+    },
+    {
+      "path": "figures/regional_roc_auc_primary_valid.png",
+      "source": "no_defense_attack_region_metrics.csv",
+      "note": "Each cell averages 3 fixed model seeds x 3 attack generation seeds; point estimates, no CI shown.\nHistorical primary-valid population differs by condition/generation. Calibration thresholds fixed before evaluation.\nMLP-surrogate transfer attacks; direct/adaptive robustness and pristine confirmatory evaluation are not established.",
+      "dpi": 300,
+      "sha256": "3cddf5cf4256695e3599dd6e27f79a679bd923e870a476b13d2dd5c30c63bb55"
+    },
+    {
+      "path": "figures/primary_population_support.png",
+      "source": "no_defense_attack_region_metrics.csv",
+      "note": "Bars: mean eligible/excluded counts across 3 generation seeds; black lines: observed min-max, not confidence intervals.\nThe historical validity mask is an evaluation rule, not a detector input or authoritative new boundary validation.",
+      "dpi": 300,
+      "sha256": "887404ecf4f144cde04b826a0e8ab8d898cbcb971060a660aaef4a0f3a526dc7"
+    }
+  ],
+  "png_count": 8,
+  "svg_count": 0,
+  "new_inference_calls": 0,
+  "test_feature_rows_read": 0
+}

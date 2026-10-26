@@ -1,0 +1,273 @@
+{
+  "status": "PASS",
+  "role": "independent_experiment_audit",
+  "requested_model": "gpt-6-astra",
+  "requested_reasoning_effort": "medium",
+  "fork_context": "none",
+  "review_scope": "unified_clean_publication_revision2_actual_results",
+  "scientific_completion": false,
+  "test_feature_rows_read": 0,
+  "non_allowlisted_project_files_read": 0,
+  "access_boundary": "PASS",
+  "historical_test_isolation": "PARTIAL",
+  "coordinate26_runtime_provenance": "PARTIAL",
+  "stage3_stage4": "NOT_RUN",
+  "shap_lime": "NOT_RUN",
+  "locked_test": "NOT_RUN",
+  "cardinalities": {
+    "contract": {
+      "features": [
+        "full",
+        "coordinates_only",
+        "no_coordinates"
+      ],
+      "models": [
+        "decision_tree",
+        "random_forest",
+        "xgboost",
+        "lightgbm",
+        "catboost",
+        "tabpfn_v2_5",
+        "tabpfn_v2_6",
+        "tabpfn_v3"
+      ],
+      "seeds": [
+        42,
+        202,
+        340
+      ],
+      "regions": [
+        "Busan",
+        "Chungbuk",
+        "Chungnam",
+        "Daegu",
+        "Daejeon",
+        "Gangwon",
+        "Gwangju",
+        "Gyeongbuk",
+        "Gyeonggi",
+        "Gyeongnam",
+        "Incheon",
+        "Jeju",
+        "Jeonbuk",
+        "Jeonnam",
+        "Sejong",
+        "Seoul",
+        "Ulsan"
+      ],
+      "evaluation_rows": 1707,
+      "calibration_rows": 1693,
+      "full_validation_rows": 3400,
+      "interval_rows": 144,
+      "metric_rows": 3672,
+      "macro_rows": 72,
+      "coverage_rows": 72
+    },
+    "observed": {
+      "clean_intervals": 144,
+      "clean_metrics": 3672,
+      "clean_macro": 72,
+      "clean_coverage": 72,
+      "features": 3,
+      "models": 8,
+      "regions": 17,
+      "seeds": [
+        42,
+        202,
+        340
+      ],
+      "rule_partition_combinations": 3
+    },
+    "rerender_byte_matches": 31,
+    "rerender_pixel_matches": 31,
+    "macro_estimates": 144,
+    "macro_ci_segments": 144,
+    "external_legends": 6,
+    "01_clean_revision2_inventory": 36,
+    "01_clean_inventory": 36,
+    "receipt_seconds": 52.0,
+    "stderr_bytes": 0,
+    "freeze_entries": 3,
+    "authenticated_inputs": 6,
+    "viewing_links": [
+      {
+        "label": "Clean 피처 3조건의 macro F1과 paired POI 95% CI",
+        "path": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/05_robustness_report/01_clean_revision2/figures/macro_f1_bootstrap_ci.png",
+        "sha256": "e855d127d3e1e85f17d35f788fb81af4f745cb010f603df4e2e9ff17548cb6e0"
+      },
+      {
+        "label": "기존 8개 모델 radar",
+        "path": "/home/mlops/orca/projects/poi/legacy/docs/assets/poi-remediation-20261001/06_clean_comparison/figures/eight_model_radar.png",
+        "sha256": "a720ceb73ca57a93c83a901321c519f1fc6d92eeb163bc8893cc9b6a509398ba"
+      },
+      {
+        "label": "기존 탐지기 조건·지역별 F1",
+        "path": "/home/mlops/orca/projects/poi/legacy/docs/assets/poi-remediation-20261001/09_attack_detection_analysis/figures/detector_f1_by_region_condition.png",
+        "sha256": "b568c226cd7ee887e62c6e7c9449b8f865db2398eb333e3108301b14f6c39e91"
+      }
+    ],
+    "production_gate_invoked": false,
+    "inference": false,
+    "fitting": false,
+    "initial_matches": 107,
+    "final_matches": 107,
+    "drift_count": 0,
+    "production_file_count": 36,
+    "png_count": 31,
+    "svg_count": 0,
+    "figure_families": {
+      "macro_bootstrap_ci": 6,
+      "regional_heatmap": 18,
+      "threshold_effect": 6,
+      "coverage": 1
+    },
+    "visual_macro_pngs_inspected": 6,
+    "metadata_changed_keys": [
+      "created_utc",
+      "source_gate"
+    ],
+    "historical_results_hub_migration": "PASS",
+    "new_79_link_replay": false,
+    "access_boundary": "PASS",
+    "scientific_completion": false,
+    "test_feature_rows_read": 0,
+    "non_allowlisted_project_files_read": 0,
+    "minimum_legend_axes_gap_display_pixels": 6.582027777777739,
+    "reviewer_execution_note": "Initial renderer pass completed all 31 byte/pixel comparisons, then Python 3.9 datetime.fromisoformat rejected UTC Z. Reviewer script normalized Z to +00:00 and continued evidence checks using its saved render/artist artifacts; no agent/context resumed and no production files changed."
+  },
+  "requirements": [
+    {
+      "requirement": "Standalone reviewer identity",
+      "expected": "independent_experiment_audit; gpt-6-astra; medium; none",
+      "observed": "CLI header matches; direct review; no agent spawn/resume/delegation",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/clean_publication_actual_revision2/actual_review_cli_header.txt",
+      "limitation": "Requested fork context none; CLI header corroborates model/effort, not independent service attestation."
+    },
+    {
+      "requirement": "Access boundary and unchanged exact files",
+      "expected": "107 SHA-256/size matches before parsing and after review; zero unauthorized reads",
+      "observed": "107/107 initial and final; 0 drift; manifest/header plus 107 = 109 existing project files",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/reporting/clean_publication_revision2_actual_review_allowlist.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/initial_authentication.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/final_rehash.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/access_log.json",
+      "limitation": "Installed packages and reviewer-created files exempt. Blocked attempts are not successful reads."
+    },
+    {
+      "requirement": "1. Corrected production inventory",
+      "expected": "36 files; 31 PNG; 0 SVG; 6/18/6/1 families",
+      "observed": "36 inventory entries match 36 allowlisted live files; 34 marker payloads plus metadata and marker; 31 catalog rows; DPI 299.9994",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/clean_publication_revision2_execution/output_inventory.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/figure_checks.json",
+      "limitation": "Set completeness is relative to exact allowlist and authenticated inventories. No directory scan or claim about unlisted filesystem objects."
+    },
+    {
+      "requirement": "2. Six external readable legends",
+      "expected": "No estimate/CI occlusion; full decision_tree visible",
+      "observed": "6/6 strict positive horizontal gaps; six actual PNGs visually inspected; F1/precision/recall full decision_tree visible",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/plot_artists.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/figure_checks.json",
+      "limitation": "None within bounded scope."
+    },
+    {
+      "requirement": "3. Numeric, order, text, palette and conditional CI preservation",
+      "expected": "144 points +144 CI segments; n1707 seeds42/202/340 regions17; 95% paired POI; 2000 repeats",
+      "observed": "144 source-table point/segment comparisons exact; recorded R4 artists agree; text and colors unchanged; 31/31 reproduced PNGs byte/pixel equal",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/plot_artists.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/cardinalities.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/01_clean_feature_comparison/tables/macro_bootstrap_intervals.csv",
+      "limitation": "No prediction/bootstrap-draw access or repeated original-score audit; prior R4 artist record is supporting historical evidence, checked against current authenticated tables."
+    },
+    {
+      "requirement": "4. Revision 4 and unchanged artifacts",
+      "expected": "Six macro PNG changed; other25/report/catalog/snapshot identical; baseline inventory preserved",
+      "observed": "6 changed macro;25 identical PNG;3 identical sidecars;36/36 R4 inventory matches; only metadata time/gate changed",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/preservation.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/clean_publication_execution/output_inventory.json",
+      "limitation": "Original 50-file aggregate/threshold preservation remains historical Revision1 evidence; six permitted inputs freshly authenticated. No access to remaining aggregate files; bounded source path writes only new output."
+    },
+    {
+      "requirement": "5. Source gate, execution and scientific status",
+      "expected": "Fresh PASS;3 freeze entries;exact bindings; no inference/refit/test",
+      "observed": "PASS verdict identity and access result;3 freeze entries exact;6 authenticated inputs;52 seconds;empty stderr;stdout equals metadata;science false",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/reporting/source_freeze_revision6.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/reporting/clean_render_execution_receipt_revision6.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/checks.json",
+      "limitation": "Receipt is authenticated execution evidence, not OS-level historical tracing; source clean entrypoint inspected and isolated replay uses summaries only. Production gate not invoked."
+    },
+    {
+      "requirement": "Authenticated clean cardinalities",
+      "expected": "3 features;8 models;17 regions;3 seeds;3 rule/partition pairs;3672/144/72/72 rows",
+      "observed": "All expected grids and rows match; calibration1693 evaluation1707 full validation3400",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/cardinalities.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/checks.json",
+      "limitation": "None within bounded scope."
+    },
+    {
+      "requirement": "6a. Historical test isolation / split and leakage",
+      "expected": "Retain PARTIAL",
+      "observed": "PARTIAL; no test feature rows read in review",
+      "verdict": "PARTIAL",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/01_clean_feature_comparison/metadata.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/05_robustness_report/01_clean_revision2/metadata.json",
+      "limitation": "No new raw split audit; historical exposure unresolved. Original plan 23800/3400/6800 and five features not re-audited."
+    },
+    {
+      "requirement": "6b. Coordinate-only TabPFN2.6 runtime provenance",
+      "expected": "Retain PARTIAL",
+      "observed": "PARTIAL retained",
+      "verdict": "PARTIAL",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/05_robustness_report/01_clean_revision2/metadata.json",
+      "limitation": "No per-fit runtime evidence opened."
+    },
+    {
+      "requirement": "6c. Stage3/4 attacks and defenses, constraints/provenance",
+      "expected": "Separate generated/reviewed results",
+      "observed": "0 actual result rows audited",
+      "verdict": "NOT_RUN",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/configs/robustness_report_revision6.yaml",
+      "limitation": "No attacks/defenses generated or approved."
+    },
+    {
+      "requirement": "6d. Regional clean/adversarial SHAP and LIME",
+      "expected": "Requested regional and clean/adversarial coverage",
+      "observed": "0 SHAP/LIME reviewed",
+      "verdict": "NOT_RUN",
+      "evidence": "/home/mlops/orca/projects/poi/docs/experiments/independent_review_protocol.md",
+      "limitation": "No explanation coverage approval."
+    },
+    {
+      "requirement": "6e. Locked test",
+      "expected": "Remain locked",
+      "observed": "0 test-feature rows; no test evaluation",
+      "verdict": "NOT_RUN",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/access_log.json",
+      "limitation": "No locked-test completion approval."
+    },
+    {
+      "requirement": "6f. Full scientific completion / broader analyses",
+      "expected": "False",
+      "observed": "scientific_completion=false",
+      "verdict": "NOT_RUN",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/verdict.json",
+      "limitation": "Bounded publication correction only."
+    },
+    {
+      "requirement": "7. Viewing index",
+      "expected": "Three live links; current pending-review macro F1; Legacy references; future NOT_RUN plain paths",
+      "observed": "3/3 links resolve to exact allowlisted authenticated files; Legacy section explicit; two future paths plain backtick text",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/05_robustness_report/VIEWING_INDEX.md; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/checks.json",
+      "limitation": "None within bounded scope."
+    },
+    {
+      "requirement": "8. Results hub preservation",
+      "expected": "Two hub bytes plus journal/operator evidence unchanged; retain historical PASS",
+      "observed": "4/4 exact allowlist hashes; journal agrees with hub bytes; prior Revision1 hub PASS retained",
+      "verdict": "PASS",
+      "evidence": "/home/mlops/orca/projects/poi/docs/results.md; /home/mlops/orca/projects/poi/legacy/docs/results.md; /home/mlops/orca/projects/poi/legacy/migration-results-hub-20261020.json; /home/mlops/orca/projects/poi/new/poi-unified-20261020-001/provenance/result_hub_migration_operator_checks.json",
+      "limitation": "No new 79-link replay or target reads."
+    }
+  ],
+  "requirement_counts": {
+    "PASS": 10,
+    "PARTIAL": 2,
+    "NOT_RUN": 4
+  }
+}

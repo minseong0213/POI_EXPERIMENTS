@@ -1,0 +1,48 @@
+# GPU-only execution config for the missing no-coordinate TabPFN 2.6 shards.
+# It retains the complete comparison contract so the same fail-closed runner can
+# validate features, seeds, partitions, and later aggregation identities.
+data_dir: data/poi_34k_seed42
+features:
+  - ASORT_LCLASDC
+  - ASORT_MLSFCDC
+  - ASORT_SDASDC
+seeds: [42, 202, 340]
+learned_models:
+  - decision_tree
+  - random_forest
+  - xgboost
+  - lightgbm
+  - catboost
+  - tabpfn_v2_5
+  - tabpfn_v2_6
+  - tabpfn_v3
+baselines:
+  - constant_negative
+  - train_joint_category_frequency
+tree_config: configs/stages/06_region_models_tree.yaml
+tree_output: artifacts/poi-remediation-20261006/work/07_no_coordinate_trees
+tabpfn26_output: artifacts/poi-remediation-20261006/work/07_no_coordinate_tabpfn26
+imported_tabpfn_output: artifacts/poi-remediation-20261006/imports/clean_ablation
+aggregate_output: artifacts/poi-remediation-20261006/reports/07_no_coordinate_comparison
+executed_ablation_source_archive: artifacts/poi-remediation-20261006/recovery/executed_source/ablation_source.tar
+partition_files:
+  - artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json
+  - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json
+expected_train_rows: 23800
+expected_validation_rows: 3400
+expected_calibration_rows: 1693
+expected_evaluation_rows: 1707
+expected_regions: 17
+expected_train_category_vocabulary_sizes: [8, 5, 16]
+fixed_threshold: 0.5
+joint_frequency_alpha: 1.0
+bootstrap_repeats: 2000
+bootstrap_seed: 20261006
+confidence_level: 0.95
+repeat_prediction_absolute_tolerance: 1.0e-12
+tabpfn_v2_6:
+  device: cuda
+  n_estimators: 8
+  official_checkpoint: /home/mlops/.cache/tabpfn/tabpfn-v2.6-classifier-v2.6_default.ckpt
+  expected_checkpoint_sha256: 0578fa56f97e11024e31735aaec2c4e7332584b7730242fbaf6c0bbd0299206a
+  require_checkpoint_attestation: true

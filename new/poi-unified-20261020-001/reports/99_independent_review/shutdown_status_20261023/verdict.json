@@ -1,0 +1,123 @@
+{
+  "status": "PARTIAL",
+  "status_meaning": "Status assessment only: experiment incomplete",
+  "role": "independent_experiment_audit",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "medium",
+  "fork_context": "none",
+  "review_scope": "status_check_before_user_requested_gpu_deletion",
+  "scientific_completion": false,
+  "whole_experiment_approved": false,
+  "gpu_deletion_verified": false,
+  "reviewed_at_utc": "2026-10-23T01:47:38.548629+00:00",
+  "original_requirements": [
+    "/home/mlops/orca/projects/poi/docs/experiments/2026-09-15_full_robustness_experiment_plan.md",
+    "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/README.md",
+    "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/configs/protocol.json"
+  ],
+  "requirements": [
+    {
+      "requirement": "Attack prediction generation cardinality",
+      "expected": "51 states (17 regions \u00d7 3 model seeds), 163872 attack + 1707 clean rows/state",
+      "observed": "51 manifest rows; 51 attack Parquets total8357472 rows; 51 clean Parquets total87057 rows",
+      "verdict": "PASS",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/tables/state_prediction_manifest.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/predictions/attack",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/predictions/clean_evaluation"
+      ],
+      "limitation": "Footer counts and manifest cardinality checked; scores not re-inferred or fully concatenated; PASS only for output counts."
+    },
+    {
+      "requirement": "Attack metric/interval generation",
+      "expected": "32 conditions \u00d7 3 generation seeds \u00d7 3 model seeds \u00d7 17 regions \u00d7 2 populations =9792 rows",
+      "observed": "9792 attack,9792 paired-clean,51 full-clean CSV rows;320 interval rows;640000 bootstrap Parquet rows",
+      "verdict": "PASS",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/tables/no_defense_attack_region_metrics.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/tables/paired_clean_reference_region_metrics.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/tables/clean_full_evaluation_region_metrics.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/tables/no_defense_paired_bootstrap_intervals.csv",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/tables/no_defense_paired_bootstrap_replicates.parquet"
+      ],
+      "limitation": "Cardinality only; not scientific result approval."
+    },
+    {
+      "requirement": "Attack terminal validation and independent actual-result approval",
+      "expected": "Successful validation and fresh independent actual-result PASS",
+      "observed": "TERMINAL_VALIDATION_FAILED_NOT_COMPLETE; execution exit_code1; no _SUCCESS.json. Attack ROC AUC27/AP233 and paired ROC AUC1/AP13 cells exceed1 by 2.22e-16 to4.44e-16. Source rejects any metric >1.",
+      "verdict": "FAIL",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/work/progress.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/gpu/revision11/remote_logs/attack_effect.log",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/gpu/revision11/remote_logs/attack_effect_execution_status.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/source/unified_attack_defense_revision11.py"
+      ],
+      "limitation": "Observed floating-point boundary discrepancy explains recorded rejection; repair code not reviewed or executed. File attack_effect.exitstatus absent; execution_status.json supplies exit code."
+    },
+    {
+      "requirement": "Defense comparison execution",
+      "expected": "Actual defense outputs and independent result review",
+      "observed": "No reports/04* directory; no actual defense result bundle in current run",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports"
+      ],
+      "limitation": "Existing detector inputs/smoke checks do not establish actual defense comparison execution."
+    },
+    {
+      "requirement": "Automatic continuation completion",
+      "expected": "Producer exits successfully with completion record",
+      "observed": "Watcher PRODUCER_PROCESS_EXITED, producer_exit_code1, completion_record_exists=false; followup log ends usage-limit errors",
+      "verdict": "FAIL",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/continuation_revision11/watcher_terminal.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/continuation_revision11/producer_followup.log"
+      ],
+      "limitation": "Draft repair source does not establish executed or reviewed correction."
+    },
+    {
+      "requirement": "Clean results and publication status",
+      "expected": "Scope-specific results and honest retained limitations",
+      "observed": "Prior full-v3 actual verdict PASS; coordinate-v2.6 and aggregate actual verdicts PARTIAL; publication revision2 PASS,scientific_completion=false",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_fit_actual_revision1/verdict.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_coordinate26_actual_revision1/verdict.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_aggregate_actual_revision1/verdict.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/99_independent_review/clean_publication_actual_revision2/verdict.json"
+      ],
+      "limitation": "Prior verdicts inspected for status, not independently re-approved here. Coordinate runtime/fit attestation limitations remain."
+    },
+    {
+      "requirement": "Original scientific requirements: splits/leakage, attack constraints/provenance, test isolation, PNG/SVG, regional clean/adversarial SHAP/LIME, statistical/ensemble/sensitivity/ablation coverage",
+      "expected": "Full original plan requirements independently verified",
+      "observed": "Not re-audited in bounded shutdown status check; metadata states test_feature_rows_read0 but this does not prove historic isolation",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/README.md",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/configs/protocol.json",
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/reports/03_attack_effect/metadata.json"
+      ],
+      "limitation": "Original plan docs/experiments/2026-09-15_full_robustness_experiment_plan.md and independent_review_protocol.md govern completion; this status audit cannot approve full study."
+    },
+    {
+      "requirement": "GPU deletion",
+      "expected": "Provider deletion evidence for exact instance56861298",
+      "observed": "Not checked by this reviewer; root handles preservation/deletion separately",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "/home/mlops/orca/projects/poi/new/poi-unified-20261020-001/runtime/gpu"
+      ],
+      "limitation": "No inference from watcher status or failed process that instance was deleted."
+    }
+  ],
+  "remaining_tasks": [
+    "Review and execute terminal-boundary repair without silently accepting invalid scientific metrics.",
+    "Fresh independent actual attack result review.",
+    "Run and independently review defense comparison if resumed.",
+    "Retain clean execution-attestation PARTIAL limitations.",
+    "Full scientific plan coverage and final delivery review remain unapproved."
+  ]
+}

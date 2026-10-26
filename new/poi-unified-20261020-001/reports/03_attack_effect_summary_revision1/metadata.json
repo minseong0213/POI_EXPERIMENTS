@@ -1,0 +1,11 @@
+{
+  "status": "DRAFT_SUMMARY_PENDING_INDEPENDENT_REPORT_REVIEW",
+  "source_table_sha256": "90bfb6728c962d9a03531908603782c7ed92f2102d0b4f7e04684f73c291ac51",
+  "numeric_review_sha256": "661b93f00dec5e5a15e41b571e02b980e2aad82087baf3532550b43a93d3c1ae",
+  "rows": 32,
+  "metric_table_rows": 32,
+  "figures": "GENERATED_PENDING_INDEPENDENT_FIGURE_REVIEW",
+  "whole_study": "PARTIAL",
+  "png_count": 8,
+  "svg_count": 0
+}

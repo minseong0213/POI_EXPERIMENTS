@@ -7,3 +7,96 @@ artifacts/
 *.egg-info/
 build/
 dist/
+
+# Large inputs and runtime state for the unified experiment runs.
+/new/*/inputs/
+/new/*/work/
+/new/*/runtime/
+/new/**/*.parquet
+/new/**/*.npy
+/new/**/*.pt
+/new/**/*.ckpt
+/new/**/*.tabpfn_fit
+
+# Local archive and non-public experiment state. Keep these on disk, but do not
+# publish them with the code/results repository.
+/legacy/
+/resources/
+/docs/overview/
+/docs/assets/poi-*
+# These local links point into the excluded legacy tree and would be broken on
+# GitHub. Current unified-run reports below replace them as publication inputs.
+/docs/experiments/2026-10-01_remediation_execution.md
+/docs/experiments/2026-10-06_completion_check.md
+/docs/experiments/2026-10-06_no_coordinate_comparison.md
+/docs/experiments/orchestration_protocol.md
+/new/*/configs/
+/new/*/source/
+/new/*/tests/
+/new/*/provenance/**
+!/new/*/provenance/attack_defense_revision14/
+!/new/*/provenance/attack_defense_revision14/repair_receipt.json
+!/new/*/provenance/attack_defense_revision14/r2_preservation_receipt.json
+/new/*/recovery/
+
+# Generated models, caches, logs, and row-level/intermediate evidence.
+/new/**/*.joblib
+/new/**/*.bin
+/new/**/*.tar
+/new/**/*.jsonl
+/new/**/*.log
+/new/**/*.pid
+/new/**/*.lock
+/new/**/*.env
+/new/**/*.exit
+/new/**/__pycache__/
+
+# Keep only compact, current result summaries from the unified run.
+/new/*/reports/00_data_analysis/
+/new/*/reports/03_attack_effect/**
+!/new/*/reports/03_attack_effect/tables/
+!/new/*/reports/03_attack_effect/tables/no_defense_paired_bootstrap_intervals.csv
+!/new/*/reports/03_attack_effect/tables/no_defense_attack_region_metrics.csv
+!/new/*/reports/03_attack_effect/tables/paired_clean_reference_region_metrics.csv
+!/new/*/reports/03_attack_effect/tables/clean_full_evaluation_region_metrics.csv
+/new/*/reports/04_classification_curves_revision1/
+/new/*/reports/04_classification_curves_revision2/
+/new/*/reports/09_raw_rf_detector_revision3/
+/new/*/reports/99_independent_review/**
+!/new/*/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/
+!/new/*/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/report.md
+!/new/*/reports/99_independent_review/attack_terminal_repair_actual_revision14_20261023/verdict.json
+!/new/*/reports/99_independent_review/clean_aggregate_actual_revision1/
+!/new/*/reports/99_independent_review/clean_aggregate_actual_revision1/review.md
+!/new/*/reports/99_independent_review/clean_aggregate_actual_revision1/verdict.json
+!/new/*/reports/99_independent_review/clean_publication_actual_revision2/
+!/new/*/reports/99_independent_review/clean_publication_actual_revision2/review.md
+!/new/*/reports/99_independent_review/clean_publication_actual_revision2/verdict.json
+!/new/*/reports/99_independent_review/shutdown_status_20261023/
+!/new/*/reports/99_independent_review/shutdown_status_20261023/report.md
+!/new/*/reports/99_independent_review/shutdown_status_20261023/verdict.json
+/new/*/reports/05_robustness_report/*
+
+# Clean comparison: retain the report/tables and one representative F1 figure.
+/new/*/reports/01_clean_feature_comparison/provenance/
+/new/*/reports/01_clean_feature_comparison/figures/*
+!/new/*/reports/01_clean_feature_comparison/figures/macro_f1_bootstrap_ci.png
+
+# The readiness tables/JSON are public status data; verbose operational notes
+# link to excluded runtime and provenance internals.
+/new/*/reports/02_attack_defense_readiness/*.md
+
+# The root result hub is the public entry point; run READMEs contain links to
+# intentionally excluded runtime and archive internals.
+/new/README.md
+/new/*/README.md
+
+# Common local development caches.
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Persist only the independent-review report and verdict, not its local probes.
+/reports/**/checks/

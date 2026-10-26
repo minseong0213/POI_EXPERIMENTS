@@ -156,6 +156,13 @@ def descriptive(clean, attack, stage, meta):
 
 
 def distributions(clean, attack, stage, meta):
+    from matplotlib.colors import LogNorm
+    limits = meta.get('numeric_axis_limits') or {
+        feature: [min(pd.to_numeric(clean[feature]).min(), pd.to_numeric(attack[feature]).min()),
+                  max(pd.to_numeric(clean[feature]).max(), pd.to_numeric(attack[feature]).max())]
+        for feature in NUMERIC}
+    delta_limits = meta.get('numeric_delta_axis_limits', {})
+    reference_rows = meta.get('axis_reference_rows', len(clean))
     long = []
     for condition, frame in [('clean', clean), ('adversarial', attack)]:
         part = frame[['POI_ID', 'region'] + NUMERIC].copy()
@@ -176,20 +183,31 @@ def distributions(clean, attack, stage, meta):
         sns.boxplot(data=long.loc[long.feature.eq(feature)], x='region', y='value', hue='condition',
                     palette=CONDITION_COLORS, showfliers=False, ax=ax)
         ax.tick_params(axis='x', rotation=55); ax.set_title(f'{feature} by region and condition')
+        ax.set_ylim(limits[feature])
     fig.tight_layout(); save_figure(fig, stage, 'boxplot_region_condition')
     fig, axes = plt.subplots(2, 2, figsize=(13, 9))
     for row, feature in enumerate(NUMERIC):
         sns.histplot(data=long.loc[long.feature.eq(feature)], x='value', hue='condition',
-                     palette=CONDITION_COLORS, bins=60, stat='density', common_norm=False, ax=axes[row, 0])
-        sns.histplot(delta[f'{feature}_delta'], bins=60, color='#7A5195', ax=axes[row, 1])
+                     palette=CONDITION_COLORS, bins=np.linspace(*limits[feature], 61),
+                     stat='density', common_norm=False, ax=axes[row, 0])
+        delta_bins = np.linspace(*delta_limits[feature], 61) if feature in delta_limits else 60
+        sns.histplot(delta[f'{feature}_delta'], bins=delta_bins, color='#7A5195', ax=axes[row, 1])
         axes[row, 0].set_title(f'{feature} distribution'); axes[row, 1].set_title(f'{feature} paired delta')
+        axes[row, 0].set_xlim(limits[feature])
+        if feature in meta.get('histogram_density_max', {}):
+            axes[row, 0].set_ylim(0, meta['histogram_density_max'][feature])
+        if feature in delta_limits:
+            axes[row, 1].set_xlim(delta_limits[feature]); axes[row, 1].set_ylim(0, reference_rows*1.05)
     fig.tight_layout(); save_figure(fig, stage, 'histograms_and_deltas')
     sample_ids = clean.groupby('region', group_keys=False).sample(n=30, random_state=meta['seed']).POI_ID
     sample_clean = clean.set_index('POI_ID').loc[sample_ids]
     sample_attack = attack.set_index('POI_ID').loc[sample_ids]
     fig, axes = plt.subplots(1, 2, figsize=(13, 6))
     for ax, (condition, frame) in zip(axes, [('clean', clean), ('adversarial', attack)]):
-        ax.hexbin(pd.to_numeric(frame.X_COORD), pd.to_numeric(frame.Y_COORD), gridsize=60, mincnt=1, cmap='viridis')
+        ax.hexbin(pd.to_numeric(frame.X_COORD), pd.to_numeric(frame.Y_COORD), gridsize=60,
+                  mincnt=1, cmap='viridis', extent=(*limits['X_COORD'], *limits['Y_COORD']),
+                  norm=LogNorm(vmin=1, vmax=reference_rows))
+        ax.set_xlim(limits['X_COORD']); ax.set_ylim(limits['Y_COORD'])
         ax.set_title(f'{condition}: coordinate density'); ax.set_xlabel('X_COORD'); ax.set_ylabel('Y_COORD')
     save_figure(fig, stage, 'coordinate_hexbin')
     fig, ax = plt.subplots(figsize=(9, 8))
@@ -200,10 +218,14 @@ def distributions(clean, attack, stage, meta):
     ax.scatter(pd.to_numeric(sample_clean.X_COORD), pd.to_numeric(sample_clean.Y_COORD), s=8, label='clean')
     ax.scatter(pd.to_numeric(sample_attack.X_COORD), pd.to_numeric(sample_attack.Y_COORD), s=8, label='adversarial')
     ax.legend(); ax.set_title('Paired coordinate shifts (30 POIs per region)')
+    ax.set_xlim(limits['X_COORD']); ax.set_ylim(limits['Y_COORD'])
     save_figure(fig, stage, 'paired_coordinate_scatter')
     metrics = {'paired_rows': len(clean), 'delta': {col: {'mean': float(delta[f'{col}_delta'].mean()),
                'std': float(delta[f'{col}_delta'].std()), 'max_abs': float(delta[f'{col}_delta'].abs().max())}
-               for col in NUMERIC}}
+               for col in NUMERIC}, 'numeric_axis_limits':limits,
+               'numeric_delta_axis_limits':delta_limits,
+               'histogram_density_max':meta.get('histogram_density_max'),
+               'hexbin_count_log_color_limits':[1,reference_rows]}
     body = ('지역별 box plot, 공통 bin histogram, 좌표 밀도와 paired 이동 그림을 생성했다. '
             '그래프는 같은 축과 조건 색상을 사용하며 산점도 이동선은 지역당 30개 고정 표본이다.')
     write_stage(stage, '02. 분포 시각화', body, meta, metrics)
@@ -230,14 +252,28 @@ def embeddings(clean, attack, stage, meta):
     attack_umap = reducer.transform(attack_transform_x)
     embedding[['umap_1', 'umap_2']] = np.vstack([clean_umap, attack_umap])
     embedding.to_csv(stage / 'tables' / 'embedding_coordinates.csv', index=False)
+    regions = sorted(clean.region.unique())
+    palette = dict(zip(regions, sns.color_palette('tab20', len(regions))))
     for method in ['tsne', 'umap']:
         fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+        xlim = (embedding[f'{method}_1'].min(), embedding[f'{method}_1'].max())
+        ylim = (embedding[f'{method}_2'].min(), embedding[f'{method}_2'].max())
         for ax, condition in zip(axes, ['clean', 'adversarial']):
             part = embedding.loc[embedding.condition.eq(condition)]
             sns.scatterplot(data=part, x=f'{method}_1', y=f'{method}_2', hue='region',
-                            s=12, alpha=.75, legend=False, ax=ax)
+                            hue_order=regions, palette=palette, s=12, alpha=.75, legend=False, ax=ax)
+            ax.set_xlim(xlim); ax.set_ylim(ylim)
             ax.set_title(f'{method.upper()} — {condition}')
         save_figure(fig, stage, f'{method}_region_condition')
+        fig, ax = plt.subplots(figsize=(11, 8))
+        sns.scatterplot(data=embedding, x=f'{method}_1', y=f'{method}_2', hue='region',
+                        hue_order=regions, palette=palette, style='condition',
+                        style_order=['clean','adversarial'], markers=['o','X'],
+                        s=14, alpha=.65, ax=ax)
+        ax.set_xlim(xlim); ax.set_ylim(ylim)
+        ax.set_title(f'{method.upper()}: paired clean/adversarial overlay')
+        ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1), fontsize=7)
+        save_figure(fig, stage, f'{method}_paired_overlay')
 
     full_clean_x, full_attack_x, _ = matrix_for(clean, attack, fit_on='joint')
     centroid_rows, centroids = [], []
@@ -246,8 +282,12 @@ def embeddings(clean, attack, stage, meta):
             centroid_rows.append({'label': f'{region}:{condition}', 'region': region, 'condition': condition})
             centroids.append(values[frame.region.eq(region).to_numpy()].mean(axis=0))
     centroid_table = pd.DataFrame(centroid_rows)
+    for index in range(len(centroids[0])):
+        centroid_table[f'dimension_{index}'] = np.asarray(centroids)[:,index]
     centroid_table.to_csv(stage / 'tables' / 'dendrogram_centroids.csv', index=False)
     linked = linkage(np.asarray(centroids), method='ward')
+    pd.DataFrame(linked, columns=['left','right','distance','cluster_size']).to_csv(
+        stage / 'tables' / 'dendrogram_linkage.csv', index=False)
     fig, ax = plt.subplots(figsize=(15, 7))
     dendrogram(linked, labels=centroid_table.label.tolist(), leaf_rotation=90, ax=ax)
     ax.set_title('Region-condition centroid dendrogram (Ward linkage)')
@@ -259,6 +299,8 @@ def embeddings(clean, attack, stage, meta):
                                                   (paired[('umap_2','clean')]-paired[('umap_2','adversarial')])**2).mean())}
     body = ('지역당 100개 paired POI를 사용해 joint t-SNE와 clean-fit UMAP을 생성했다. '
             'Dendrogram은 개별 23,800행이 아니라 34개 지역×조건 centroid를 Ward 방식으로 군집화했다. '
+            '각 공격 조건의 임베딩은 별도로 적합하므로 조건 사이의 좌표 위치는 직접 비교하지 않는다. '
+            '같은 조건의 clean/adversarial은 공통 축과 지역 색상, overlay marker로 구분한다. '
             '임베딩은 탐색 시각화이며 분류 성능 근거로 사용하지 않는다.')
     write_stage(stage, '03. t-SNE, UMAP, dendrogram', body, meta, metrics)
 

@@ -1,0 +1,33 @@
+data_dir: data/poi_34k_seed42
+attacks_file: artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+output: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification
+device: cuda
+seeds: [42, 202, 340]
+generation_seeds: [42, 202, 340]
+expected_attack_conditions: 32
+clean_retentions: [0.90, 0.95, 0.975, 0.99]
+primary_clean_retention: 0.95
+classification_threshold: 0.5
+proposed_checkpoint_template: artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed{seed}.pt
+ure_checkpoint_template: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed{seed}.pt
+official_checkpoint: null
+proposed_batch_size: 128
+exact_prediction_cache:
+  enabled: true
+  max_entries_per_model_seed: 128
+  max_bytes_per_model_seed: 67108864
+calibration:
+  proposed_ids: artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json
+  ure_ids: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json
+  fraction: 0.5
+  seed: 340
+  allow_fallback: false
+fixed_region_model:
+  model_id: tabpfn_v2_5
+  device: cuda
+  n_estimators: 8
+  official_checkpoint: /home/mlops/.cache/tabpfn/tabpfn-v2.5-classifier-v2.5_default.ckpt
+  expected_checkpoint_sha256: 5d7170e2d3af01f9c501bb09ec3bd12e9944f8604de18002c647873c6ec04a12
+  require_checkpoint_attestation: true
+  persist_official_fitted_states: true
+  tree_config: configs/stages/06_region_models_tree.yaml

@@ -1,0 +1,249 @@
+{
+  "role": "independent_experiment_audit",
+  "requested_model": "gpt-6-astra",
+  "reasoning_effort": "medium",
+  "fork_context": "none",
+  "launch_mechanism": "collaboration.spawn_agent; fresh-context task received, project role instructions read; no child delegation",
+  "review_scope": "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/",
+  "manifest_sha256": "5a39ad492261f66c51d31c4c855c612bedec6cd3e16115257e85c26fad6dac98",
+  "status": "FAIL",
+  "source_status": "FAIL",
+  "completion_allowed": false,
+  "requirements": [
+    {
+      "requirement": "Candidate byte identity",
+      "expected": "Requested manifest digest; every member matches",
+      "observed": "SHA256 5a39ad492261f66c51d31c4c855c612bedec6cd3e16115257e85c26fad6dac98; 26/26 members match; 24 required paths",
+      "verdict": "PASS",
+      "evidence": [
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/probe.json",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/validation_20261023_revision5/manifest.json"
+      ],
+      "limitation": "Offline source/test scope; no live provider action."
+    },
+    {
+      "requirement": "Fault injection regression suite",
+      "expected": "All candidate tests pass",
+      "observed": "54 tests, 0 failures, 0 errors, 4.426 seconds",
+      "verdict": "PASS",
+      "evidence": [
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/tests/test_lifecycle_controller.py"
+      ],
+      "limitation": "Offline source/test scope; no live provider action."
+    },
+    {
+      "requirement": "Composed adapter process deadlines and cleanup",
+      "expected": "Outer/inner status and fetch deadlines kill owned descendants; ordinary completion also cleans group",
+      "observed": "4 relevant outer/inner/ordinary-detached-session tests pass; _run always cleans owned group after communicate",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:819",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/fetch_remote_snapshot.py:39",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/orchestrator_status.py:82",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Offline source/test scope; no live provider action."
+    },
+    {
+      "requirement": "All operation subprocess descendants cleaned",
+      "expected": "Zero live owned descendants after operation completion",
+      "observed": "Independent probes: upload_exact success leaves 1 live child; readback_exact success leaves 1 live child (2/2 reproduced). Reviewer killed both children. These helpers bypass _run and only terminate groups on timeout (upload also on exception).",
+      "verdict": "FAIL",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1209",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1259",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/probe.py",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/probe.json"
+      ],
+      "limitation": "Normal-return R2 subprocess cleanup remains missing. Fault suite does not test this path. No claim that ordinary rclone necessarily spawns such children; command interface permits them and cleanup invariant fails. Additional source-visible gap: readback_exact has no BaseException process-group cleanup. Both R2 helpers need cleanup on success, nonzero exits, integrity failures, and unexpected exceptions; standalone direct calls also do not reject nonpositive timeout before spawn. Supervisor detached Popen is intentional."
+    },
+    {
+      "requirement": "Preexpired production operation cannot spawn",
+      "expected": "Budget check before subprocess construction",
+      "observed": "_run computes _bounded_timeout before Popen; expiration regression passes; preserve computes bounded budget before calling each R2 helper",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:801",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1053",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Direct upload/readback helper APIs do not independently validate positive budgets; production caller checks remaining time."
+    },
+    {
+      "requirement": "Manifest membership, symlinks, source freshness",
+      "expected": "Nonempty manifests; exact required members; reject symlink components; fresh readiness before rent/launch",
+      "observed": "Both manifest validators check current member sizes/hashes and symlink ancestry; dependencies must belong to required_paths; malformed/changed/symlink tests pass; launch repeats readiness",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/readiness_callback.py:27",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/readiness_callback.py:44",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:889",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Exact final dependency list and configured commands need final configuration review."
+    },
+    {
+      "requirement": "Lease identity and endpoint binding",
+      "expected": "Exact ID, label, fresh provider host/port before remote work",
+      "observed": "Connection ID and current direct/proxy endpoint validated before status/launch/fetch; stale address and ID matrix tests pass",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:977",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/orchestrator_status.py",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/fetch_remote_snapshot.py",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Offline source/test scope; no live provider action."
+    },
+    {
+      "requirement": "Rent before launch and uncertain action reconciliation",
+      "expected": "Durable rent/launch intent; no duplicate uncertain submission; price cap",
+      "observed": "Lifecycle order and uncertain rent/launch tests pass; create_gpu.sh checks request journal and current credit/spend/price before PUT",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:394",
+        "/home/mlops/gpu-orchestrator/engine/vast/create_gpu.sh",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Offline source/test scope; no live provider action."
+    },
+    {
+      "requirement": "Terminal success/failure/timeout snapshot coverage",
+      "expected": "All 3 standard output roots and 4 required runner diagnostics; frozen terminal bytes",
+      "observed": "Snapshot walks results/checkpoints/logs; lock and runner_exit checks; tar hashes read bytes and verifies metadata stability; bootstrap failure fixture preserves four diagnostics; source tests pass",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/remote_snapshot.py",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1092",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Actual final worker confinement/quiescence is NOT_RUN; lifecycle assumes worker obeys reviewed lock and output-root contract."
+    },
+    {
+      "requirement": "Exact local and R2 validation before delete",
+      "expected": "Exact tar members, archive SHA256/size, metadata upload/readback, then deletion gate",
+      "observed": "validate_snapshot compares all member bytes; upload hashes sent stream; two R2 objects read back for hash/size; preservation event precedes delete; corruption tests pass",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1009",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1092",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:655",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Live R2 readback not run; R2 subprocess cleanup failure reported separately."
+    },
+    {
+      "requirement": "Preservation failure retains and stops safely",
+      "expected": "Bounded retries; stop exact owned lease; no delete without verification",
+      "observed": "Retention tests pass including stop failure and running/stopped mismatch; stop verifies stopped intent and stopped/exited actual; unsaved disk retained",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:481",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:614",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/stop_owned_instance.sh",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Stop failure remains visible with compute/storage cost warning; this does not guarantee zero residual storage charges."
+    },
+    {
+      "requirement": "Lost DELETE response and fresh absence receipt",
+      "expected": "Reverify local/R2 even after provider absence; fresh list absence, no second delete",
+      "observed": "Lost response test and absent-provider production-preserve test pass; installed local archive checked before connection access; ID reuse/label mismatch blocks",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:489",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:655",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1019",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Provider offers no durable deletion receipt in this adapter; evidence is fresh list absence."
+    },
+    {
+      "requirement": "Agent loss recovery and test isolation",
+      "expected": "Independent durable supervisor installed before controller; offline tests only",
+      "observed": "Cron installation order mocked test passes; journal restart tests pass; no provider/GPU/SSH/R2/cron operations performed in review",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:1406",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Live watchdog activation/recovery NOT_RUN. Retained/unknown state intentionally requires intervention."
+    },
+    {
+      "requirement": "Credential avoidance",
+      "expected": "No credentials copied to archive or command journal",
+      "observed": "Secret-like filenames rejected; operations retain stdout/stderr hashes only; exact configured environment for adapter commands; credential fixtures rejected",
+      "verdict": "PASS",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/remote_snapshot.py:29",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/lifecycle_controller.py:862",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/readiness_callback.py:137",
+        "reports/99_independent_review/lifecycle_source_revision5_20261023/checks/tests.log"
+      ],
+      "limitation": "Filename checks cannot prove arbitrary log contents contain no secret. Final worker must keep credentials out of scientific logs; R2 helpers inherit process environment."
+    },
+    {
+      "requirement": "Final worker/config binding and live full lifecycle",
+      "expected": "Reviewed final scientific bytes/config plus real rent, experiment, snapshot, R2 and absence receipts",
+      "observed": "0 final configurations or live lifecycle runs reviewed",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/config.example.json",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/launch_contract.example.json",
+        "new/poi-unified-20261020-001/runtime/lifecycle_20261023_revision5/worker_ready.example.json"
+      ],
+      "limitation": "Source-only assignment; placeholders deliberately non-runnable. No deployment/rental approval."
+    },
+    {
+      "requirement": "Scientific split and leakage",
+      "expected": "34000 rows: 23800 train, 3400 validation, 6800 test; five permitted features",
+      "observed": "0 scientific result tables/plots reviewed in this lifecycle source assignment",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "docs/experiments/independent_review_protocol.md"
+      ],
+      "limitation": "Outside lifecycle source scope; cannot infer experiment or delivery completion."
+    },
+    {
+      "requirement": "Attack constraints/provenance and test isolation",
+      "expected": "32 conditions, 870400 train/validation rows; valid distances/L0/categories/labels; locked test",
+      "observed": "0 scientific result tables/plots reviewed in this lifecycle source assignment",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "docs/experiments/independent_review_protocol.md"
+      ],
+      "limitation": "Outside lifecycle source scope; cannot infer experiment or delivery completion."
+    },
+    {
+      "requirement": "Model/region/seed/condition/metric cardinality",
+      "expected": "408 clean rows; 1683 attack rows; five metrics",
+      "observed": "0 scientific result tables/plots reviewed in this lifecycle source assignment",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "docs/experiments/independent_review_protocol.md"
+      ],
+      "limitation": "Outside lifecycle source scope; cannot infer experiment or delivery completion."
+    },
+    {
+      "requirement": "PNG/SVG and regional SHAP/LIME coverage",
+      "expected": "PNG 300dpi, zero SVG; SHAP 34 region-condition plots; plan-required regional LIME",
+      "observed": "0 scientific result tables/plots reviewed in this lifecycle source assignment",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "docs/experiments/independent_review_protocol.md"
+      ],
+      "limitation": "Outside lifecycle source scope; cannot infer experiment or delivery completion."
+    },
+    {
+      "requirement": "Additional statistical/defense/sensitivity analyses",
+      "expected": "Original experiment plan coverage",
+      "observed": "0 scientific result tables/plots reviewed in this lifecycle source assignment",
+      "verdict": "NOT_RUN",
+      "evidence": [
+        "docs/experiments/independent_review_protocol.md"
+      ],
+      "limitation": "Outside lifecycle source scope; cannot infer experiment or delivery completion."
+    }
+  ]
+}

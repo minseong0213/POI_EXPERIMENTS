@@ -1,0 +1,80 @@
+# Training matrix for Stage 14. The full model reuses Stage 08; all other rows
+# retain its data, seeds, sampling budget, and official TabPFN v2.5 checkpoint.
+base_config: configs/stages/08_proposed_tabpfn_defense.yaml
+variants:
+  - name: full_model_staged
+    kind: reference
+    train: false
+    output: artifacts/poi-remediation-20261001/reports/08_proposed_model
+    changes: []
+    overrides: {}
+
+  - name: no_reliability_gate
+    kind: structural
+    train: true
+    output: artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_reliability_gate
+    changes:
+      - learned reliability gate replaced by a fixed 0.5 observation/reconstruction blend
+    overrides:
+      model:
+        use_reliability_gate: false
+
+  - name: no_reconstruction_path
+    kind: structural
+    train: true
+    output: artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_reconstruction_path
+    changes:
+      - cross-feature reconstruction is bypassed and raw observed features reach TabPFN
+      - reconstruction objective is disabled because the branch is absent
+    overrides:
+      model:
+        use_reconstruction_path: false
+      loss_weights:
+        reconstruction: 0.0
+
+  - name: no_encoder_enhancements
+    kind: structural
+    train: true
+    output: artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_encoder_enhancements
+    changes:
+      - learned multiscale numeric and categorical embedding encoders are removed
+      - fixed standardized/index scalar tokens preserve dimensions for the other modules
+      - masked categorical relation encoder is disabled
+    overrides:
+      model:
+        use_multiscale_encoder: false
+        use_feature_encoders: false
+        use_category_relations: false
+
+  - name: no_corruption_heads
+    kind: structural
+    train: true
+    output: artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_corruption_heads
+    changes:
+      - feature corruption heads are absent and reliability uses the fixed 0.5 blend
+      - feature corruption supervision is disabled because its heads are absent
+    overrides:
+      model:
+        use_corruption_heads: false
+      loss_weights:
+        feature_detection: 0.0
+
+  - name: no_consistency_loss
+    kind: objective
+    train: true
+    output: artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_consistency_loss
+    changes:
+      - paired clean-adversarial region consistency weight set to zero
+    overrides:
+      loss_weights:
+        consistency: 0.0
+
+  - name: no_fine_tuning_block
+    kind: optimization
+    train: true
+    output: artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_fine_tuning_block
+    changes:
+      - staged final-block fine-tuning is disabled; official TabPFN remains frozen
+    overrides:
+      fine_tuning:
+        mode: disabled

@@ -1,0 +1,12 @@
+data_dir: data/poi_34k_seed42
+output: artifacts/poi-remediation-20261001/reports/06_clean_comparison
+tree_predictions: artifacts/poi-remediation-20261001/reports/06_clean_tree/tables/all_predictions.parquet
+tabpfn_prediction_directories:
+  tabpfn_v2_5: artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation/predictions
+  tabpfn_v3: artifacts/poi-remediation-20261001/reports/06_clean_tabpfn3/predictions
+  tabpfn_v2_6: artifacts/poi-remediation-20261001/reports/06_clean_tabpfn26/predictions
+models: [decision_tree, random_forest, xgboost, lightgbm, catboost, tabpfn_v2_5, tabpfn_v2_6, tabpfn_v3]
+seeds: [42, 202, 340]
+expected_pois: 3400
+expected_regions: 17
+threshold: 0.5

@@ -18,7 +18,7 @@ from sklearn.metrics import (accuracy_score, average_precision_score, confusion_
                              recall_score, roc_auc_score, roc_curve)
 import yaml
 
-from .data import CATEGORICAL, FEATURES, NUMERIC, sha256
+from .data import CATEGORICAL, FEATURES, NUMERIC, sha256, load_clean_splits
 
 METRICS = ["f1", "precision", "recall", "accuracy", "roc_auc", "average_precision"]
 EXPECTED_MODELS = {"decision_tree", "random_forest", "xgboost", "lightgbm", "catboost",
@@ -34,16 +34,7 @@ def _hash(path):
 
 
 def _load_clean(data_dir):
-    data_dir = Path(data_dir)
-    report = json.loads((data_dir / "report.json").read_text())
-    for name in ["poi_data_region.csv", "sample_manifest.csv"]:
-        if sha256(data_dir / name) != report["outputs"][name]["sha256"]:
-            raise ValueError(f"Dataset checksum mismatch: {name}")
-    clean = pd.read_csv(data_dir / "poi_data_region.csv", dtype=str, keep_default_na=False)
-    manifest = pd.read_csv(data_dir / "sample_manifest.csv", dtype=str, keep_default_na=False)
-    clean = clean.set_index("POI_ID").loc[manifest.POI_ID].reset_index()
-    clean["split"] = manifest.split.to_numpy()
-    return clean, manifest
+    return load_clean_splits(data_dir, splits=("train", "validation"))
 
 
 def _attack_frame(rows, clean_order):

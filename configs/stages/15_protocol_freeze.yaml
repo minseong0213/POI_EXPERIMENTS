@@ -1,0 +1,481 @@
+format: poi-locked-test-protocol-freeze-v1
+manifest_output: artifacts/poi-remediation-20261001/protocol_freeze_manifest.json
+required_stages: ['01', '06', '07', '08', '09', '10', '13', '14']
+
+# These files affect freeze verification, locked-test gating, common metrics, model replay, or the
+# resolved Python environment even when they are not owned by a single experiment stage.
+protocol_dependencies:
+  source_files:
+    - src/poi/protocol_freeze.py
+    - src/poi/data.py
+    - src/poi/uncertainty.py
+    - src/poi/clean_uncertainty.py
+    - src/poi/final_test.py
+    - src/poi/locked_test.py
+    - src/poi/locked_test_backend.py
+    - src/poi/defense_evaluate.py
+    - src/poi/selected_explain.py
+    - src/poi/attack_evaluate.py
+    - src/poi/ablation.py
+    - src/poi/benchmark.py
+  config_files:
+    - configs/stages/15_locked_test.yaml
+  environment_files:
+    - pyproject.toml
+    - requirements.txt
+    - requirements.lock
+
+# This fresh review is separate from per-stage reviews. It must be written only after this
+# freeze config and every shared source/config/environment dependency have their final bytes.
+common_independent_review:
+  verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/protocol_common_freeze_verdict.json
+  agent_role: independent_experiment_audit
+  reviewer_role: independent_reviewer
+  requested_model: gpt-6-astra
+  reasoning_effort: medium
+  fork_context: none
+  gate_verdict_field: prospective_lock_readiness_verdict
+  allowed_overall_verdicts: [PARTIAL]
+  scope_tokens:
+    - configs/stages/15_protocol_freeze.yaml
+    - protocol_dependencies
+  required_items:
+    - common_dependency_byte_inventory
+    - freeze_verifier_and_config_review
+    - actual_runtime_environment_binding
+  acknowledged_nonpass_items:
+    historical_pristine_test_isolation: PARTIAL
+
+# Each artifact root is inventoried recursively. A later addition or deletion is a verification
+# failure, even when it is not one of the required landmark files below.
+stages:
+  '01':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/01_attack_generation
+    config_files:
+      - configs/stages/01_attack_generation.yaml
+      - configs/geospatial/korea_adm1_consensus.yaml
+      - resources/geospatial/kr_sido_sgis_2020_crs84.geojson.gz
+      - resources/geospatial/kr_sido_vworld_2023.geojson
+    code_files:
+      - src/poi/adversarial.py
+      - src/poi/geospatial.py
+      - src/poi/validate_boundaries.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/01_attack_generation/metadata.json
+      - artifacts/poi-remediation-20261001/reports/01_attack_generation/work/generation_request.json
+      - artifacts/poi-remediation-20261001/reports/01_attack_generation/work/generation_identity.json
+      - artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attacks.parquet
+      - artifacts/poi-remediation-20261001/reports/01_attack_generation/tables/attack_validity_summary.csv
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage01_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/01_attack_generation.md
+        - artifacts/poi-remediation-20261001/reports/01_attack_generation
+      required_items:
+        - attack_generation_cardinality
+        - attack_constraints_and_provenance
+        - split_and_feature_leakage
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '06':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty
+    config_files:
+      - configs/stages/06_clean_comparison.yaml
+      - configs/stages/06_clean_comparison_uncertainty.yaml
+    code_files:
+      - src/poi/clean_comparison.py
+      - src/poi/clean_uncertainty.py
+      - src/poi/uncertainty.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison/metadata.json
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/all_predictions.parquet
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/metrics_by_region.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/macro_by_seed.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/macro_seed_summary.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/metadata.json
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/tables/seed_region_point_metrics.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/tables/bootstrap_metric_replicates.parquet
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/tables/metric_confidence_intervals.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/tables/all_clean_model_pairwise_differences.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/tables/source_provenance.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/work/bootstrap_poi_weights.npy
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/work/bootstrap_poi_order.csv
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/provenance/input_source_hashes.json
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/figures/clean_model_f1_ci.png
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/figures/clean_model_precision_ci.png
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/figures/clean_model_recall_ci.png
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/figures/clean_model_accuracy_ci.png
+      - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/figures/clean_model_roc_auc_ci.png
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage06_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/06_region_models.md
+        - artifacts/poi-remediation-20261001/reports/06_clean_comparison
+        - artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty
+      required_items:
+        - exact_eight_model_clean_validation_coverage
+        - model_selection_rule_and_fixed_downstream_binding
+        - paired_poi_comparison_and_selection_uncertainty
+        - validation_only_selection_scope
+        - source_prediction_provenance_and_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '07':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation
+    config_files:
+      - configs/stages/07_clean_feature_ablation.yaml
+    code_files:
+      - src/poi/feature_ablation.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation/metadata.json
+      - artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation/tables/metrics.csv
+      - artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation/tables/summary.csv
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage07_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/07_backbone_ablation.md
+        - artifacts/poi-remediation-20261001/reports/07_clean_feature_ablation
+      required_items:
+        - clean_feature_ablation_coverage
+        - model_region_seed_metric_cardinality
+        - validation_only_selection_scope
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '08':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model
+    config_files:
+      - configs/stages/08_proposed_tabpfn_defense.yaml
+    code_files:
+      - src/poi/proposed_defense/__init__.py
+      - src/poi/proposed_defense/ablation.py
+      - src/poi/proposed_defense/data.py
+      - src/poi/proposed_defense/losses.py
+      - src/poi/proposed_defense/model.py
+      - src/poi/proposed_defense/predictor.py
+      - src/poi/proposed_defense/schema.py
+      - src/poi/proposed_defense/structural.py
+      - src/poi/proposed_defense/train.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model/metadata.json
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model/training_history.csv
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed42.pt
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed202.pt
+      - artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed340.pt
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage08_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/08_proposed_model.md
+        - artifacts/poi-remediation-20261001/reports/08_proposed_model
+      required_items:
+        - proposed_model_architecture_and_training
+        - checkpoint_hash_and_seed_coverage
+        - calibration_evaluation_partition_isolation
+        - train_validation_only_scope
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '09':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf
+    config_files:
+      - configs/stages/09_ure_rf_detection.yaml
+    code_files:
+      - src/poi/ure/__init__.py
+      - src/poi/ure/detector.py
+      - src/poi/ure/model.py
+      - src/poi/ure/preprocessing.py
+      - src/poi/ure/source.py
+      - src/poi/ure/train.py
+      - src/poi/ure/training.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/metadata.json
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/seed_metadata.json
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed42.pt
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed42.joblib
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed202.pt
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed202.joblib
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed340.pt
+      - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed340.joblib
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage09_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/09_attack_detection.md
+        - artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf
+      required_items:
+        - ure_rf_method_correspondence
+        - checkpoint_hash_and_seed_coverage
+        - calibration_evaluation_partition_isolation
+        - train_validation_only_scope
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '10':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification
+    config_files:
+      - configs/stages/10_defense_pipeline.yaml
+    code_files:
+      - src/poi/defense_evaluate.py
+      - src/poi/defense_pipeline.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/metadata.json
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/detection_thresholds.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/calibration_detector_scores.parquet
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/prediction_manifest.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/detector_metrics.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/classification_metrics.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/classification_macro_metrics.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/selective_operating_summary.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/risk_coverage_curve.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/risk_coverage_summary.csv
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/figures/risk_coverage.png
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/fixed_downstream_replay_contract.json
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/runtime_environment.json
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/defense_pipeline.py
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/selected_explain.py
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/defense_evaluate.py
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/data.py
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/attack_evaluate.py
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/ablation.py
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/work/fixed_downstream_replay_sources/benchmark.py
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage10_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/10_filtered_region_classification.md
+        - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification
+      required_items:
+        - fixed_same_downstream_comparison
+        - fixed_downstream_official_fitted_state_replay
+        - threshold_calibration_only_fit
+        - section10_macro_risk_coverage
+        - quarantine_and_primary_valid_scope
+        - coverage_region_seed_condition_metric_cardinality
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '13':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/13_explainability
+    config_files:
+      - configs/stages/13_clean_explain_catboost.yaml
+      - configs/stages/13_clean_explain_decision_tree.yaml
+      - configs/stages/13_clean_explain_lightgbm.yaml
+      - configs/stages/13_clean_explain_random_forest.yaml
+      - configs/stages/13_clean_explain_tabpfn_v2_5.yaml
+      - configs/stages/13_clean_explain_tabpfn_v2_6.yaml
+      - configs/stages/13_clean_explain_tabpfn_v3.yaml
+      - configs/stages/13_clean_explain_xgboost.yaml
+      - configs/stages/13_expanded_explain.yaml
+      - configs/stages/13_proposed_explain.yaml
+    code_files:
+      - src/poi/expanded_explain.py
+      - src/poi/selected_explain.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_catboost/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_decision_tree/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_lightgbm/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_random_forest/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_tabpfn_v2_5/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_tabpfn_v2_6/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_tabpfn_v3/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/clean_xgboost/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/tabpfn_v2_5/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/13_explainability/proposed_tabpfn/_GENERATED.json
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage13_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/13_explainability.md
+        - artifacts/poi-remediation-20261001/reports/13_explainability
+      required_items:
+        - shap_region_clean_adversarial_coverage
+        - lime_region_clean_adversarial_coverage
+        - proposed_and_selected_model_coverage
+        - png_300dpi_and_no_svg
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+  '14':
+    artifact_roots:
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking
+      - artifacts/poi-remediation-20261001/reports/14_proposed_ablation
+    config_files:
+      - configs/stages/14_sensitivity_stability_ranking.yaml
+      - configs/stages/14_proposed_structure_ablation.yaml
+    code_files:
+      - src/poi/sensitivity_stability.py
+      - src/poi/proposed_defense/ablation.py
+    required_artifact_files:
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/_GENERATED.json
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/metadata.json
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/tables/sensitivity_by_region.csv
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/tables/rank_summary.csv
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/tables/ranking_bootstrap_intervals.csv
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/tables/seed_effect_marginals.csv
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/tables/seed_variance_decomposition.csv
+      - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking/tables/extended_plan_assessment.csv
+      - artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_reliability_gate/metadata.json
+      - artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_reconstruction_path/metadata.json
+      - artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_multiscale_encoder/metadata.json
+      - artifacts/poi-remediation-20261001/reports/14_proposed_ablation/no_consistency_loss/metadata.json
+      - artifacts/poi-remediation-20261001/reports/14_proposed_ablation/unfrozen_last_block/metadata.json
+    independent_review:
+      verdict_file: artifacts/poi-remediation-20261001/reports/99_independent_review/stage14_protocol_freeze_verdict.json
+      agent_role: independent_experiment_audit
+      reviewer_role: independent_reviewer
+      requested_model: gpt-6-astra
+      reasoning_effort: medium
+      fork_context: none
+      gate_verdict_field: prospective_lock_readiness_verdict
+      allowed_overall_verdicts: [PARTIAL]
+      scope_tokens:
+        - docs/experiments/14_robustness_analysis.md
+        - artifacts/poi-remediation-20261001/reports/14_sensitivity_stability_ranking
+        - artifacts/poi-remediation-20261001/reports/14_proposed_ablation
+      required_items:
+        - attack_mixture_and_retention_sensitivity
+        - seed_stability_and_paired_poi_uncertainty
+        - spearman_kendall_region_ranking
+        - calibration_only_ensemble_fit
+        - structural_and_objective_ablation_coverage
+        - primary_valid_and_all_intent_scope
+        - leave_one_attack_out_generalization
+        - leave_one_source_model_out_transfer
+        - adaptive_detector_evasion_attack
+        - regional_probability_ensemble_calibration
+        - execution_source_snapshot_and_commit_binding
+        - actual_execution_runtime_inventory
+        - prospective_test_access_lock
+      acknowledged_nonpass_items:
+        historical_pristine_test_isolation: PARTIAL
+
+critical_freeze_items:
+  selection_evidence:
+    - {label: clean_eight_model_selection_summary, stage: '06', path: artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/macro_seed_summary.csv}
+    - {label: clean_eight_model_paired_predictions, stage: '06', path: artifacts/poi-remediation-20261001/reports/06_clean_comparison/tables/all_predictions.parquet}
+    - {label: clean_eight_model_paired_uncertainty, stage: '06', path: artifacts/poi-remediation-20261001/reports/06_clean_comparison_uncertainty/tables/all_clean_model_pairwise_differences.csv}
+  selected_checkpoints:
+    - {label: proposed_seed42, stage: '08', path: artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed42.pt}
+    - {label: proposed_seed202, stage: '08', path: artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed202.pt}
+    - {label: proposed_seed340, stage: '08', path: artifacts/poi-remediation-20261001/reports/08_proposed_model/checkpoints/proposed_tabpfn25_seed340.pt}
+    - {label: ure_seed42, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed42.pt}
+    - {label: ure_seed42_forest, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed42.joblib}
+    - {label: ure_seed202, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed202.pt}
+    - {label: ure_seed202_forest, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed202.joblib}
+    - {label: ure_seed340, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed340.pt}
+    - {label: ure_seed340_forest, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/checkpoints/ure_rf_seed340.joblib}
+  threshold_files:
+    - {label: detector_thresholds, stage: '10', path: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/detection_thresholds.csv}
+  calibration_partitions:
+    - {label: proposed_calibration_ids, stage: '08', path: artifacts/poi-remediation-20261001/reports/08_proposed_model/calibration_ids.json}
+    - {label: ure_calibration_ids, stage: '09', path: artifacts/poi-remediation-20261001/reports/09_attack_detection/ure_rf/calibration_ids.json}
+    - {label: ensemble_calibration_scores, stage: '10', path: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/calibration_detector_scores.parquet}
+  fixed_downstream:
+    model_id: tabpfn_v2_5
+    expected_checkpoint_sha256: 5d7170e2d3af01f9c501bb09ec3bd12e9944f8604de18002c647873c6ec04a12
+    actual_checkpoint_path: /home/mlops/.cache/tabpfn/tabpfn-v2.5-classifier-v2.5_default.ckpt
+    replay_contract_file: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/fixed_downstream_replay_contract.json
+    expected_fit_count: 51
+    replay_hash_bindings:
+      thresholds_sha256: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/detection_thresholds.csv
+      calibration_scores_sha256: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/calibration_detector_scores.parquet
+      prediction_manifest_sha256: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/tables/prediction_manifest.csv
+      stage_config_sha256: configs/stages/10_defense_pipeline.yaml
+      runtime_environment_sha256: artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/runtime_environment.json
+    evidence_files:
+      - configs/stages/08_proposed_tabpfn_defense.yaml
+      - configs/stages/09_ure_rf_detection.yaml
+      - configs/stages/10_defense_pipeline.yaml
+      - artifacts/poi-remediation-20261001/reports/10_filtered_region_classification/metadata.json
+
+# A prior process materialized all 34,000 coordinates, including the 6,800 locked-test rows.
+# Freezing can only establish prospective isolation. It cannot make that test historically pristine.
+prior_test_coordinate_access:
+  occurred: true
+  historically_pristine_test_claim_permitted: false
+  statement: >-
+    A prior exploratory process materialized coordinates for all 34,000 rows, including the
+    locked-test coordinates. This irreversible exposure must accompany every later evaluation;
+    the freeze establishes only prospective access isolation and never a fresh/never-opened test.
+  evidence_files:
+    - artifacts/poi-remediation-20261001/reports/01_attack_generation/metadata.json
